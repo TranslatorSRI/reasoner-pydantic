@@ -28,7 +28,7 @@ def answer_question(request):
     qnode: QNode = message.query_graph.nodes[0]
 
     # add knowledge graph node
-    knode: KNode = KNode(id='bar')
+    knode: KNode = KNode(id='foo:bar')
     message.knowledge_graph.nodes.append(knode)
 
     # add result
