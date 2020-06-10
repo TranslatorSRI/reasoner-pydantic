@@ -21,6 +21,12 @@ class EdgeBinding(BaseModel):
 
     class Config:
         title = 'edge binding'
+        schema_extra = {
+            'example': {
+                'qg_id': 'string',
+                'kg_id': 'string',
+            },
+        }
 
 
 class NodeBinding(BaseModel):
@@ -37,6 +43,12 @@ class NodeBinding(BaseModel):
 
     class Config:
         title = 'node binding'
+        schema_extra = {
+            'example': {
+                'qg_id': 'string',
+                'kg_id': 'x:string',
+            },
+        }
 
 
 class Result(BaseModel):

@@ -21,6 +21,12 @@ class KNode(BaseModel):
 
     class Config:
         title = 'knowledge-graph node'
+        schema_extra = {
+            'example': {
+                'id': 'x:string',
+                'type': 'string',
+            },
+        }
 
 
 class KEdge(BaseModel):
