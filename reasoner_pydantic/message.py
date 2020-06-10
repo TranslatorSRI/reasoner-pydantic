@@ -38,4 +38,4 @@ class Request(BaseModel):
     )
 
     class Config:
-        title = 'result'
+        title = 'request'
