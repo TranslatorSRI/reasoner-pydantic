@@ -2,9 +2,9 @@
 """Query graph models."""
 from typing import List, Union
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, constr, Field
 
-from .basics import BiolinkEntity, BiolinkRelation
+CURIE = constr(regex='^.+:.+$')
 
 
 class QNode(BaseModel):
@@ -14,7 +14,7 @@ class QNode(BaseModel):
         ...,
         title='id',
     )
-    curie: Union[BiolinkEntity, List[BiolinkEntity]] = Field(
+    curie: Union[CURIE, List[CURIE]] = Field(
         None,
         title='CURIE',
     )
@@ -42,7 +42,7 @@ class QEdge(BaseModel):
         ...,
         title='target node id',
     )
-    type: Union[BiolinkRelation, List[BiolinkRelation]] = Field(
+    type: Union[str, List[str]] = Field(
         None,
         title='type',
     )

@@ -2,9 +2,9 @@
 """Knowledge graph models."""
 from typing import List, Union
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, constr, Field
 
-from .basics import BiolinkEntity, BiolinkRelation
+CURIE = constr(regex='^.+:.+$')
 
 
 class KNode(BaseModel):
@@ -14,7 +14,7 @@ class KNode(BaseModel):
         ...,
         title='id',
     )
-    type: Union[BiolinkEntity, List[BiolinkEntity]] = Field(
+    type: Union[CURIE, List[CURIE]] = Field(
         None,
         title='type',
     )
@@ -38,7 +38,7 @@ class KEdge(BaseModel):
         ...,
         title='target node id',
     )
-    type: Union[BiolinkRelation, List[BiolinkRelation]] = None
+    type: Union[str, List[str]] = None
 
     class Config:
         title = 'knowledge-graph edge'

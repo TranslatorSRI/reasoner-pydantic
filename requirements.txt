@@ -1,1 +1,1 @@
-git+https://github.com/patrickkwang/pydantic.git@all_root_mods#egg=pydantic
+pydantic
