@@ -4,7 +4,7 @@ from typing import List, Union
 
 from pydantic import BaseModel, Field
 
-from models.basics import BiolinkEntity, BiolinkRelation
+from .basics import BiolinkEntity, BiolinkRelation
 
 
 class KNode(BaseModel):

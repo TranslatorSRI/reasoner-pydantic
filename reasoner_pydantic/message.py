@@ -4,9 +4,9 @@ from typing import List
 
 from pydantic import BaseModel, Field
 
-from models.results import Result
-from models.qgraph import QueryGraph
-from models.kgraph import KnowledgeGraph
+from .results import Result
+from .qgraph import QueryGraph
+from .kgraph import KnowledgeGraph
 
 
 class Message(BaseModel):
