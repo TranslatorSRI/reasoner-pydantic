@@ -27,6 +27,7 @@ class EdgeBinding(BaseModel):
                 'kg_id': 'string',
             },
         }
+        extra = 'allow'
 
 
 class NodeBinding(BaseModel):
@@ -49,6 +50,7 @@ class NodeBinding(BaseModel):
                 'kg_id': 'x:string',
             },
         }
+        extra = 'allow'
 
 
 class Result(BaseModel):
@@ -73,3 +75,4 @@ class Result(BaseModel):
 
     class Config:
         title = 'result'
+        extra = 'allow'

@@ -25,6 +25,7 @@ class QNode(BaseModel):
 
     class Config:
         title = 'query-graph node'
+        extra = 'allow'
 
 
 class QEdge(BaseModel):
@@ -49,6 +50,7 @@ class QEdge(BaseModel):
 
     class Config:
         title = 'query-graph edge'
+        extra = 'allow'
 
 
 class QueryGraph(BaseModel):
@@ -65,3 +67,4 @@ class QueryGraph(BaseModel):
 
     class Config:
         title = 'simple query graph'
+        extra = 'allow'

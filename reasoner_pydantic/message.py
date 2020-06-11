@@ -27,6 +27,7 @@ class Message(BaseModel):
 
     class Config:
         title = 'message'
+        extra = 'allow'
 
 
 class Request(BaseModel):
@@ -39,3 +40,4 @@ class Request(BaseModel):
 
     class Config:
         title = 'request'
+        extra = 'allow'

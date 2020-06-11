@@ -27,6 +27,7 @@ class KNode(BaseModel):
                 'type': 'string',
             },
         }
+        extra = 'allow'
 
 
 class KEdge(BaseModel):
@@ -48,6 +49,7 @@ class KEdge(BaseModel):
 
     class Config:
         title = 'knowledge-graph edge'
+        extra = 'allow'
 
 
 class KnowledgeGraph(BaseModel):
@@ -64,3 +66,4 @@ class KnowledgeGraph(BaseModel):
 
     class Config:
         title = 'knowledge graph'
+        extra = 'allow'
