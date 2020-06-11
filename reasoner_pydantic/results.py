@@ -1,4 +1,4 @@
-# pylint: disable=too-few-public-methods
+# pylint: disable=too-few-public-methods, missing-class-docstring
 """Results models."""
 from typing import Dict, List, Union
 
