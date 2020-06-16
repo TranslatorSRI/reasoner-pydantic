@@ -10,11 +10,11 @@ CURIE = constr(regex='^.+:.+$')
 class KNode(BaseModel):
     """Knowledge graph node."""
 
-    id: Union[CURIE, List[CURIE]] = Field(
+    id: CURIE = Field(
         ...,
         title='id',
     )
-    type: str = Field(
+    type: Union[str, List[str]] = Field(
         None,
         title='type',
     )
