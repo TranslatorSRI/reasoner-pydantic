@@ -64,14 +64,6 @@ class Result(BaseModel):
         ...,
         title='list of edge bindings',
     )
-    extra_nodes: List[Dict] = Field(
-        None,
-        title='list of extra nodes',
-    )
-    extra_edges: List[Dict] = Field(
-        None,
-        title='list of extra edges',
-    )
 
     class Config:
         title = 'result'
