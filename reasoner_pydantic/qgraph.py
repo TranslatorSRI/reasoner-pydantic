@@ -1,11 +1,11 @@
 # pylint: disable=too-few-public-methods, missing-class-docstring
 """Query graph models."""
 from typing import List, Union
-
+import re
 from pydantic import BaseModel, constr, Field
 
 # CURIE = constr(regex='^.+:.+$')
-CURIE = constr(regex='^.+.+$|\A\{[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}\}\z')
+CURIE = constr(regex="^.+.+$|^{?([0-9a-fA-F]){8}(-([0-9a-fA-F]){4}){3}-([0-9a-fA-F]){12}}?$")
 
 
 class QNode(BaseModel):
