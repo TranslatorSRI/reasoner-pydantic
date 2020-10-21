@@ -4,7 +4,8 @@ from typing import List, Union
 
 from pydantic import BaseModel, constr, Field
 
-CURIE = constr(regex='^.+:.+$')
+# CURIE = constr(regex='^.+:.+$')
+CURIE = constr(regex='^.+.+$|\A\{[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}\}\z')
 
 
 class QNode(BaseModel):
