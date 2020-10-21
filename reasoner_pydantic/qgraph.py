@@ -1,7 +1,6 @@
 # pylint: disable=too-few-public-methods, missing-class-docstring
 """Query graph models."""
 from typing import List, Union
-import re
 from pydantic import BaseModel, constr, Field
 
 # CURIE = constr(regex='^.+:.+$')
