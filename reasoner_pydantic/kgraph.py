@@ -4,7 +4,7 @@ from typing import List, Union
 
 from pydantic import BaseModel, constr, Field
 
-#CURIE = constr(regex='^.+:.+$')
+# CURIE = constr(regex='^.+:.+$')
 CURIE = constr(regex="^.+.+$|^{?([0-9a-fA-F]){8}(-([0-9a-fA-F]){4}){3}-([0-9a-fA-F]){12}}?$")
 
 
