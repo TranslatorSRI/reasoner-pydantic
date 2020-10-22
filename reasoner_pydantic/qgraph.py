@@ -2,9 +2,7 @@
 """Query graph models."""
 from typing import List, Union
 
-from pydantic import BaseModel, constr, Field
-
-CURIE = constr(regex='^.+:.+$')
+from pydantic import BaseModel, Field
 
 
 class QNode(BaseModel):
@@ -14,7 +12,7 @@ class QNode(BaseModel):
         ...,
         title='id',
     )
-    curie: Union[CURIE, List[CURIE]] = Field(
+    curie: Union[str, List[str]] = Field(
         None,
         title='CURIE',
     )

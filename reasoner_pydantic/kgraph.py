@@ -2,15 +2,13 @@
 """Knowledge graph models."""
 from typing import List, Union
 
-from pydantic import BaseModel, constr, Field
-
-CURIE = constr(regex='^.+:.+$')
+from pydantic import BaseModel, Field
 
 
 class KNode(BaseModel):
     """Knowledge graph node."""
 
-    id: CURIE = Field(
+    id: str = Field(
         ...,
         title='id',
     )
