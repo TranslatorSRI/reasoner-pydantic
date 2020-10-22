@@ -2,9 +2,7 @@
 """Results models."""
 from typing import Dict, List, Union
 
-from pydantic import BaseModel, constr, Field
-
-CURIE = constr(regex='^.+:.+$')
+from pydantic import BaseModel, Field
 
 
 class EdgeBinding(BaseModel):
@@ -37,7 +35,7 @@ class NodeBinding(BaseModel):
         ...,
         title='query graph id',
     )
-    kg_id: Union[CURIE, List[CURIE]] = Field(
+    kg_id: Union[str, List[str]] = Field(
         ...,
         title='knowledge graph id',
     )
