@@ -1,63 +1,61 @@
 # pylint: disable=too-few-public-methods, missing-class-docstring
 """Knowledge graph models."""
-from typing import List, Union
+from typing import Dict, List, Union
 
 from pydantic import BaseModel, Field
 
+from .shared import Attribute, BiolinkEntity, BiolinkRelation, CURIE
 
-class KNode(BaseModel):
+
+class Node(BaseModel):
     """Knowledge graph node."""
 
-    id: str = Field(
-        ...,
-        title='id',
-    )
-    type: Union[str, List[str]] = Field(
+    category: Union[BiolinkEntity, List[BiolinkEntity]] = Field(
         None,
-        title='type',
+        title='category',
     )
+    name: str = None
+    attributes: List[Attribute] = None
 
     class Config:
         title = 'knowledge-graph node'
         schema_extra = {
             'example': {
                 'id': 'x:string',
-                'type': 'string',
+                'category': 'string',
             },
         }
-        extra = 'allow'
+        extra = 'forbid'
 
 
-class KEdge(BaseModel):
+class Edge(BaseModel):
     """Knowledge graph edge."""
 
-    id: str = Field(
+    subject: CURIE = Field(
         ...,
-        title='identifier',
+        title='subject node id',
     )
-    source_id: str = Field(
+    object: CURIE = Field(
         ...,
-        title='source node id',
+        title='object node id',
     )
-    target_id: str = Field(
-        ...,
-        title='target node id',
-    )
-    type: Union[str, List[str]] = None
+    predicate: BiolinkRelation = None
+    relation: str = None
+    attributes: List[Attribute] = None
 
     class Config:
         title = 'knowledge-graph edge'
-        extra = 'allow'
+        extra = 'forbid'
 
 
 class KnowledgeGraph(BaseModel):
     """Knowledge graph."""
 
-    nodes: List[KNode] = Field(
+    nodes: Dict[str, Node] = Field(
         ...,
         title='nodes',
     )
-    edges: List[KEdge] = Field(
+    edges: Dict[str, Edge] = Field(
         ...,
         title='edges',
     )

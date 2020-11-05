@@ -27,10 +27,10 @@ class Message(BaseModel):
 
     class Config:
         title = 'message'
-        extra = 'allow'
+        extra = 'forbid'
 
 
-class Request(BaseModel):
+class Query(BaseModel):
     """Request."""
 
     message: Message = Field(
@@ -39,5 +39,21 @@ class Request(BaseModel):
     )
 
     class Config:
-        title = 'request'
+        title = 'query'
+        extra = 'allow'
+        schema_extra = {
+            "x-body-name": "request_body"
+        }
+
+
+class Response(BaseModel):
+    """Response."""
+
+    message: Message = Field(
+        ...,
+        title='message',
+    )
+
+    class Config:
+        title = 'response'
         extra = 'allow'
