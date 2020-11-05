@@ -1,25 +1,24 @@
 # pylint: disable=too-few-public-methods, missing-class-docstring
 """Query graph models."""
-from typing import List, Union
+from typing import Dict, List, Union
 
 from pydantic import BaseModel, Field
+
+from .shared import BiolinkEntity, BiolinkRelation, CURIE
 
 
 class QNode(BaseModel):
     """Query node."""
 
-    id: str = Field(
-        ...,
+    id: Union[CURIE, List[CURIE]] = Field(
+        None,
         title='id',
     )
-    curie: Union[str, List[str]] = Field(
+    category: Union[BiolinkEntity, List[BiolinkEntity]] = Field(
         None,
-        title='CURIE',
+        title='category',
     )
-    type: Union[str, List[str]] = Field(
-        None,
-        title='type',
-    )
+    is_set: bool = False
 
     class Config:
         title = 'query-graph node'
@@ -29,22 +28,19 @@ class QNode(BaseModel):
 class QEdge(BaseModel):
     """Query edge."""
 
-    id: str = Field(
+    subject: str = Field(
         ...,
-        title='id',
+        title='subject node id',
     )
-    source_id: str = Field(
+    object: str = Field(
         ...,
-        title='source node id',
+        title='object node id',
     )
-    target_id: str = Field(
-        ...,
-        title='target node id',
-    )
-    type: Union[str, List[str]] = Field(
+    predicate: Union[BiolinkRelation, List[BiolinkRelation]] = Field(
         None,
-        title='type',
+        title='predicate',
     )
+    relation: str = None
 
     class Config:
         title = 'query-graph edge'
@@ -54,13 +50,13 @@ class QEdge(BaseModel):
 class QueryGraph(BaseModel):
     """Query graph."""
 
-    nodes: List[QNode] = Field(
+    nodes: Dict[str, QNode] = Field(
         ...,
-        title='list of nodes',
+        title='dict of nodes',
     )
-    edges: List[QEdge] = Field(
+    edges: Dict[str, QEdge] = Field(
         ...,
-        title='list of edges',
+        title='dict of edges',
     )
 
     class Config:

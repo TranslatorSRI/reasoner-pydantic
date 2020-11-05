@@ -1,18 +1,16 @@
 # pylint: disable=too-few-public-methods, missing-class-docstring
 """Results models."""
-from typing import Dict, List, Union
+from typing import Dict, List
 
 from pydantic import BaseModel, Field
+
+from .shared import CURIE
 
 
 class EdgeBinding(BaseModel):
     """Edge binding."""
 
-    qg_id: str = Field(
-        ...,
-        title='query graph id',
-    )
-    kg_id: Union[str, List[str]] = Field(
+    id: str = Field(
         ...,
         title='knowledge graph id',
     )
@@ -21,8 +19,7 @@ class EdgeBinding(BaseModel):
         title = 'edge binding'
         schema_extra = {
             'example': {
-                'qg_id': 'string',
-                'kg_id': 'string',
+                'id': 'string',
             },
         }
         extra = 'allow'
@@ -31,11 +28,7 @@ class EdgeBinding(BaseModel):
 class NodeBinding(BaseModel):
     """Node binding."""
 
-    qg_id: str = Field(
-        ...,
-        title='query graph id',
-    )
-    kg_id: Union[str, List[str]] = Field(
+    id: CURIE = Field(
         ...,
         title='knowledge graph id',
     )
@@ -44,8 +37,7 @@ class NodeBinding(BaseModel):
         title = 'node binding'
         schema_extra = {
             'example': {
-                'qg_id': 'string',
-                'kg_id': 'x:string',
+                'id': 'x:string',
             },
         }
         extra = 'allow'
@@ -54,11 +46,11 @@ class NodeBinding(BaseModel):
 class Result(BaseModel):
     """Result."""
 
-    node_bindings: List[NodeBinding] = Field(
+    node_bindings: Dict[str, List[NodeBinding]] = Field(
         ...,
         title='list of node bindings',
     )
-    edge_bindings: List[EdgeBinding] = Field(
+    edge_bindings: Dict[str, List[EdgeBinding]] = Field(
         ...,
         title='list of edge bindings',
     )
