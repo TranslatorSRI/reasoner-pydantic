@@ -8,37 +8,38 @@ These models are very handy when setting up a Reasoner API with [FastAPI](https:
 
 ```python
 from reasoner_pydantic import (
-    Request, Message, QNode,
+    Query, Message, QNode,
     KnowledgeGraph, KNode,
     Result, NodeBinding,
 )
 
 def answer_question(request):
-    request: Request = Request(**request)
+    request: Query = Query(**request)
     message: Message = request.message
 
     # sanitize incoming message
     assert message.query_graph.nodes, 'Query graph has no nodes!'
     if message.knowledge_graph is None:
-        message.knowledge_graph = KnowledgeGraph(nodes=[], edges=[])
+        message.knowledge_graph = KnowledgeGraph(nodes={}, edges={})
     if message.results is None:
         message.results = []
 
     # get query graph node
-    qnode: QNode = message.query_graph.nodes[0]
+    qnode_id = next(iter(message.query_graph.nodes))
 
     # add knowledge graph node
-    knode: KNode = KNode(id='foo:bar')
-    message.knowledge_graph.nodes.append(knode)
+    knode: Node = Node()
+    knode_id = "foo:bar"
+    message.knowledge_graph.nodes[knode_id] = knode
 
     # add result
     node_binding: NodeBinding = NodeBinding(
-        qg_id=qnode.id,
-        kg_id=knode.id,
+        id=knode_id,
     )
     result: Result = Result(
-        node_bindings=[node_binding],
-        edge_bindings=[],
+        node_bindings={qnode_id: [node_binding]},
+        edge_bindings={},
+        foo='bar',
     )
     message.results.append(result)
 
