@@ -3,7 +3,7 @@
 from .kgraph import KnowledgeGraph, Node, Edge
 from .qgraph import QueryGraph, QNode, QEdge
 from .results import Result, NodeBinding, EdgeBinding
-from .message import Message, Query
+from .message import Message, Query, Response
 from .shared import Attribute, BiolinkEntity, BiolinkRelation, CURIE, LogEntry
 
 components = [
