@@ -21,7 +21,6 @@ class Node(BaseModel):
         title = 'knowledge-graph node'
         schema_extra = {
             'example': {
-                'id': 'x:string',
                 'category': 'string',
             },
         }

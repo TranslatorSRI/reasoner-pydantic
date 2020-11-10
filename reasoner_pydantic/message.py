@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 from .results import Result
 from .qgraph import QueryGraph
 from .kgraph import KnowledgeGraph
+from .shared import LogEntry
 
 
 class Message(BaseModel):
@@ -53,6 +54,10 @@ class Response(BaseModel):
         ...,
         title='message',
     )
+
+    logs: List[LogEntry] = None
+
+    status: str = None
 
     class Config:
         title = 'response'
