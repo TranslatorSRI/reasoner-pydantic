@@ -1,4 +1,3 @@
-# pylint: disable=too-few-public-methods, missing-class-docstring
 """Knowledge graph models."""
 from typing import Dict, List, Optional, Union
 

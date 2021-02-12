@@ -1,4 +1,3 @@
-# pylint: disable=too-few-public-methods, missing-class-docstring
 """Shared models."""
 from datetime import datetime
 from enum import Enum
