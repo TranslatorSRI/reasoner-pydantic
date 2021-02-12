@@ -1,4 +1,3 @@
-# pylint: disable=too-few-public-methods, missing-class-docstring
 """Reasoner API models."""
 from typing import List, Optional
 
