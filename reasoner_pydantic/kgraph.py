@@ -1,10 +1,10 @@
 # pylint: disable=too-few-public-methods, missing-class-docstring
 """Knowledge graph models."""
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from pydantic import BaseModel, Field
 
-from .shared import Attribute, BiolinkEntity, BiolinkRelation, CURIE
+from .shared import Attribute, BiolinkEntity, BiolinkPredicate, CURIE
 
 
 class Node(BaseModel):
@@ -13,9 +13,10 @@ class Node(BaseModel):
     category: Union[BiolinkEntity, List[BiolinkEntity]] = Field(
         None,
         title='category',
+        nullable=True,
     )
-    name: str = None
-    attributes: List[Attribute] = None
+    name: Optional[str] = Field(None, nullable=True)
+    attributes: Optional[List[Attribute]] = Field(None, nullable=True)
 
     class Config:
         title = 'knowledge-graph node'
@@ -38,9 +39,9 @@ class Edge(BaseModel):
         ...,
         title='object node id',
     )
-    predicate: BiolinkRelation = None
-    relation: str = None
-    attributes: List[Attribute] = None
+    predicate: Optional[BiolinkPredicate] = Field(None, nullable=True)
+    relation: Optional[str] = Field(None, nullable=True)
+    attributes: Optional[List[Attribute]] = Field(None, nullable=True)
 
     class Config:
         title = 'knowledge-graph edge'

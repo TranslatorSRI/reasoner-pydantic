@@ -1,6 +1,6 @@
 # pylint: disable=too-few-public-methods, missing-class-docstring
 """Reasoner API models."""
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -13,17 +13,20 @@ from .shared import LogEntry
 class Message(BaseModel):
     """Message."""
 
-    query_graph: QueryGraph = Field(
+    query_graph: Optional[QueryGraph] = Field(
         None,
         title='query graph',
+        nullable=True,
     )
-    knowledge_graph: KnowledgeGraph = Field(
+    knowledge_graph: Optional[KnowledgeGraph] = Field(
         None,
         title='knowledge graph',
+        nullable=True,
     )
-    results: List[Result] = Field(
+    results: Optional[List[Result]] = Field(
         None,
         title='list of results',
+        nullable=True,
     )
 
     class Config:
@@ -55,9 +58,9 @@ class Response(BaseModel):
         title='message',
     )
 
-    logs: List[LogEntry] = None
+    logs: Optional[List[LogEntry]] = Field(None, nullable=True)
 
-    status: str = None
+    status: Optional[str] = Field(None, nullable=True)
 
     class Config:
         title = 'response'
