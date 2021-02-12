@@ -2,19 +2,25 @@
 """Shared models."""
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, Type
+from typing import Any, Dict, Optional
 
 from pydantic import BaseModel, constr, Field
+
+
+class CURIE(BaseModel):
+    """Compact URI."""
+
+    __root__: str
 
 
 class Attribute(BaseModel):
     """Node/edge attribute."""
 
-    type: str = Field(..., title="type")
+    type: CURIE = Field(..., title="type")
     value: Any = Field(..., title="value")
-    name: str = None
-    url: str = None
-    source: str = None
+    name: Optional[str] = Field(None, nullable=True)
+    url: Optional[str] = Field(None, nullable=True)
+    source: Optional[str] = Field(None, nullable=True)
 
     class Config:
         extra = "forbid"
@@ -29,19 +35,13 @@ class BiolinkEntity(BaseModel):
         title = 'biolink entity'
 
 
-class BiolinkRelation(BaseModel):
-    """Biolink relation."""
+class BiolinkPredicate(BaseModel):
+    """Biolink predicate."""
 
     __root__: constr(regex="^biolink:[a-z][a-z_]*$")
 
     class Config:
-        title = 'biolink relation'
-
-
-class CURIE(BaseModel):
-    """Compact URI."""
-
-    __root__: str
+        title = 'biolink predicate'
 
 
 class LevelEnum(str, Enum):
@@ -56,16 +56,16 @@ class LevelEnum(str, Enum):
 class LogEntry(BaseModel):
     """Log entry."""
 
-    timestamp: datetime = None
-    level: LevelEnum = None
-    code: str = None
-    message: str = None
+    timestamp: Optional[datetime] = Field(None, nullable=True)
+    level: Optional[str] = Field(None, nullable=True)
+    code: Optional[str] = Field(None, nullable=True)
+    message: Optional[str] = Field(None, nullable=True)
 
     class Config:
         @staticmethod
-        def schema_extra(schema: Dict[str, Any], model: Type['Person']) -> None:
+        def schema_extra(schema: Dict[str, Any], _) -> None:
             """Modify generated schema."""
-            schema["properties"]["level"] = {
+            schema["properties"]["level"].update({
                 "type": "string",
                 "enum": [
                     "ERROR",
@@ -73,4 +73,4 @@ class LogEntry(BaseModel):
                     "INFO",
                     "DEBUG",
                 ]
-            }
+            })

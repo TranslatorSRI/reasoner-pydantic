@@ -1,22 +1,24 @@
 # pylint: disable=too-few-public-methods, missing-class-docstring
 """Query graph models."""
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from pydantic import BaseModel, Field
 
-from .shared import BiolinkEntity, BiolinkRelation, CURIE
+from .shared import BiolinkEntity, BiolinkPredicate, CURIE
 
 
 class QNode(BaseModel):
     """Query node."""
 
-    id: Union[CURIE, List[CURIE]] = Field(
+    id: Union[CURIE, List[CURIE], None] = Field(
         None,
         title='id',
+        nullable=True,
     )
-    category: Union[BiolinkEntity, List[BiolinkEntity]] = Field(
+    category: Union[BiolinkEntity, List[BiolinkEntity], None] = Field(
         None,
         title='category',
+        nullable=True,
     )
     is_set: bool = False
 
@@ -36,11 +38,12 @@ class QEdge(BaseModel):
         ...,
         title='object node id',
     )
-    predicate: Union[BiolinkRelation, List[BiolinkRelation]] = Field(
+    predicate: Union[BiolinkPredicate, List[BiolinkPredicate], None] = Field(
         None,
         title='predicate',
+        nullable=True,
     )
-    relation: str = None
+    relation: Optional[str] = Field(None, nullable=True)
 
     class Config:
         title = 'query-graph edge'
