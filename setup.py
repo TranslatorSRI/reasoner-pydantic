@@ -2,15 +2,18 @@
 from setuptools import setup
 
 setup(
-    name='reasoner_pydantic',
-    version='0.1.0-dev',
-    author='Patrick Wang',
-    author_email='patrick@covar.com',
-    url='https://github.com/ranking-agent/reasoner-pydantic',
-    description='Pydantic models for the Reasoner API data formats',
-    packages=['reasoner_pydantic'],
+    name="reasoner-pydantic",
+    version="1.0.0",
+    author="Patrick Wang",
+    author_email="patrick@covar.com",
+    url="https://github.com/TranslatorSRI/reasoner-pydantic",
+    description="Pydantic models for the Reasoner API data formats",
+    packages=["reasoner_pydantic"],
     include_package_data=True,
+    install_requires=[
+        "pydantic>=1.5"
+    ],
     zip_safe=False,
-    license='MIT',
-    python_requires='>=3.6',
+    license="MIT",
+    python_requires=">=3.6",
 )
