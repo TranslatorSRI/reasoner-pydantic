@@ -1,0 +1,4 @@
+httpx==0.16.1
+pydantic==1.5
+pytest==6.2.2
+pyyaml==5.4.1
