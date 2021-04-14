@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 from .results import Result
 from .qgraph import QueryGraph
 from .kgraph import KnowledgeGraph
-from .shared import LogEntry
+from .shared import LogEntry, LogLevel
 
 
 class Message(BaseModel):
@@ -39,6 +39,11 @@ class Query(BaseModel):
     message: Message = Field(
         ...,
         title='message',
+    )
+    log_level: Optional[LogLevel] = Field(
+        None,
+        title='log_level',
+        nullable=True,
     )
 
     class Config:
