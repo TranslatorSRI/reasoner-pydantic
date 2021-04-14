@@ -15,11 +15,12 @@ class CURIE(BaseModel):
 class Attribute(BaseModel):
     """Node/edge attribute."""
 
-    type: CURIE = Field(..., title="type")
+    attribute_type_id: CURIE = Field(..., title="type")
     value: Any = Field(..., title="value")
-    name: Optional[str] = Field(None, nullable=True)
-    url: Optional[str] = Field(None, nullable=True)
-    source: Optional[str] = Field(None, nullable=True)
+    value_type_id: Optional[CURIE] = Field(None, title="value_type_id")
+    original_attribute_name: Optional[str] = Field(None, nullable=True)
+    value_url: Optional[str] = Field(None, nullable=True)
+    attribute_source: Optional[str] = Field(None, nullable=True)
 
     class Config:
         extra = "forbid"
@@ -43,8 +44,8 @@ class BiolinkPredicate(BaseModel):
         title = 'biolink predicate'
 
 
-class LevelEnum(str, Enum):
-    """Logging level."""
+class LogLevelEnum(str, Enum):
+    """Log level."""
 
     error = "ERROR"
     warning = "WARNING"
@@ -52,24 +53,16 @@ class LevelEnum(str, Enum):
     debug = "DEBUG"
 
 
+class LogLevel(BaseModel):
+    """Log level."""
+
+    __root__: LogLevelEnum
+
+
 class LogEntry(BaseModel):
     """Log entry."""
 
     timestamp: Optional[datetime] = Field(None, nullable=True)
-    level: Optional[str] = Field(None, nullable=True)
+    level: Optional[LogLevel] = Field(None, nullable=True)
     code: Optional[str] = Field(None, nullable=True)
     message: Optional[str] = Field(None, nullable=True)
-
-    class Config:
-        @staticmethod
-        def schema_extra(schema: Dict[str, Any], _) -> None:
-            """Modify generated schema."""
-            schema["properties"]["level"].update({
-                "type": "string",
-                "enum": [
-                    "ERROR",
-                    "WARNING",
-                    "INFO",
-                    "DEBUG",
-                ]
-            })
