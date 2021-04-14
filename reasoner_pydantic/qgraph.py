@@ -66,15 +66,17 @@ class QueryConstraint(BaseModel):
 class QNode(BaseModel):
     """Query node."""
 
-    ids: Optional[conlist(CURIE, min_items=1)] = Field(
+    id: Optional[conlist(CURIE, min_items=1)] = Field(
         None,
-        title='ids',
+        title='id',
         nullable=True,
+        alias='ids',
     )
-    categories: Optional[conlist(BiolinkEntity, min_items=1)] = Field(
+    category: Optional[conlist(BiolinkEntity, min_items=1)] = Field(
         None,
-        title='categories',
+        title='category',
         nullable=True,
+        alias='categories',
     )
     is_set: bool = False
     constraints: Optional[List[QueryConstraint]] = Field(
@@ -84,12 +86,12 @@ class QNode(BaseModel):
     )
     
     _listify_categories = validator(
-        "categories",
+        "category",
         allow_reuse=True,
         pre=True,
     )(listify)
     _listify_ids = validator(
-        "ids",
+        "id",
         allow_reuse=True,
         pre=True,
     )(listify)
@@ -98,15 +100,6 @@ class QNode(BaseModel):
         title = 'query-graph node'
         extra = 'allow'
         allow_population_by_field_name = True
-
-        aliases = {
-            "category": "categories",
-            "id": "ids",
-        }
-
-        @classmethod
-        def alias_generator(cls, string: str) -> str:
-            return cls.aliases.get(string, string)
 
 
 class QEdge(BaseModel):
@@ -120,10 +113,11 @@ class QEdge(BaseModel):
         ...,
         title='object node id',
     )
-    predicates: Union[conlist(BiolinkPredicate, min_items=1), None] = Field(
+    predicate: Union[conlist(BiolinkPredicate, min_items=1), None] = Field(
         None,
-        title='predicates',
+        title='predicate',
         nullable=True,
+        alias='predicates',
     )
     relation: Optional[str] = Field(None, nullable=True)
     constraints: Optional[List[QueryConstraint]] = Field(
@@ -133,7 +127,7 @@ class QEdge(BaseModel):
     )
 
     _listify_predicates = validator(
-        "predicates",
+        "predicate",
         allow_reuse=True,
         pre=True,
     )(listify)
@@ -142,14 +136,6 @@ class QEdge(BaseModel):
         title = 'query-graph edge'
         extra = 'allow'
         allow_population_by_field_name = True
-
-        aliases = {
-            "predicate": "predicates",
-        }
-
-        @classmethod
-        def alias_generator(cls, string: str) -> str:
-            return cls.aliases.get(string, string)
 
 
 class QueryGraph(BaseModel):
