@@ -1,29 +1,112 @@
 """Query graph models."""
 from typing import Dict, List, Optional, Union
 
-from pydantic import BaseModel, Field
+from enum import Enum
+from typing import Any, Dict, List, Optional, Union
+
+from pydantic import BaseModel, Field, validator
+from pydantic.types import conlist
 
 from .shared import BiolinkEntity, BiolinkPredicate, CURIE
+
+
+def listify(str_or_list: Union[str, List[str]]):
+    """Ensure that string is enclosed in list."""
+    if not isinstance(str_or_list, list):
+        return [str_or_list]
+    return str_or_list
+
+
+class Operator(str, Enum):
+    """Operator."""
+    equal_to = '=='
+    greater_than = '>'
+    less_than = '<'
+    matches = 'matches'
+
+
+class QueryConstraint(BaseModel):
+    """QNode or QEdge constraint."""
+    id: CURIE = Field(
+        ...,
+        title='id',
+        nullable=False,
+    )
+    name: str = Field(
+        ...,
+        title='name',
+        nullable=False,
+    )
+    negated: bool = Field(
+        False,
+        title='not',
+        alias='not',
+    )
+    operator: Operator = Field(
+        '==',
+        title='operator',
+    )
+    value: Any = Field(
+        ...,
+        title='value',
+    )
+    unit_id: Optional[Any] = Field(
+        None,
+        title='unit_id',
+    )
+    unit_name: Optional[Any] = Field(
+        None,
+        title='unit_name',
+    )
+
+    class Config:
+        extra = 'forbid'
 
 
 class QNode(BaseModel):
     """Query node."""
 
-    id: Union[CURIE, List[CURIE], None] = Field(
+    ids: Optional[conlist(CURIE, min_items=1)] = Field(
         None,
-        title='id',
+        title='ids',
         nullable=True,
     )
-    category: Union[BiolinkEntity, List[BiolinkEntity], None] = Field(
+    categories: Optional[conlist(BiolinkEntity, min_items=1)] = Field(
         None,
-        title='category',
+        title='categories',
         nullable=True,
     )
     is_set: bool = False
+    constraints: Optional[List[QueryConstraint]] = Field(
+        None,
+        title='constraints',
+        nullable=True,
+    )
+    
+    _listify_categories = validator(
+        "categories",
+        allow_reuse=True,
+        pre=True,
+    )(listify)
+    _listify_ids = validator(
+        "ids",
+        allow_reuse=True,
+        pre=True,
+    )(listify)
 
     class Config:
         title = 'query-graph node'
         extra = 'allow'
+        allow_population_by_field_name = True
+
+        aliases = {
+            "category": "categories",
+            "id": "ids",
+        }
+
+        @classmethod
+        def alias_generator(cls, string: str) -> str:
+            return cls.aliases.get(string, string)
 
 
 class QEdge(BaseModel):
@@ -37,16 +120,36 @@ class QEdge(BaseModel):
         ...,
         title='object node id',
     )
-    predicate: Union[BiolinkPredicate, List[BiolinkPredicate], None] = Field(
+    predicates: Union[conlist(BiolinkPredicate, min_items=1), None] = Field(
         None,
-        title='predicate',
+        title='predicates',
         nullable=True,
     )
     relation: Optional[str] = Field(None, nullable=True)
+    constraints: Optional[List[QueryConstraint]] = Field(
+        None,
+        title='constraints',
+        nullable=True,
+    )
+
+    _listify_predicates = validator(
+        "predicates",
+        allow_reuse=True,
+        pre=True,
+    )(listify)
 
     class Config:
         title = 'query-graph edge'
         extra = 'allow'
+        allow_population_by_field_name = True
+
+        aliases = {
+            "predicate": "predicates",
+        }
+
+        @classmethod
+        def alias_generator(cls, string: str) -> str:
+            return cls.aliases.get(string, string)
 
 
 class QueryGraph(BaseModel):

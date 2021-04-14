@@ -9,9 +9,9 @@ from .shared import Attribute, BiolinkEntity, BiolinkPredicate, CURIE
 class Node(BaseModel):
     """Knowledge graph node."""
 
-    category: Union[BiolinkEntity, List[BiolinkEntity]] = Field(
+    categories: Optional[List[BiolinkEntity]] = Field(
         None,
-        title='category',
+        title='categories',
         nullable=True,
     )
     name: Optional[str] = Field(None, nullable=True)
@@ -25,6 +25,15 @@ class Node(BaseModel):
             },
         }
         extra = 'forbid'
+        allow_population_by_field_name = True
+
+        aliases = {
+            "category": "categories",
+        }
+
+        @classmethod
+        def alias_generator(cls, string: str) -> str:
+            return cls.aliases.get(string, string)
 
 
 class Edge(BaseModel):

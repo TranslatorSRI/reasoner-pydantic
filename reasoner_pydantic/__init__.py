@@ -1,10 +1,16 @@
 """Reasoner-pydantic module."""
 
 from .kgraph import KnowledgeGraph, Node, Edge
-from .qgraph import QueryGraph, QNode, QEdge
+from .qgraph import (
+    QueryGraph, QNode, QEdge,
+    QueryConstraint,
+)
 from .results import Result, NodeBinding, EdgeBinding
 from .message import Message, Query, Response
-from .shared import Attribute, BiolinkEntity, BiolinkPredicate, CURIE, LogEntry
+from .shared import (
+    Attribute, BiolinkEntity, BiolinkPredicate, CURIE,
+    LogEntry, LogLevel,
+)
 
 components = [
     Attribute,
@@ -15,4 +21,5 @@ components = [
     QEdge, QNode,
     Query, QueryGraph,
     Result, Response,
+    LogLevel, QueryConstraint,
 ]
