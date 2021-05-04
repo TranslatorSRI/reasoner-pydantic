@@ -1,5 +1,7 @@
 # Reasoner-Pydantic
 
+[![Test status via GitHub Actions](https://github.com/TranslatorSRI/reasoner-pydantic/workflows/test/badge.svg)](https://github.com/TranslatorSRI/reasoner-pydantic/actions?query=workflow%3Atest) [ℹ️](tests/README.md)
+
 [Pydantic](https://pydantic-docs.helpmanual.io/) models for the [Reasoner API](https://github.com/NCATS-Tangerine/NCATS-ReasonerStdAPI) data formats.
 
 These models are very handy when setting up a Reasoner API with [FastAPI](https://fastapi.tiangolo.com/).

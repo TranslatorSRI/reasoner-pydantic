@@ -1,5 +1,7 @@
 # Testing reasoner-pydantic
 
+[![Test status via GitHub Actions](https://github.com/TranslatorSRI/reasoner-pydantic/workflows/test/badge.svg)](https://github.com/TranslatorSRI/reasoner-pydantic/actions?query=workflow%3Atest)
+
 ### Content
 
 * [`test_openapi.py`](test_openapi.py):
@@ -8,4 +10,4 @@
 
 ### Workflow
 
-Tests are run automatically via GitHub Actions on each pull request.
+Tests are run automatically via GitHub Actions on each pull request and each push to `main`.
