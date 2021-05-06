@@ -11,6 +11,7 @@ from .shared import (
     Attribute, BiolinkEntity, BiolinkPredicate, CURIE,
     LogEntry, LogLevel,
 )
+from .metakg import MetaEdge, MetaNode, MetaKnowledgeGraph
 
 components = [
     Attribute,
@@ -22,4 +23,5 @@ components = [
     Query, QueryGraph,
     Result, Response,
     LogLevel, QueryConstraint,
+    MetaEdge, MetaNode, MetaKnowledgeGraph,
 ]
