@@ -45,7 +45,7 @@ class QueryConstraint(BaseModel):
         alias='not',
     )
     operator: Operator = Field(
-        '==',
+        ...,
         title='operator',
     )
     value: Any = Field(
