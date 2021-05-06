@@ -29,14 +29,14 @@ class Operator(str, Enum):
 
 class QueryConstraint(BaseModel):
     """QNode or QEdge constraint."""
-    id: CURIE = Field(
-        ...,
-        title='id',
-        nullable=False,
-    )
     name: str = Field(
         ...,
         title='name',
+        nullable=False,
+    )
+    id: CURIE = Field(
+        ...,
+        title='id',
         nullable=False,
     )
     negated: bool = Field(
