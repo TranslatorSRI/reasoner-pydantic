@@ -66,3 +66,6 @@ class LogEntry(BaseModel):
     level: Optional[LogLevel] = Field(None, nullable=True)
     code: Optional[str] = Field(None, nullable=True)
     message: Optional[str] = Field(None, nullable=True)
+
+    class Config:
+        extra = "allow"
