@@ -9,11 +9,10 @@ from .shared import Attribute, BiolinkEntity, BiolinkPredicate, CURIE
 class Node(BaseModel):
     """Knowledge graph node."""
 
-    category: Optional[List[BiolinkEntity]] = Field(
+    categories: Optional[List[BiolinkEntity]] = Field(
         None,
-        title='category',
+        title='categories',
         nullable=True,
-        alias='categories',
     )
     name: Optional[str] = Field(None, nullable=True)
     attributes: Optional[List[Attribute]] = Field(None, nullable=True)
