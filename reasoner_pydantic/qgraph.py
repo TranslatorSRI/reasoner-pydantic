@@ -4,19 +4,10 @@ from typing import Dict, List, Optional, Union
 from enum import Enum
 from typing import Any, Dict, List, Optional, Union
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field
 from pydantic.types import conlist
 
 from .shared import BiolinkEntity, BiolinkPredicate, CURIE
-
-
-def listify(str_or_list: Union[str, List[str]]):
-    """Ensure that string is enclosed in list."""
-    if str_or_list is None:
-        return None
-    if not isinstance(str_or_list, list):
-        return [str_or_list]
-    return str_or_list
 
 
 class Operator(str, Enum):
@@ -84,17 +75,6 @@ class QNode(BaseModel):
         title='constraints',
         nullable=True,
     )
-    
-    _listify_categories = validator(
-        "categories",
-        allow_reuse=True,
-        pre=True,
-    )(listify)
-    _listify_ids = validator(
-        "ids",
-        allow_reuse=True,
-        pre=True,
-    )(listify)
 
     class Config:
         title = 'query-graph node'
@@ -124,12 +104,6 @@ class QEdge(BaseModel):
         title='constraints',
         nullable=True,
     )
-
-    _listify_predicates = validator(
-        "predicates",
-        allow_reuse=True,
-        pre=True,
-    )(listify)
 
     class Config:
         title = 'query-graph edge'
