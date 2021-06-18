@@ -52,14 +52,3 @@ def test_singletons():
         "ids": "MONDO:0005737",
         "categories": "biolink:Disease",
     })
-
-
-def test_aliases():
-    """Test that `categories` and `category` work the same way."""
-    assert QNode(**{
-        "ids": ["MONDO:0005737"],
-        "categories": ["biolink:Disease"],
-    }) == QNode(**{
-        "id": ["MONDO:0005737"],
-        "category": ["biolink:Disease"],
-    })

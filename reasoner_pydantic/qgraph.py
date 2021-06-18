@@ -68,17 +68,15 @@ class QueryConstraint(BaseModel):
 class QNode(BaseModel):
     """Query node."""
 
-    id: Optional[conlist(CURIE, min_items=1)] = Field(
+    ids: Optional[conlist(CURIE, min_items=1)] = Field(
         None,
-        title='id',
+        title='ids',
         nullable=True,
-        alias='ids',
     )
-    category: Optional[conlist(BiolinkEntity, min_items=1)] = Field(
+    categories: Optional[conlist(BiolinkEntity, min_items=1)] = Field(
         None,
-        title='category',
+        title='categories',
         nullable=True,
-        alias='categories',
     )
     is_set: bool = False
     constraints: Optional[List[QueryConstraint]] = Field(
@@ -88,12 +86,12 @@ class QNode(BaseModel):
     )
     
     _listify_categories = validator(
-        "category",
+        "categories",
         allow_reuse=True,
         pre=True,
     )(listify)
     _listify_ids = validator(
-        "id",
+        "ids",
         allow_reuse=True,
         pre=True,
     )(listify)
@@ -115,11 +113,10 @@ class QEdge(BaseModel):
         ...,
         title='object node id',
     )
-    predicate: Union[conlist(BiolinkPredicate, min_items=1), None] = Field(
+    predicates: Union[conlist(BiolinkPredicate, min_items=1), None] = Field(
         None,
-        title='predicate',
+        title='predicates',
         nullable=True,
-        alias='predicates',
     )
     relation: Optional[str] = Field(None, nullable=True)
     constraints: Optional[List[QueryConstraint]] = Field(
@@ -129,7 +126,7 @@ class QEdge(BaseModel):
     )
 
     _listify_predicates = validator(
-        "predicate",
+        "predicates",
         allow_reuse=True,
         pre=True,
     )(listify)
