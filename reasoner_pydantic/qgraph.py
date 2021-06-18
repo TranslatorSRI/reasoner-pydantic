@@ -1,6 +1,4 @@
 """Query graph models."""
-from typing import Dict, List, Optional, Union
-
 from enum import Enum
 from typing import Any, Dict, List, Optional, Union
 
