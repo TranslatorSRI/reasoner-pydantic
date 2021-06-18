@@ -49,6 +49,6 @@ def test_manipulation():
 def test_singletons():
     """Test that str-valued `categories` works."""
     qnode = QNode(**{
-        "ids": "MONDO:0005737",
-        "categories": "biolink:Disease",
+        "ids": ["MONDO:0005737"],
+        "categories": ["biolink:Disease"],
     })
