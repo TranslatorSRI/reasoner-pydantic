@@ -1,5 +1,5 @@
 """Results models."""
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -52,6 +52,10 @@ class Result(BaseModel):
     edge_bindings: Dict[str, List[EdgeBinding]] = Field(
         ...,
         title='list of edge bindings',
+    )
+    score: Optional[float] = Field(
+        None,
+        format="float",
     )
 
     class Config:
