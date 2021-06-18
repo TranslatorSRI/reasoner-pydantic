@@ -17,7 +17,11 @@ class Attribute(BaseModel):
 
     attribute_type_id: CURIE = Field(..., title="type")
     value: Any = Field(..., title="value")
-    value_type_id: Optional[CURIE] = Field(None, title="value_type_id")
+    value_type_id: Optional[CURIE] = Field(
+        None,
+        title="value_type_id",
+        nullable=True,
+    )
     original_attribute_name: Optional[str] = Field(None, nullable=True)
     value_url: Optional[str] = Field(None, nullable=True)
     attribute_source: Optional[str] = Field(None, nullable=True)
