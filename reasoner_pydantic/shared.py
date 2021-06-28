@@ -25,6 +25,7 @@ class Attribute(BaseModel):
     original_attribute_name: Optional[str] = Field(None, nullable=True)
     value_url: Optional[str] = Field(None, nullable=True)
     attribute_source: Optional[str] = Field(None, nullable=True)
+    description: Optional[str] = Field(None, nullable=True)
 
     class Config:
         extra = "forbid"
