@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
-from .shared import CURIE
+from .shared import Attribute, CURIE
 
 
 class EdgeBinding(BaseModel):
@@ -13,6 +13,8 @@ class EdgeBinding(BaseModel):
         ...,
         title='knowledge graph id',
     )
+
+    attributes: Optional[List[Attribute]] = Field(None, nullable=True)
 
     class Config:
         title = 'edge binding'

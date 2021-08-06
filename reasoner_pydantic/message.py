@@ -1,7 +1,7 @@
 """Reasoner API models."""
 from typing import List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, constr, Field
 
 from .results import Result
 from .qgraph import QueryGraph
@@ -33,6 +33,15 @@ class Message(BaseModel):
         extra = 'forbid'
 
 
+class Operation(BaseModel):
+    """Operation."""
+
+
+class Workflow(BaseModel):
+    """Workflow."""
+    __root__: List[Operation]
+
+
 class Query(BaseModel):
     """Request."""
 
@@ -45,6 +54,30 @@ class Query(BaseModel):
         title='log_level',
         nullable=True,
     )
+    workflow: Optional[Workflow] = Field(**{"$ref": "http://standards.ncats.io/workflow/1.0.0/schema"})
+
+    class Config:
+        title = 'query'
+        extra = 'allow'
+        schema_extra = {
+            "x-body-name": "request_body"
+        }
+
+
+class AsyncQuery(BaseModel):
+    """AsyncQuery."""
+
+    callback: constr(regex=r"^https?://") = Field(..., format="uri")
+    message: Message = Field(
+        ...,
+        title='message',
+    )
+    log_level: Optional[LogLevel] = Field(
+        None,
+        title='log_level',
+        nullable=True,
+    )
+    workflow: Optional[Workflow] = Field(**{"$ref": "http://standards.ncats.io/workflow/1.0.0/schema"})
 
     class Config:
         title = 'query'
@@ -65,6 +98,8 @@ class Response(BaseModel):
     logs: Optional[List[LogEntry]] = Field(None, nullable=True)
 
     status: Optional[str] = Field(None, nullable=True)
+
+    workflow: Optional[Workflow] = Field(**{"$ref": "http://standards.ncats.io/workflow/1.0.0/schema"})
 
     class Config:
         title = 'response'
