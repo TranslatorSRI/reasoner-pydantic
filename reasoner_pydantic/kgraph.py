@@ -40,7 +40,6 @@ class Edge(BaseModel):
         title='object node id',
     )
     predicate: Optional[BiolinkPredicate] = Field(None, nullable=True)
-    relation: Optional[str] = Field(None, nullable=True)
     attributes: Optional[List[Attribute]] = Field(None, nullable=True)
 
     class Config:

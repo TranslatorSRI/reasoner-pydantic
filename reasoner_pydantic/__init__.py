@@ -6,12 +6,18 @@ from .qgraph import (
     QueryConstraint,
 )
 from .results import Result, NodeBinding, EdgeBinding
-from .message import Message, Query, Response
+from .message import (
+    Message, Query, Response, AsyncQuery,
+    Operation, Workflow,
+)
 from .shared import (
     Attribute, BiolinkEntity, BiolinkPredicate, CURIE,
     LogEntry, LogLevel,
 )
-from .metakg import MetaEdge, MetaNode, MetaKnowledgeGraph
+from .metakg import (
+    MetaEdge, MetaNode, MetaKnowledgeGraph,
+    MetaAttribute,
+)
 
 components = [
     Attribute,
@@ -20,8 +26,9 @@ components = [
     KnowledgeGraph, LogEntry, Message,
     Node, NodeBinding,
     QEdge, QNode,
-    Query, QueryGraph,
+    Query, QueryGraph, AsyncQuery,
     Result, Response,
     LogLevel, QueryConstraint,
     MetaEdge, MetaNode, MetaKnowledgeGraph,
+    MetaAttribute,
 ]

@@ -1,7 +1,7 @@
 """Shared models."""
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, constr, Field
 
@@ -10,6 +10,25 @@ class CURIE(BaseModel):
     """Compact URI."""
 
     __root__: str
+
+
+class SubAttribute(BaseModel):
+    """Attribute subattribute."""
+
+    attribute_type_id: CURIE = Field(..., title="type")
+    value: Any = Field(..., title="value")
+    value_type_id: Optional[CURIE] = Field(
+        None,
+        title="value_type_id",
+        nullable=True,
+    )
+    original_attribute_name: Optional[str] = Field(None, nullable=True)
+    value_url: Optional[str] = Field(None, nullable=True)
+    attribute_source: Optional[str] = Field(None, nullable=True)
+    description: Optional[str] = Field(None, nullable=True)
+
+    class Config:
+        extra = "forbid"
 
 
 class Attribute(BaseModel):
@@ -26,6 +45,7 @@ class Attribute(BaseModel):
     value_url: Optional[str] = Field(None, nullable=True)
     attribute_source: Optional[str] = Field(None, nullable=True)
     description: Optional[str] = Field(None, nullable=True)
+    attributes: Optional[List[SubAttribute]] = Field(None, nullable=True)
 
     class Config:
         extra = "forbid"

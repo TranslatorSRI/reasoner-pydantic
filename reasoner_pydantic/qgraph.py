@@ -96,7 +96,6 @@ class QEdge(BaseModel):
         title='predicates',
         nullable=True,
     )
-    relation: Optional[str] = Field(None, nullable=True)
     constraints: Optional[List[QueryConstraint]] = Field(
         None,
         title='constraints',

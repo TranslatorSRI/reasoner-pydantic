@@ -47,7 +47,7 @@ class NormDecoder(json.JSONDecoder):
         return dct
 
 
-TAG = "v1.1.2"
+TAG = "v1.2"
 response = httpx.get(f"https://raw.githubusercontent.com/NCATSTranslator/ReasonerAPI/{TAG}/TranslatorReasonerAPI.yaml")
 reference_schemas = yaml.load(
     response.text,
