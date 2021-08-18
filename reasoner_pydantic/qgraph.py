@@ -53,6 +53,12 @@ class QueryConstraint(BaseModel):
     class Config:
         extra = 'forbid'
 
+    def dict(self, *args, **kwargs):
+        output = super().dict(*args, **kwargs)
+        if 'not' not in output:
+            output['not'] = output.pop('negated', False)
+        return output
+
 
 class QNode(BaseModel):
     """Query node."""
