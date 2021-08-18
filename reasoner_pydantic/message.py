@@ -7,6 +7,7 @@ from .results import Result
 from .qgraph import QueryGraph
 from .kgraph import KnowledgeGraph
 from .shared import LogEntry, LogLevel
+from .workflow import Workflow
 
 
 class Message(BaseModel):
@@ -31,15 +32,6 @@ class Message(BaseModel):
     class Config:
         title = 'message'
         extra = 'forbid'
-
-
-class Operation(BaseModel):
-    """Operation."""
-
-
-class Workflow(BaseModel):
-    """Workflow."""
-    __root__: List[Operation]
 
 
 class Query(BaseModel):

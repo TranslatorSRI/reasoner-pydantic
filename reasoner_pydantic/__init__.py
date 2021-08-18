@@ -8,6 +8,8 @@ from .qgraph import (
 from .results import Result, NodeBinding, EdgeBinding
 from .message import (
     Message, Query, Response, AsyncQuery,
+)
+from .workflow import (
     Operation, Workflow,
 )
 from .shared import (
