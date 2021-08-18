@@ -8,7 +8,7 @@ from pydantic.types import confloat, conint, conlist
 
 def constant(s: str):
     """Generate a static enum."""
-    return Enum(s, {s: s})
+    return Enum(value=s, names={s: s}, type=str)
 
 
 class OperationAnnotate(BaseModel):
