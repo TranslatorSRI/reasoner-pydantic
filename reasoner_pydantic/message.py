@@ -46,7 +46,7 @@ class Query(BaseModel):
         title='log_level',
         nullable=True,
     )
-    workflow: Optional[Workflow] = Field(**{"$ref": "http://standards.ncats.io/workflow/1.0.0/schema"})
+    workflow: Optional[Workflow]
 
     class Config:
         title = 'query'
@@ -69,7 +69,7 @@ class AsyncQuery(BaseModel):
         title='log_level',
         nullable=True,
     )
-    workflow: Optional[Workflow] = Field(**{"$ref": "http://standards.ncats.io/workflow/1.0.0/schema"})
+    workflow: Optional[Workflow]
 
     class Config:
         title = 'query'
@@ -91,7 +91,7 @@ class Response(BaseModel):
 
     status: Optional[str] = Field(None, nullable=True)
 
-    workflow: Optional[Workflow] = Field(**{"$ref": "http://standards.ncats.io/workflow/1.0.0/schema"})
+    workflow: Optional[Workflow]
 
     class Config:
         title = 'response'
