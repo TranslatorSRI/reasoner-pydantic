@@ -33,5 +33,5 @@ class MetaEdge(BaseModel):
 
 
 class MetaKnowledgeGraph(BaseModel):
-    nodes: Optional[Dict[str, MetaNode]]
-    edges: Optional[conlist(MetaEdge, min_items=1)]
+    nodes: Dict[str, MetaNode]
+    edges: List[MetaEdge]
