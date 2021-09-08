@@ -98,6 +98,29 @@ class OperationFill(BaseModel):
         extra = "forbid"
 
 
+class OperationFilterResults(BaseModel):
+    id: constant("filter_results")
+    parameters: Optional[Any]
+
+    class Config:
+        extra = "forbid"
+
+
+class FilterResultsTopNParameters(BaseModel):
+    max_results: conint(ge=0)
+
+    class Config:
+        extra = "forbid"
+
+
+class OperationFilterResultsTopN(BaseModel):
+    id: constant("filter_results_top_n")
+    parameters: Optional[FilterResultsTopNParameters]
+
+    class Config:
+        extra = "forbid"
+
+
 class OperationFilterKgraph(BaseModel):
     id: constant("filter_kgraph")
     parameters: Optional[Any]
@@ -177,6 +200,45 @@ class FilterKgraphTopNParameters(BaseModel):
     remove_top_or_bottom: TopOrBottomEnum = TopOrBottomEnum.top
     qedge_keys: Optional[List[str]]
     qnode_keys: List[str] = []
+
+
+class FilterKgraphPercentileParameters(BaseModel):
+    edge_attribute: str
+    threshold: confloat(ge=0, le=100) = 95
+    remove_above_or_below: AboveOrBelowEnum = AboveOrBelowEnum.below
+    qedge_keys: Optional[List[str]]
+    qnode_keys: List[str] = []
+
+
+class OperationFilterKgraphPercentile(BaseModel):
+    id: constant("filter_kgraph_percentile")
+    parameters: FilterKgraphPercentileParameters
+
+    class Config:
+        extra = "forbid"
+
+
+class PlusOrMinusEnum(str, Enum):
+    """'plus' or 'minus'."""
+    plus = "plus"
+    minus = "minus"
+
+
+class FilterKgraphStdDevParameters(BaseModel):
+    edge_attribute: str
+    plus_or_minus_std_dev: PlusOrMinusEnum = PlusOrMinusEnum.plus
+    num_sigma: confloat(ge=0) = 1
+    remove_above_or_below: AboveOrBelowEnum = AboveOrBelowEnum.below
+    qedge_keys: Optional[List[str]]
+    qnode_keys: List[str] = []
+
+
+class OperationFilterKgraphStdDev(BaseModel):
+    id: constant("filter_kgraph_std_dev")
+    parameters: FilterKgraphStdDevParameters
+
+    class Config:
+        extra = "forbid"
 
 
 class OperationFilterKgraphTopN(BaseModel):
@@ -261,6 +323,14 @@ class OperationRestate(BaseModel):
         extra = "forbid"
 
 
+class OperationScore(BaseModel):
+    id: constant("score")
+    parameters: Optional[Any]
+
+    class Config:
+        extra = "forbid"
+
+
 class OperationSortResults(BaseModel):
     id: constant("sort_results")
     parameters: Optional[Any]
@@ -328,7 +398,11 @@ operations = [
     OperationFilterKgraphDiscreteKedgeAttribute,
     OperationFilterKgraphDiscreteKnodeAttribute,
     OperationFilterKgraphOrphans,
+    OperationFilterKgraphPercentile,
+    OperationFilterKgraphStdDev,
     OperationFilterKgraphTopN,
+    OperationFilterResults,
+    OperationFilterResultsTopN,
     OperationLookup,
     OperationOverlay,
     OperationOverlayComputeJaccard,
@@ -336,6 +410,7 @@ operations = [
     OperationOverlayConnectKnodes,
     OperationOverlayFisherExactTest,
     OperationRestate,
+    OperationScore,
     OperationSortResults,
     OperationSortResultsEdgeAttribute,
     OperationSortResultsNodeAttribute,
@@ -357,7 +432,11 @@ class Operation(BaseModel):
         OperationFilterKgraphDiscreteKedgeAttribute,
         OperationFilterKgraphDiscreteKnodeAttribute,
         OperationFilterKgraphOrphans,
+        OperationFilterKgraphPercentile,
+        OperationFilterKgraphStdDev,
         OperationFilterKgraphTopN,
+        OperationFilterResults,
+        OperationFilterResultsTopN,
         OperationLookup,
         OperationOverlay,
         OperationOverlayComputeJaccard,
@@ -365,6 +444,7 @@ class Operation(BaseModel):
         OperationOverlayConnectKnodes,
         OperationOverlayFisherExactTest,
         OperationRestate,
+        OperationScore,
         OperationSortResults,
         OperationSortResultsEdgeAttribute,
         OperationSortResultsNodeAttribute,
