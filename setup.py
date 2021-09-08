@@ -11,7 +11,7 @@ setup(
     packages=["reasoner_pydantic"],
     include_package_data=True,
     install_requires=[
-        "pydantic>=1.5"
+        "pydantic>=1.8"
     ],
     zip_safe=False,
     license="MIT",
