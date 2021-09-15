@@ -74,9 +74,8 @@ class QNode(BaseModel):
     )
     is_set: bool = False
     constraints: Optional[List[QueryConstraint]] = Field(
-        None,
+        [],
         title='constraints',
-        nullable=True,
     )
 
     class Config:
@@ -102,9 +101,8 @@ class QEdge(BaseModel):
         nullable=True,
     )
     constraints: Optional[List[QueryConstraint]] = Field(
-        None,
+        [],
         title='constraints',
-        nullable=True,
     )
 
     class Config:
