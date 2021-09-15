@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name="reasoner-pydantic",
-    version="1.2.0.3",
+    version="1.2.0.4",
     author="Patrick Wang",
     author_email="patrick@covar.com",
     url="https://github.com/TranslatorSRI/reasoner-pydantic",
