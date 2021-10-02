@@ -3,8 +3,9 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, constr, Field
+from pydantic import constr, Field
 
+from .base_model import BaseModel
 
 class CURIE(BaseModel):
     """Compact URI."""

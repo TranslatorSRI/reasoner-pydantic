@@ -2,9 +2,10 @@
 from enum import Enum
 from typing import Any, Dict, List, Optional, Union
 
-from pydantic import BaseModel, Field
+from pydantic import Field
 from pydantic.types import conlist
 
+from .base_model import BaseModel
 from .shared import BiolinkEntity, BiolinkPredicate, CURIE
 
 

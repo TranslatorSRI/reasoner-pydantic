@@ -1,9 +1,11 @@
 from reasoner_pydantic.shared import CURIE
 from typing import Dict, List, Optional
 
-from pydantic import BaseModel, conlist
+
+from pydantic import conlist
 from reasoner_pydantic import BiolinkEntity, BiolinkPredicate
 
+from .base_model import BaseModel
 
 class MetaAttribute(BaseModel):
     """MetaAttribute."""
