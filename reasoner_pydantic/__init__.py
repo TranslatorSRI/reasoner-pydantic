@@ -21,6 +21,8 @@ from .metakg import (
     MetaAttribute,
 )
 
+from .base_model import BaseModel
+
 components = [
     Attribute,
     BiolinkEntity, BiolinkPredicate, CURIE,
@@ -33,4 +35,5 @@ components = [
     LogLevel, QueryConstraint,
     MetaEdge, MetaNode, MetaKnowledgeGraph,
     MetaAttribute,
+    BaseModel,
 ]
