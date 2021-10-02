@@ -21,7 +21,7 @@ from .metakg import (
     MetaAttribute,
 )
 
-from .base_model import BaseModel
+from .base_model import BaseModel, FrozenDict
 
 components = [
     Attribute,
@@ -35,5 +35,5 @@ components = [
     LogLevel, QueryConstraint,
     MetaEdge, MetaNode, MetaKnowledgeGraph,
     MetaAttribute,
-    BaseModel,
+    BaseModel, FrozenDict
 ]
