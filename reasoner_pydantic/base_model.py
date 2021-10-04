@@ -32,18 +32,19 @@ def freeze_object(o, setify):
 
     Either converts lists to sets (unordered) or to tuples (ordered)
     """
-    if isinstance(o, BaseModel):
+
+    # type(o) is faster than isinstance(o) because it doesn't
+    # traverse the inheritance hierarchy
+    o_type = str(type(o))
+
+    if "pydantic" in o_type:
         new_object = o.frozendict(setify)
-    elif isinstance(o, collections.abc.Mapping):
+    elif "dict" in o_type:
         new_object = FrozenDict({
             k: freeze_object(v, setify)
             for k, v in o.items()
         })
-    elif (
-            isinstance(o, collections.abc.Sequence)
-            and
-            not isinstance(o, str)
-            ):
+    elif "list" in o_type:
         if setify:
             new_object = frozenset(
                 freeze_object(v, setify) for v in o
