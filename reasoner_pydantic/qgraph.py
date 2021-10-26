@@ -1,11 +1,13 @@
 """Query graph models."""
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
+from reasoner_pydantic.utils import HashableMapping
+from typing import Any, Optional, Union
 
 from pydantic import Field
 from pydantic.types import conlist
 
 from .base_model import BaseModel
+from .utils import HashableMapping, HashableSequence
 from .shared import BiolinkEntity, BiolinkPredicate, CURIE
 
 
@@ -74,7 +76,7 @@ class QNode(BaseModel):
         nullable=True,
     )
     is_set: bool = False
-    constraints: Optional[List[QueryConstraint]] = Field(
+    constraints: Optional[HashableSequence[QueryConstraint]] = Field(
         [],
         title='constraints',
     )
@@ -101,7 +103,7 @@ class QEdge(BaseModel):
         title='predicates',
         nullable=True,
     )
-    constraints: Optional[List[QueryConstraint]] = Field(
+    constraints: Optional[HashableSequence[QueryConstraint]] = Field(
         [],
         title='constraints',
     )
@@ -115,11 +117,11 @@ class QEdge(BaseModel):
 class QueryGraph(BaseModel):
     """Query graph."""
 
-    nodes: Dict[str, QNode] = Field(
+    nodes: HashableMapping[str, QNode] = Field(
         ...,
         title='dict of nodes',
     )
-    edges: Dict[str, QEdge] = Field(
+    edges: HashableMapping[str, QEdge] = Field(
         ...,
         title='dict of edges',
     )

@@ -1,11 +1,12 @@
 """Shared models."""
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 from pydantic import constr, Field
 
 from .base_model import BaseModel
+from .utils import HashableSequence
 
 
 class CURIE(BaseModel):
@@ -47,7 +48,7 @@ class Attribute(BaseModel):
     value_url: Optional[str] = Field(None, nullable=True)
     attribute_source: Optional[str] = Field(None, nullable=True)
     description: Optional[str] = Field(None, nullable=True)
-    attributes: Optional[List[SubAttribute]] = Field(None, nullable=True)
+    attributes: Optional[HashableSequence[SubAttribute]] = Field(None, nullable=True)
 
     class Config:
         extra = "forbid"

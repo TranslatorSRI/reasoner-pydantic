@@ -1,10 +1,11 @@
 """Operations models."""
 from enum import Enum
-from typing import Any, List, Optional, Union
+from typing import Any,  Optional, Union
 
 from pydantic.types import confloat, conint, conlist
 
 from .base_model import BaseModel
+from .utils import HashableMapping, HashableSequence
 
 def constant(s: str):
     """Generate a static enum."""
@@ -20,7 +21,7 @@ class OperationAnnotate(BaseModel):
 
 
 class AnnotateEdgesParameters(BaseModel):
-    attributes: Optional[List[str]]
+    attributes: Optional[HashableSequence[str]]
 
 
 class OperationAnnotateEdges(BaseModel):
@@ -32,7 +33,7 @@ class OperationAnnotateEdges(BaseModel):
 
 
 class AnnotateNodesParameters(BaseModel):
-    attributes: Optional[List[str]]
+    attributes: Optional[HashableSequence[str]]
 
 
 class OperationAnnotateNodes(BaseModel):
@@ -61,7 +62,7 @@ class OperationCompleteResults(BaseModel):
 
 class EnrichResultsParameters(BaseModel):
     pvalue_threshold: confloat(ge=0.0, le=1.0) = 1e-6
-    qnode_keys: Optional[List[str]]
+    qnode_keys: Optional[HashableSequence[str]]
 
 
 class OperationEnrichResults(BaseModel):
@@ -139,8 +140,8 @@ class FilterKgraphContinuousKedgeAttributeParameters(BaseModel):
     edge_attribute: str
     threshold: float
     remove_above_or_below: AboveOrBelowEnum
-    qedge_keys: Optional[List[str]]
-    qnode_keys: List[str] = []
+    qedge_keys: Optional[HashableSequence[str]]
+    qnode_keys: HashableSequence[str] = []
 
 
 class OperationFilterKgraphContinuousKedgeAttribute(BaseModel):
@@ -154,8 +155,8 @@ class OperationFilterKgraphContinuousKedgeAttribute(BaseModel):
 class FilterKgraphDiscreteKedgeAttributeParameters(BaseModel):
     edge_attribute: str
     remove_value: Any
-    qedge_keys: Optional[List[str]]
-    qnode_keys: List[str] = []
+    qedge_keys: Optional[HashableSequence[str]]
+    qnode_keys: HashableSequence[str] = []
 
 
 class OperationFilterKgraphDiscreteKedgeAttribute(BaseModel):
@@ -169,7 +170,7 @@ class OperationFilterKgraphDiscreteKedgeAttribute(BaseModel):
 class FilterKgraphDiscreteKnodeAttributeParameters(BaseModel):
     node_attribute: str
     remove_value: Any
-    qnode_keys: Optional[List[str]]
+    qnode_keys: Optional[HashableSequence[str]]
 
 
 class OperationFilterKgraphDiscreteKnodeAttribute(BaseModel):
@@ -198,16 +199,16 @@ class FilterKgraphTopNParameters(BaseModel):
     edge_attribute: str
     max_edges: conint(le=0) = 50
     remove_top_or_bottom: TopOrBottomEnum = TopOrBottomEnum.top
-    qedge_keys: Optional[List[str]]
-    qnode_keys: List[str] = []
+    qedge_keys: Optional[HashableSequence[str]]
+    qnode_keys: HashableSequence[str] = []
 
 
 class FilterKgraphPercentileParameters(BaseModel):
     edge_attribute: str
     threshold: confloat(ge=0, le=100) = 95
     remove_above_or_below: AboveOrBelowEnum = AboveOrBelowEnum.below
-    qedge_keys: Optional[List[str]]
-    qnode_keys: List[str] = []
+    qedge_keys: Optional[HashableSequence[str]]
+    qnode_keys: HashableSequence[str] = []
 
 
 class OperationFilterKgraphPercentile(BaseModel):
@@ -229,8 +230,8 @@ class FilterKgraphStdDevParameters(BaseModel):
     plus_or_minus_std_dev: PlusOrMinusEnum = PlusOrMinusEnum.plus
     num_sigma: confloat(ge=0) = 1
     remove_above_or_below: AboveOrBelowEnum = AboveOrBelowEnum.below
-    qedge_keys: Optional[List[str]]
-    qnode_keys: List[str] = []
+    qedge_keys: Optional[HashableSequence[str]]
+    qnode_keys: HashableSequence[str] = []
 
 
 class OperationFilterKgraphStdDev(BaseModel):
@@ -267,7 +268,7 @@ class OperationOverlay(BaseModel):
 
 class OverlayComputeJaccardParameters(BaseModel):
     intermediate_node_key: str
-    end_node_keys: List[str]
+    end_node_keys: HashableSequence[str]
     virtual_relation_label: str
 
 
@@ -280,7 +281,7 @@ class OperationOverlayComputeJaccard(BaseModel):
 
 
 class OverlayComputeNgdParameters(BaseModel):
-    qnode_keys: List[str]
+    qnode_keys: HashableSequence[str]
     virtual_relation_label: str
 
 
@@ -348,7 +349,7 @@ class AscOrDescEnum(str, Enum):
 class SortResultsEdgeAttributeParameters(BaseModel):
     edge_attribute: str
     ascending_or_descending: AscOrDescEnum
-    qedge_keys: Optional[List[str]]
+    qedge_keys: Optional[HashableSequence[str]]
 
 
 class OperationSortResultsEdgeAttribute(BaseModel):
@@ -362,7 +363,7 @@ class OperationSortResultsEdgeAttribute(BaseModel):
 class SortResultsNodeAttributeParameters(BaseModel):
     node_attribute: str
     ascending_or_descending: AscOrDescEnum
-    qnode_keys: Optional[List[str]]
+    qnode_keys: Optional[HashableSequence[str]]
 
 
 class OperationSortResultsNodeAttribute(BaseModel):
@@ -453,4 +454,4 @@ class Operation(BaseModel):
 
 
 class Workflow(BaseModel):
-    __root__: List[Operation]
+    __root__: HashableSequence[Operation]
