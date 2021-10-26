@@ -1,13 +1,12 @@
 import collections
 from typing import Dict, List, Generic, TypeVar
 
-from pydantic import BaseModel as PydanticBaseModel
-from pydantic.fields import ModelField
+from pydantic.generics import GenericModel
 
 KeyType = TypeVar('KeyType')
 ValueType = TypeVar('ValueType')
 
-class HashableMapping(PydanticBaseModel, Generic[KeyType, ValueType]):
+class HashableMapping(GenericModel, Generic[KeyType, ValueType]):
     """
     Custom class that implements MutableMapping and is hashable
 
@@ -17,6 +16,7 @@ class HashableMapping(PydanticBaseModel, Generic[KeyType, ValueType]):
     __root__: Dict[KeyType, ValueType]
 
     _hash = None
+
 
     def __getitem__(self, k):
         return self.__root__[k]
@@ -46,7 +46,7 @@ class HashableMapping(PydanticBaseModel, Generic[KeyType, ValueType]):
         return repr(self.__root__)
 
 
-class HashableSequence(PydanticBaseModel, Generic[ValueType]):
+class HashableSequence(GenericModel, Generic[ValueType]):
     """
     Custom class that implements MutableSequence and is hashable
 
