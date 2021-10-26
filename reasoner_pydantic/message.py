@@ -1,8 +1,9 @@
 """Reasoner API models."""
 from typing import List, Optional
 
-from pydantic import BaseModel, constr, Field
+from pydantic import constr, Field
 
+from .base_model import BaseModel
 from .results import Result
 from .qgraph import QueryGraph
 from .kgraph import KnowledgeGraph

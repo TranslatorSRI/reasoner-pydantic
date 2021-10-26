@@ -1,9 +1,10 @@
 """Knowledge graph models."""
 from typing import Dict, List, Optional, Union
 
-from pydantic import BaseModel, Field
+from pydantic import Field
 
 from .shared import Attribute, BiolinkEntity, BiolinkPredicate, CURIE
+from .base_model import BaseModel
 
 
 class Node(BaseModel):
