@@ -2,9 +2,9 @@
 from enum import Enum
 from typing import Any, List, Optional, Union
 
-from pydantic import BaseModel
 from pydantic.types import confloat, conint, conlist
 
+from .base_model import BaseModel
 
 def constant(s: str):
     """Generate a static enum."""
