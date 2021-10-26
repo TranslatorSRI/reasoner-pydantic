@@ -1,9 +1,10 @@
 """Results models."""
-from typing import Dict, List, Optional
+from typing import Optional
 
 from pydantic import Field
 
 from .base_model import BaseModel
+from .utils import HashableMapping, HashableSequence
 from .shared import Attribute, CURIE
 
 
@@ -15,7 +16,7 @@ class EdgeBinding(BaseModel):
         title='knowledge graph id',
     )
 
-    attributes: Optional[List[Attribute]] = Field(None, nullable=True)
+    attributes: Optional[HashableSequence[Attribute]] = Field(None, nullable=True)
 
     class Config:
         title = 'edge binding'
@@ -48,11 +49,11 @@ class NodeBinding(BaseModel):
 class Result(BaseModel):
     """Result."""
 
-    node_bindings: Dict[str, List[NodeBinding]] = Field(
+    node_bindings: HashableMapping[str, HashableSequence[NodeBinding]] = Field(
         ...,
         title='list of node bindings',
     )
-    edge_bindings: Dict[str, List[EdgeBinding]] = Field(
+    edge_bindings: HashableMapping[str, HashableSequence[EdgeBinding]] = Field(
         ...,
         title='list of edge bindings',
     )

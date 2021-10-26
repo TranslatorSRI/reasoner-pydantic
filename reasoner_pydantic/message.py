@@ -1,9 +1,10 @@
 """Reasoner API models."""
-from typing import List, Optional
+from typing import  Optional
 
 from pydantic import constr, Field
 
 from .base_model import BaseModel
+from .utils import HashableSequence
 from .results import Result
 from .qgraph import QueryGraph
 from .kgraph import KnowledgeGraph
@@ -24,7 +25,7 @@ class Message(BaseModel):
         title='knowledge graph',
         nullable=True,
     )
-    results: Optional[List[Result]] = Field(
+    results: Optional[HashableSequence[Result]] = Field(
         None,
         title='list of results',
         nullable=True,
@@ -88,7 +89,7 @@ class Response(BaseModel):
         title='message',
     )
 
-    logs: Optional[List[LogEntry]] = Field(None, nullable=True)
+    logs: Optional[HashableSequence[LogEntry]] = Field(None, nullable=True)
 
     status: Optional[str] = Field(None, nullable=True)
 

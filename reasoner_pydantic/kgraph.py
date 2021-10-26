@@ -1,22 +1,23 @@
 """Knowledge graph models."""
-from typing import Dict, List, Optional, Union
+from typing import Optional, Union
 
 from pydantic import Field
 
 from .shared import Attribute, BiolinkEntity, BiolinkPredicate, CURIE
 from .base_model import BaseModel
+from .utils import HashableMapping, HashableSequence
 
 
 class Node(BaseModel):
     """Knowledge graph node."""
 
-    categories: Optional[List[BiolinkEntity]] = Field(
+    categories: Optional[HashableSequence[BiolinkEntity]] = Field(
         None,
         title='categories',
         nullable=True,
     )
     name: Optional[str] = Field(None, nullable=True)
-    attributes: Optional[List[Attribute]] = Field(None, nullable=True)
+    attributes: Optional[HashableSequence[Attribute]] = Field(None, nullable=True)
 
     class Config:
         title = 'knowledge-graph node'
@@ -41,7 +42,7 @@ class Edge(BaseModel):
         title='object node id',
     )
     predicate: Optional[BiolinkPredicate] = Field(None, nullable=True)
-    attributes: Optional[List[Attribute]] = Field(None, nullable=True)
+    attributes: Optional[HashableSequence[Attribute]] = Field(None, nullable=True)
 
     class Config:
         title = 'knowledge-graph edge'
@@ -51,11 +52,11 @@ class Edge(BaseModel):
 class KnowledgeGraph(BaseModel):
     """Knowledge graph."""
 
-    nodes: Dict[str, Node] = Field(
+    nodes: HashableMapping[str, Node] = Field(
         ...,
         title='nodes',
     )
-    edges: Dict[str, Edge] = Field(
+    edges: HashableMapping[str, Edge] = Field(
         ...,
         title='edges',
     )
