@@ -1,5 +1,6 @@
-from reasoner_pydantic import Message, QNode, QEdge
-from reasoner_pydantic.utils import HashableMapping
+from reasoner_pydantic.shared import BiolinkEntity
+from reasoner_pydantic.message import Message
+from reasoner_pydantic import Query, QNode, QEdge
 
 def test_qnode_null_properties():
     """ Check that we can parse a QNode with None property values """
@@ -16,21 +17,70 @@ def test_qedge_null_properties():
         "predicates": None,
     })
 
-def test_hashable_message():
-    """ Check that we can hash and update a message correctly """
-    m = Message.parse_obj({
-        "query_graph": {
-            "nodes" : {
-                "n1" : {"categories" : ["biolink:ChemicalSubstance"]}
-            },
-            "edges" : {}
+EXAMPLE_MESSAGE = {
+    "query_graph": {
+        "nodes" : {
+            "n1" : {
+                "categories" : ["biolink:ChemicalSubstance"]
+            }
         },
-        "knowledge_graph": {
-            "nodes" : {},
-            "edges" : {}
-        },
-        "results": [],
-    })
+        "edges" : {}
+    },
+    "knowledge_graph": {
+        "nodes" : {},
+        "edges" : {}
+    },
+    "results": [],
+}
 
-    assert isinstance(m.query_graph.nodes, HashableMapping) # HashableMapping
-    assert isinstance(m.query_graph.nodes["n1"], HashableMapping) # dict??
+def test_message_hashable():
+    """ Check that we can hash a message """
+
+    m = Message.parse_obj(EXAMPLE_MESSAGE)
+    h = hash(m)
+    assert h
+
+    m2 = Message.parse_obj(EXAMPLE_MESSAGE)
+    h2 = hash(m2)
+
+    assert h == h2
+
+
+def test_hash_property_update():
+    """ Check that we can update the property of an object and the hash changes """
+
+    # Test on a QNode
+    qnode = QNode.parse_obj({"categories" : ["biolink:ChemicalSubstance"]})
+
+    h = hash(qnode)
+
+    qnode.is_set = True
+
+    assert hash(qnode) != h
+
+
+def test_hash_list_update():
+    """ Check that we can update a list property on an object and the hash changes """
+
+    # Test on a QNode
+    qnode = QNode.parse_obj({"categories" : ["biolink:ChemicalSubstance"]})
+    h = hash(qnode)
+
+    qnode.categories.insert(0, "biolink:Disease")
+    assert hash(qnode) != h
+
+
+def test_hash_deeply_nested_update():
+    """
+    Check that we can update a deeply nested object and the hash change is propogated
+    """
+
+    m = Message.parse_obj(EXAMPLE_MESSAGE)
+    h = hash(m)
+
+    m.query_graph.nodes['n1'].categories.insert(
+        0, BiolinkEntity.parse_obj("biolink:Gene")
+    )
+
+    assert hash(m) != h
+

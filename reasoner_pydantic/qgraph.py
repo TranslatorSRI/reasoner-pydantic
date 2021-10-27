@@ -1,5 +1,7 @@
 """Query graph models."""
 from enum import Enum
+
+from pydantic.class_validators import validator
 from reasoner_pydantic.utils import HashableMapping
 from typing import Any, Optional, Union
 
@@ -7,7 +9,7 @@ from pydantic import Field
 from pydantic.types import conlist
 
 from .base_model import BaseModel
-from .utils import HashableMapping, HashableSequence
+from .utils import HashableMapping, HashableSequence, nonzero_validator
 from .shared import BiolinkEntity, BiolinkPredicate, CURIE
 
 
@@ -65,19 +67,23 @@ class QueryConstraint(BaseModel):
 class QNode(BaseModel):
     """Query node."""
 
-    ids: Optional[conlist(CURIE, min_items=1)] = Field(
+    ids: Optional[HashableSequence[CURIE]] = Field(
         None,
         title='ids',
         nullable=True,
     )
-    categories: Optional[conlist(BiolinkEntity, min_items=1)] = Field(
+    _nonzero_ids = validator('ids', allow_reuse=True)(nonzero_validator)
+
+    categories: Optional[HashableSequence[BiolinkEntity]] = Field(
         None,
         title='categories',
         nullable=True,
     )
+    _nonzero_categories = validator('categories', allow_reuse=True)(nonzero_validator)
+
     is_set: bool = False
     constraints: Optional[HashableSequence[QueryConstraint]] = Field(
-        [],
+        HashableSequence.parse_obj([]),
         title='constraints',
     )
 
@@ -98,11 +104,14 @@ class QEdge(BaseModel):
         ...,
         title='object node id',
     )
-    predicates: Union[conlist(BiolinkPredicate, min_items=1), None] = Field(
+
+    predicates: Union[HashableSequence[BiolinkPredicate], None] = Field(
         None,
         title='predicates',
         nullable=True,
     )
+    _nonzero_predicates = validator('predicates', allow_reuse=True)(nonzero_validator)
+
     constraints: Optional[HashableSequence[QueryConstraint]] = Field(
         [],
         title='constraints',
