@@ -1,4 +1,4 @@
-from reasoner_pydantic.shared import BiolinkEntity
+from reasoner_pydantic.shared import Attribute, BiolinkEntity
 from reasoner_pydantic.message import Message
 from reasoner_pydantic import Query, QNode, QEdge
 
@@ -84,3 +84,14 @@ def test_hash_deeply_nested_update():
 
     assert hash(m) != h
 
+
+def test_hash_attribute_values():
+    """
+    Check that we can hash a dictionary valued attribute
+    """
+
+    a = Attribute.parse_obj({
+        "attribute_type_id": "biolink:knowledge_source",
+        "value": {"sources" : ["a", "b", "c"]},
+    })
+    assert hash(a)

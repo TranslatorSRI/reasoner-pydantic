@@ -125,12 +125,12 @@ def make_hashable(o):
     o_type = str(type(o))
 
     if "dict" in o_type:
-        return HashableMapping((
+        return HashableMapping.parse_obj((
             (k, make_hashable(v))
             for k,v in o.items()
         ))
     if "list" in o_type:
-        return HashableSequence(
+        return HashableSequence.parse_obj(
             make_hashable(v)
             for v in o
         )
