@@ -1,11 +1,12 @@
 """Operations models."""
 from enum import Enum
 from typing import Any,  Optional, Union
+from pydantic.class_validators import validator
 
-from pydantic.types import confloat, conint, conlist
+from pydantic.types import confloat, conint
 
 from .base_model import BaseModel
-from .utils import HashableMapping, HashableSequence
+from .utils import HashableMapping, HashableSequence, nonzero_validator
 
 def constant(s: str):
     """Generate a static enum."""
@@ -74,14 +75,18 @@ class OperationEnrichResults(BaseModel):
 
 
 class FillAllowParameters(BaseModel):
-    allowlist: conlist(str, min_items=1)
+    allowlist: HashableSequence[str]
+    _nonzero_allowlist = \
+        validator('allowlist', allow_reuse=True)(nonzero_validator)
 
     class Config:
         extra = "forbid"
 
 
 class FillDenyParameters(BaseModel):
-    denylist: conlist(str, min_items=1)
+    denylist: HashableSequence[str]
+    _nonzero_denylist = \
+        validator('denylist', allow_reuse=True)(nonzero_validator)
 
     class Config:
         extra = "forbid"
