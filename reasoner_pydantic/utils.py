@@ -1,6 +1,7 @@
 import collections
-from typing import Dict, List, Generic, TypeVar
+from typing import Callable, Dict, List, Generic, TypeVar
 
+from pydantic import PrivateAttr
 from pydantic.generics import GenericModel
 
 KeyType = TypeVar('KeyType')
@@ -15,8 +16,14 @@ class HashableMapping(GenericModel, Generic[KeyType, ValueType]):
     """
     __root__: Dict[KeyType, ValueType]
 
-    _hash = None
+    _hash: int = PrivateAttr(default=None)
+    _invalidate_hook: Callable = PrivateAttr(default=None)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for value in self.__root__.values():
+            if hasattr(value, "_invalidate_hook"):
+                value._invalidate_hook = self.invalidate_hash
 
     def __getitem__(self, k):
         return self.__root__[k]
@@ -26,12 +33,12 @@ class HashableMapping(GenericModel, Generic[KeyType, ValueType]):
         return len(self.__root__)
 
     def __setitem__(self, k, v):
-        # Invalidate hash
-        self._hash = None
+        self.invalidate_hash()
+        if hasattr(v, "_invalidate_hook"):
+            v._invalidate_hook = self.invalidate_hash
         self.__root__[k] = v
     def __delitem__(self, k):
-        # Invalidate hash
-        self._hash = None
+        self.invalidate_hash()
         del self.__root__[k]
 
     def __hash__(self):
@@ -42,8 +49,12 @@ class HashableMapping(GenericModel, Generic[KeyType, ValueType]):
             self._hash = h
         return self._hash
 
-    def __repr__(self):
-        return repr(self.__root__)
+    def invalidate_hash(self):
+        """ Invalidate stored hash value """
+        self._hash = None
+        # Propogate
+        if self._invalidate_hook:
+            self._invalidate_hook()
 
 
 class HashableSequence(GenericModel, Generic[ValueType]):
@@ -54,8 +65,14 @@ class HashableSequence(GenericModel, Generic[ValueType]):
     hash can be considered valid if the values are immutable.
     """
     __root__: List[ValueType]
+    _hash: int = PrivateAttr(default=None)
+    _invalidate_hook: Callable = PrivateAttr(default=None)
 
-    _hash = None
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for value in self.__root__:
+            if hasattr(value, "_invalidate_hook"):
+                value._invalidate_hook = self.invalidate_hash
 
     def __getitem__(self, i):
         return self.__root__[i]
@@ -65,16 +82,15 @@ class HashableSequence(GenericModel, Generic[ValueType]):
         return len(self.__root__)
 
     def __setitem__(self, i, v):
-        # Invalidate hash
-        self._hash = None
+        self.invalidate_hash()
+        if hasattr(v, "_invalidate_hook"):
+            v._invalidate_hook = self.invalidate_hash
         self.__root__[i] = v
     def __delitem__(self, i):
-        # Invalidate hash
-        self._hash = None
+        self.invalidate_hash()
         del self.__root__[i]
     def insert(self, i, v):
-        # Invalidate hash
-        self._hash = None
+        self.invalidate_hash()
         self.__root__.insert(i, v)
 
     def __hash__(self):
@@ -84,6 +100,18 @@ class HashableSequence(GenericModel, Generic[ValueType]):
                 h ^= hash(value)
             self._hash = h
         return self._hash
+
+    def invalidate_hash(self):
+        """ Invalidate stored hash value """
+        self._hash = None
+        # Propogate
+        if self._invalidate_hook:
+            self._invalidate_hook()
+
+def nonzero_validator(v):
+    if v != None and len(v) == 0:
+        raise ValueError("Must have nonzero number of elements")
+    return v
 
 def make_hashable(o):
     """
