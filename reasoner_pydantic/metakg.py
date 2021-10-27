@@ -1,11 +1,11 @@
+from pydantic import validator
 from reasoner_pydantic.shared import CURIE
 from typing import Optional
 
-from pydantic import conlist
 from reasoner_pydantic import BiolinkEntity, BiolinkPredicate
 
 from .base_model import BaseModel
-from .utils import HashableMapping, HashableSequence
+from .utils import HashableMapping, HashableSequence, nonzero_validator
 
 class MetaAttribute(BaseModel):
     """MetaAttribute."""
@@ -17,7 +17,9 @@ class MetaAttribute(BaseModel):
 
 
 class MetaNode(BaseModel):
-    id_prefixes: conlist(str, min_items=1)
+    id_prefixes: HashableSequence[str]
+    _nonzero_id_prefixes = \
+        validator('id_prefixes', allow_reuse=True)(nonzero_validator)
     attributes: Optional[HashableSequence[MetaAttribute]]
 
     class Config:

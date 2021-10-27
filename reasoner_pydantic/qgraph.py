@@ -6,7 +6,6 @@ from reasoner_pydantic.utils import HashableMapping
 from typing import Any, Optional, Union
 
 from pydantic import Field
-from pydantic.types import conlist
 
 from .base_model import BaseModel
 from .utils import HashableMapping, HashableSequence, nonzero_validator
