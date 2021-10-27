@@ -7,7 +7,11 @@ from pydantic.generics import GenericModel
 KeyType = TypeVar('KeyType')
 ValueType = TypeVar('ValueType')
 
-class HashableMapping(GenericModel, Generic[KeyType, ValueType]):
+class HashableMapping(
+        GenericModel,
+        Generic[KeyType, ValueType],
+        collections.abc.MutableMapping,
+):
     """
     Custom class that implements MutableMapping and is hashable
 
@@ -57,7 +61,11 @@ class HashableMapping(GenericModel, Generic[KeyType, ValueType]):
             self._invalidate_hook()
 
 
-class HashableSequence(GenericModel, Generic[ValueType]):
+class HashableSequence(
+        GenericModel,
+        Generic[ValueType],
+        collections.abc.MutableSequence,
+):
     """
     Custom class that implements MutableSequence and is hashable
 

@@ -66,7 +66,7 @@ def test_hash_list_update():
     qnode = QNode.parse_obj({"categories" : ["biolink:ChemicalSubstance"]})
     h = hash(qnode)
 
-    qnode.categories.insert(0, "biolink:Disease")
+    qnode.categories.append("biolink:Disease")
     assert hash(qnode) != h
 
 
@@ -78,8 +78,8 @@ def test_hash_deeply_nested_update():
     m = Message.parse_obj(EXAMPLE_MESSAGE)
     h = hash(m)
 
-    m.query_graph.nodes['n1'].categories.insert(
-        0, BiolinkEntity.parse_obj("biolink:Gene")
+    m.query_graph.nodes['n1'].categories.append(
+        BiolinkEntity.parse_obj("biolink:Gene")
     )
 
     assert hash(m) != h
