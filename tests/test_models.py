@@ -1,6 +1,5 @@
 from reasoner_pydantic.shared import Attribute, BiolinkEntity
-from reasoner_pydantic.message import Message
-from reasoner_pydantic import Query, QNode, QEdge
+from reasoner_pydantic import Message, QNode, QEdge, QueryGraph
 
 def test_qnode_null_properties():
     """ Check that we can parse a QNode with None property values """
@@ -68,6 +67,17 @@ def test_hash_list_update():
 
     qnode.categories.append("biolink:Disease")
     assert hash(qnode) != h
+
+def test_hash_dict_update():
+    """ Check that we can update a dict property on an object and the hash changes """
+
+    # Test on a QueryGraph
+    kg = QueryGraph.parse_obj(EXAMPLE_MESSAGE["query_graph"])
+    h = hash(kg)
+
+    kg.nodes["n0"] = kg.nodes["n1"]
+
+    assert hash(kg) != h
 
 
 def test_hash_deeply_nested_update():
