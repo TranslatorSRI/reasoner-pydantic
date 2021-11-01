@@ -47,10 +47,7 @@ class HashableMapping(
 
     def __hash__(self):
         if self._hash is None:
-            h = 0
-            for key, value in self.__root__.items():
-                h ^= hash((key, value))
-            self._hash = h
+            self._hash = hash(tuple((k,v) for k,v in self.__root__.items()))
         return self._hash
 
     def invalidate_hash(self):
@@ -103,10 +100,7 @@ class HashableSequence(
 
     def __hash__(self):
         if self._hash is None:
-            h = 0
-            for value in self.__root__:
-                h ^= hash(value)
-            self._hash = h
+            self._hash = hash(tuple(self.__root__))
         return self._hash
 
     def invalidate_hash(self):

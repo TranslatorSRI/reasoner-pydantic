@@ -19,7 +19,8 @@ class BaseModel(PydanticBaseModel):
     def __hash__(self) -> int:
         """ Hash function based on Pydantic implementation """
         if not self._hash:
-            self._hash = hash(self.__class__) + hash(tuple(self.__dict__.values()))
+            self._hash = hash(
+                (self.__class__, tuple(self.__dict__.values())))
         return self._hash
 
     def __setattr__(self, name, value):
