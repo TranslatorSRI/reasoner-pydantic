@@ -2,6 +2,7 @@ from typing import Callable
 import weakref
 from pydantic import BaseModel as PydanticBaseModel, PrivateAttr
 
+
 class BaseModel(PydanticBaseModel):
     """
     Custom base model for all classes
@@ -17,21 +18,20 @@ class BaseModel(PydanticBaseModel):
     _invalidate_hook: Callable = PrivateAttr(default=None)
 
     def __hash__(self) -> int:
-        """ Hash function based on Pydantic implementation """
+        """Hash function based on Pydantic implementation"""
         if not self._hash:
-            self._hash = hash(
-                (self.__class__, tuple(self.__dict__.values())))
+            self._hash = hash((self.__class__, tuple(self.__dict__.values())))
         return self._hash
 
     def __setattr__(self, name, value):
-        """ Custom setattr that invalidates hash """
+        """Custom setattr that invalidates hash"""
 
         if name != "_hash":
             self.invalidate_hash()
         return super().__setattr__(name, value)
 
     def invalidate_hash(self):
-        """ Invalidate stored hash value """
+        """Invalidate stored hash value"""
         self._hash = None
         # Propogate
         if self._invalidate_hook:

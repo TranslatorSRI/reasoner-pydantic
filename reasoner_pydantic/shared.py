@@ -21,8 +21,7 @@ class SubAttribute(BaseModel):
 
     attribute_type_id: CURIE = Field(..., title="type")
     value: Any = Field(..., title="value")
-    _make_value_hashable = \
-        validator("value", allow_reuse=True)(make_hashable)
+    _make_value_hashable = validator("value", allow_reuse=True)(make_hashable)
     value_type_id: Optional[CURIE] = Field(
         None,
         title="value_type_id",
@@ -42,8 +41,7 @@ class Attribute(BaseModel):
 
     attribute_type_id: CURIE = Field(..., title="type")
     value: Any = Field(..., title="value")
-    _make_value_hashable = \
-        validator("value", allow_reuse=True)(make_hashable)
+    _make_value_hashable = validator("value", allow_reuse=True)(make_hashable)
     value_type_id: Optional[CURIE] = Field(
         None,
         title="value_type_id",
@@ -62,10 +60,10 @@ class Attribute(BaseModel):
 class BiolinkEntity(BaseModel):
     """Biolink entity."""
 
-    __root__: constr(regex='^biolink:[A-Z][a-zA-Z]*$')
+    __root__: constr(regex="^biolink:[A-Z][a-zA-Z]*$")
 
     class Config:
-        title = 'biolink entity'
+        title = "biolink entity"
 
 
 class BiolinkPredicate(BaseModel):
@@ -74,7 +72,7 @@ class BiolinkPredicate(BaseModel):
     __root__: constr(regex="^biolink:[a-z][a-z_]*$")
 
     class Config:
-        title = 'biolink predicate'
+        title = "biolink predicate"
 
 
 class LogLevelEnum(str, Enum):

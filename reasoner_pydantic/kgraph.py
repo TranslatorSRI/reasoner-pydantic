@@ -13,20 +13,20 @@ class Node(BaseModel):
 
     categories: Optional[HashableSequence[BiolinkEntity]] = Field(
         None,
-        title='categories',
+        title="categories",
         nullable=True,
     )
     name: Optional[str] = Field(None, nullable=True)
     attributes: Optional[HashableSequence[Attribute]] = Field(None, nullable=True)
 
     class Config:
-        title = 'knowledge-graph node'
+        title = "knowledge-graph node"
         schema_extra = {
-            'example': {
-                'category': 'string',
+            "example": {
+                "category": "string",
             },
         }
-        extra = 'forbid'
+        extra = "forbid"
         allow_population_by_field_name = True
 
 
@@ -35,18 +35,18 @@ class Edge(BaseModel):
 
     subject: CURIE = Field(
         ...,
-        title='subject node id',
+        title="subject node id",
     )
     object: CURIE = Field(
         ...,
-        title='object node id',
+        title="object node id",
     )
     predicate: Optional[BiolinkPredicate] = Field(None, nullable=True)
     attributes: Optional[HashableSequence[Attribute]] = Field(None, nullable=True)
 
     class Config:
-        title = 'knowledge-graph edge'
-        extra = 'forbid'
+        title = "knowledge-graph edge"
+        extra = "forbid"
 
 
 class KnowledgeGraph(BaseModel):
@@ -54,13 +54,13 @@ class KnowledgeGraph(BaseModel):
 
     nodes: HashableMapping[str, Node] = Field(
         ...,
-        title='nodes',
+        title="nodes",
     )
     edges: HashableMapping[str, Edge] = Field(
         ...,
-        title='edges',
+        title="edges",
     )
 
     class Config:
-        title = 'knowledge graph'
-        extra = 'allow'
+        title = "knowledge graph"
+        extra = "allow"

@@ -14,52 +14,54 @@ from .shared import BiolinkEntity, BiolinkPredicate, CURIE
 
 class Operator(str, Enum):
     """Operator."""
-    equal_to = '=='
-    greater_than = '>'
-    less_than = '<'
-    matches = 'matches'
+
+    equal_to = "=="
+    greater_than = ">"
+    less_than = "<"
+    matches = "matches"
 
 
 class QueryConstraint(BaseModel):
     """QNode or QEdge constraint."""
+
     name: str = Field(
         ...,
-        title='name',
+        title="name",
         nullable=False,
     )
     id: CURIE = Field(
         ...,
-        title='id',
+        title="id",
         nullable=False,
     )
     negated: bool = Field(
         False,
-        title='not',
-        alias='not',
+        title="not",
+        alias="not",
     )
     operator: Operator = Field(
         ...,
-        title='operator',
+        title="operator",
     )
     value: Any = Field(
         ...,
-        title='value',
+        title="value",
     )
     unit_id: Optional[Any] = Field(
         None,
-        title='unit_id',
+        title="unit_id",
     )
     unit_name: Optional[Any] = Field(
         None,
-        title='unit_name',
+        title="unit_name",
     )
 
     class Config:
-        extra = 'forbid'
+        extra = "forbid"
 
     def dict(self, *args, **kwargs):
         output = super().dict(*args, **kwargs)
-        output['not'] = output.pop('negated', False)
+        output["not"] = output.pop("negated", False)
         return output
 
 
@@ -68,27 +70,27 @@ class QNode(BaseModel):
 
     ids: Optional[HashableSequence[CURIE]] = Field(
         None,
-        title='ids',
+        title="ids",
         nullable=True,
     )
-    _nonzero_ids = validator('ids', allow_reuse=True)(nonzero_validator)
+    _nonzero_ids = validator("ids", allow_reuse=True)(nonzero_validator)
 
     categories: Optional[HashableSequence[BiolinkEntity]] = Field(
         None,
-        title='categories',
+        title="categories",
         nullable=True,
     )
-    _nonzero_categories = validator('categories', allow_reuse=True)(nonzero_validator)
+    _nonzero_categories = validator("categories", allow_reuse=True)(nonzero_validator)
 
     is_set: bool = False
     constraints: Optional[HashableSequence[QueryConstraint]] = Field(
         HashableSequence.parse_obj([]),
-        title='constraints',
+        title="constraints",
     )
 
     class Config:
-        title = 'query-graph node'
-        extra = 'allow'
+        title = "query-graph node"
+        extra = "allow"
         allow_population_by_field_name = True
 
 
@@ -97,28 +99,28 @@ class QEdge(BaseModel):
 
     subject: str = Field(
         ...,
-        title='subject node id',
+        title="subject node id",
     )
     object: str = Field(
         ...,
-        title='object node id',
+        title="object node id",
     )
 
     predicates: Union[HashableSequence[BiolinkPredicate], None] = Field(
         None,
-        title='predicates',
+        title="predicates",
         nullable=True,
     )
-    _nonzero_predicates = validator('predicates', allow_reuse=True)(nonzero_validator)
+    _nonzero_predicates = validator("predicates", allow_reuse=True)(nonzero_validator)
 
     constraints: Optional[HashableSequence[QueryConstraint]] = Field(
         [],
-        title='constraints',
+        title="constraints",
     )
 
     class Config:
-        title = 'query-graph edge'
-        extra = 'allow'
+        title = "query-graph edge"
+        extra = "allow"
         allow_population_by_field_name = True
 
 
@@ -127,13 +129,13 @@ class QueryGraph(BaseModel):
 
     nodes: HashableMapping[str, QNode] = Field(
         ...,
-        title='dict of nodes',
+        title="dict of nodes",
     )
     edges: HashableMapping[str, QEdge] = Field(
         ...,
-        title='dict of edges',
+        title="dict of edges",
     )
 
     class Config:
-        title = 'simple query graph'
-        extra = 'allow'
+        title = "simple query graph"
+        extra = "allow"
