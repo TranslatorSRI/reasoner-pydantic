@@ -1,10 +1,7 @@
-name: test
+name: "Pull Request Feedback"
 
 on: 
   pull_request:
-  push:
-    branches:
-      - main
 
 jobs:
   test:
@@ -24,3 +21,10 @@ jobs:
       - name: Run pytest
         run: |
           python -m pytest tests/
+
+  check-format:
+    name: Check that code matches Black formatter
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: psf/black@stable
