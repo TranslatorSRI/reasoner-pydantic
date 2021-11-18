@@ -1,12 +1,13 @@
 """Operations models."""
 from enum import Enum
-from typing import Any,  Optional, Union
+from typing import Any, Optional, Union
 from pydantic.class_validators import validator
 
 from pydantic.types import confloat, conint
 
 from .base_model import BaseModel
 from .utils import HashableMapping, HashableSequence, nonzero_validator
+
 
 def constant(s: str):
     """Generate a static enum."""
@@ -76,8 +77,7 @@ class OperationEnrichResults(BaseModel):
 
 class FillAllowParameters(BaseModel):
     allowlist: HashableSequence[str]
-    _nonzero_allowlist = \
-        validator('allowlist', allow_reuse=True)(nonzero_validator)
+    _nonzero_allowlist = validator("allowlist", allow_reuse=True)(nonzero_validator)
 
     class Config:
         extra = "forbid"
@@ -85,8 +85,7 @@ class FillAllowParameters(BaseModel):
 
 class FillDenyParameters(BaseModel):
     denylist: HashableSequence[str]
-    _nonzero_denylist = \
-        validator('denylist', allow_reuse=True)(nonzero_validator)
+    _nonzero_denylist = validator("denylist", allow_reuse=True)(nonzero_validator)
 
     class Config:
         extra = "forbid"
@@ -137,6 +136,7 @@ class OperationFilterKgraph(BaseModel):
 
 class AboveOrBelowEnum(str, Enum):
     """'above' or 'below'."""
+
     above = "above"
     below = "below"
 
@@ -196,6 +196,7 @@ class OperationFilterKgraphOrphans(BaseModel):
 
 class TopOrBottomEnum(str, Enum):
     """'top' or 'bottom'."""
+
     top = "top"
     bottom = "bottom"
 
@@ -226,6 +227,7 @@ class OperationFilterKgraphPercentile(BaseModel):
 
 class PlusOrMinusEnum(str, Enum):
     """'plus' or 'minus'."""
+
     plus = "plus"
     minus = "minus"
 
@@ -347,6 +349,7 @@ class OperationSortResults(BaseModel):
 
 class AscOrDescEnum(str, Enum):
     """'ascending' or 'descending'."""
+
     ascending = "ascending"
     descending = "descending"
 

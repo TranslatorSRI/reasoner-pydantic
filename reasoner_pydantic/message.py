@@ -1,5 +1,5 @@
 """Reasoner API models."""
-from typing import  Optional
+from typing import Optional
 
 from pydantic import constr, Field
 
@@ -17,23 +17,23 @@ class Message(BaseModel):
 
     query_graph: Optional[QueryGraph] = Field(
         None,
-        title='query graph',
+        title="query graph",
         nullable=True,
     )
     knowledge_graph: Optional[KnowledgeGraph] = Field(
         None,
-        title='knowledge graph',
+        title="knowledge graph",
         nullable=True,
     )
     results: Optional[HashableSequence[Result]] = Field(
         None,
-        title='list of results',
+        title="list of results",
         nullable=True,
     )
 
     class Config:
-        title = 'message'
-        extra = 'forbid'
+        title = "message"
+        extra = "forbid"
 
 
 class Query(BaseModel):
@@ -41,21 +41,19 @@ class Query(BaseModel):
 
     message: Message = Field(
         ...,
-        title='message',
+        title="message",
     )
     log_level: Optional[LogLevel] = Field(
         None,
-        title='log_level',
+        title="log_level",
         nullable=True,
     )
     workflow: Optional[Workflow]
 
     class Config:
-        title = 'query'
-        extra = 'allow'
-        schema_extra = {
-            "x-body-name": "request_body"
-        }
+        title = "query"
+        extra = "allow"
+        schema_extra = {"x-body-name": "request_body"}
 
 
 class AsyncQuery(BaseModel):
@@ -64,21 +62,19 @@ class AsyncQuery(BaseModel):
     callback: constr(regex=r"^https?://") = Field(..., format="uri")
     message: Message = Field(
         ...,
-        title='message',
+        title="message",
     )
     log_level: Optional[LogLevel] = Field(
         None,
-        title='log_level',
+        title="log_level",
         nullable=True,
     )
     workflow: Optional[Workflow]
 
     class Config:
-        title = 'query'
-        extra = 'allow'
-        schema_extra = {
-            "x-body-name": "request_body"
-        }
+        title = "query"
+        extra = "allow"
+        schema_extra = {"x-body-name": "request_body"}
 
 
 class Response(BaseModel):
@@ -86,7 +82,7 @@ class Response(BaseModel):
 
     message: Message = Field(
         ...,
-        title='message',
+        title="message",
     )
 
     logs: Optional[HashableSequence[LogEntry]] = Field(None, nullable=True)
@@ -96,5 +92,5 @@ class Response(BaseModel):
     workflow: Optional[Workflow]
 
     class Config:
-        title = 'response'
-        extra = 'allow'
+        title = "response"
+        extra = "allow"

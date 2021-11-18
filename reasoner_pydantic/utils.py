@@ -4,13 +4,14 @@ from typing import Callable, Dict, List, Generic, TypeVar
 from pydantic import PrivateAttr
 from pydantic.generics import GenericModel
 
-KeyType = TypeVar('KeyType')
-ValueType = TypeVar('ValueType')
+KeyType = TypeVar("KeyType")
+ValueType = TypeVar("ValueType")
+
 
 class HashableMapping(
-        GenericModel,
-        Generic[KeyType, ValueType],
-        collections.abc.MutableMapping,
+    GenericModel,
+    Generic[KeyType, ValueType],
+    collections.abc.MutableMapping,
 ):
     """
     Custom class that implements MutableMapping and is hashable
@@ -18,6 +19,7 @@ class HashableMapping(
     Hash will be recomputed if items are updated or deleted. The
     hash can be considered valid if the values are immutable.
     """
+
     __root__: Dict[KeyType, ValueType]
 
     _hash: int = PrivateAttr(default=None)
@@ -31,8 +33,10 @@ class HashableMapping(
 
     def __getitem__(self, k):
         return self.__root__[k]
+
     def __iter__(self):
         return iter(self.__root__)
+
     def __len__(self):
         return len(self.__root__)
 
@@ -41,17 +45,18 @@ class HashableMapping(
         if hasattr(v, "_invalidate_hook"):
             v._invalidate_hook = self.invalidate_hash
         self.__root__[k] = v
+
     def __delitem__(self, k):
         self.invalidate_hash()
         del self.__root__[k]
 
     def __hash__(self):
         if self._hash is None:
-            self._hash = hash(tuple((k,v) for k,v in self.__root__.items()))
+            self._hash = hash(tuple((k, v) for k, v in self.__root__.items()))
         return self._hash
 
     def invalidate_hash(self):
-        """ Invalidate stored hash value """
+        """Invalidate stored hash value"""
         self._hash = None
         # Propogate
         if self._invalidate_hook:
@@ -59,9 +64,9 @@ class HashableMapping(
 
 
 class HashableSequence(
-        GenericModel,
-        Generic[ValueType],
-        collections.abc.MutableSequence,
+    GenericModel,
+    Generic[ValueType],
+    collections.abc.MutableSequence,
 ):
     """
     Custom class that implements MutableSequence and is hashable
@@ -69,6 +74,7 @@ class HashableSequence(
     Hash will be recomputed if items are updated or deleted. The
     hash can be considered valid if the values are immutable.
     """
+
     __root__: List[ValueType]
     _hash: int = PrivateAttr(default=None)
     _invalidate_hook: Callable = PrivateAttr(default=None)
@@ -81,8 +87,10 @@ class HashableSequence(
 
     def __getitem__(self, i):
         return self.__root__[i]
+
     def __iter__(self):
         return iter(self.__root__)
+
     def __len__(self):
         return len(self.__root__)
 
@@ -91,9 +99,11 @@ class HashableSequence(
         if hasattr(v, "_invalidate_hook"):
             v._invalidate_hook = self.invalidate_hash
         self.__root__[i] = v
+
     def __delitem__(self, i):
         self.invalidate_hash()
         del self.__root__[i]
+
     def insert(self, i, v):
         self.invalidate_hash()
         self.__root__.insert(i, v)
@@ -104,16 +114,18 @@ class HashableSequence(
         return self._hash
 
     def invalidate_hash(self):
-        """ Invalidate stored hash value """
+        """Invalidate stored hash value"""
         self._hash = None
         # Propogate
         if self._invalidate_hook:
             self._invalidate_hook()
 
+
 def nonzero_validator(v):
     if v != None and len(v) == 0:
         raise ValueError("Must have nonzero number of elements")
     return v
+
 
 def make_hashable(o):
     """
@@ -127,15 +139,8 @@ def make_hashable(o):
     o_type = str(type(o))
 
     if "dict" in o_type:
-        return HashableMapping.parse_obj((
-            (k, make_hashable(v))
-            for k,v in o.items()
-        ))
+        return HashableMapping.parse_obj(((k, make_hashable(v)) for k, v in o.items()))
     if "list" in o_type:
-        return HashableSequence.parse_obj(
-            make_hashable(v)
-            for v in o
-        )
+        return HashableSequence.parse_obj(make_hashable(v) for v in o)
 
     return o
-

@@ -3,60 +3,36 @@ from reasoner_pydantic import Query
 
 query = {
     "workflow": [
-        {
-            "id": "fill"
-        },
-        {
-            "id": "bind"
-        },
+        {"id": "fill"},
+        {"id": "bind"},
         {
             "id": "overlay_compute_ngd",
             "parameters": {
-                "qnode_keys": [
-                    "n0",
-                    "n1"
-                ],
-                "virtual_relation_label": "NGD1"
-            }
+                "qnode_keys": ["n0", "n1"],
+                "virtual_relation_label": "NGD1",
+            },
         },
-        {
-            "id": "complete_results"
-        },
-        {
-            "id": "filter_results_top_n",
-            "parameters": {
-                "max_results": 50
-            }
-        }
+        {"id": "complete_results"},
+        {"id": "filter_results_top_n", "parameters": {"max_results": 50}},
     ],
     "message": {
         "query_graph": {
             "nodes": {
-                "n0": {
-                    "categories": [
-                        "biolink:Gene"
-                    ]
-                },
+                "n0": {"categories": ["biolink:Gene"]},
                 "n1": {
-                    "ids": [
-                        "CHEBI:45783"
-                    ],
-                    "categories": [
-                        "biolink:ChemicalSubstance"
-                    ]
-                }
+                    "ids": ["CHEBI:45783"],
+                    "categories": ["biolink:ChemicalSubstance"],
+                },
             },
             "edges": {
                 "e01": {
                     "subject": "n0",
                     "object": "n1",
-                    "predicates": [
-                        "biolink:related_to"
-                    ]
+                    "predicates": ["biolink:related_to"],
                 }
-            }
+            },
         }
-    }
+    },
 }
 
 

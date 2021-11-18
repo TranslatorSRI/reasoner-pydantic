@@ -13,19 +13,19 @@ class EdgeBinding(BaseModel):
 
     id: str = Field(
         ...,
-        title='knowledge graph id',
+        title="knowledge graph id",
     )
 
     attributes: Optional[HashableSequence[Attribute]] = Field(None, nullable=True)
 
     class Config:
-        title = 'edge binding'
+        title = "edge binding"
         schema_extra = {
-            'example': {
-                'id': 'string',
+            "example": {
+                "id": "string",
             },
         }
-        extra = 'allow'
+        extra = "allow"
 
 
 class NodeBinding(BaseModel):
@@ -33,17 +33,17 @@ class NodeBinding(BaseModel):
 
     id: CURIE = Field(
         ...,
-        title='knowledge graph id',
+        title="knowledge graph id",
     )
 
     class Config:
-        title = 'node binding'
+        title = "node binding"
         schema_extra = {
-            'example': {
-                'id': 'x:string',
+            "example": {
+                "id": "x:string",
             },
         }
-        extra = 'allow'
+        extra = "allow"
 
 
 class Result(BaseModel):
@@ -51,11 +51,11 @@ class Result(BaseModel):
 
     node_bindings: HashableMapping[str, HashableSequence[NodeBinding]] = Field(
         ...,
-        title='list of node bindings',
+        title="list of node bindings",
     )
     edge_bindings: HashableMapping[str, HashableSequence[EdgeBinding]] = Field(
         ...,
-        title='list of edge bindings',
+        title="list of edge bindings",
     )
     score: Optional[float] = Field(
         None,
@@ -63,5 +63,5 @@ class Result(BaseModel):
     )
 
     class Config:
-        title = 'result'
-        extra = 'allow'
+        title = "result"
+        extra = "allow"

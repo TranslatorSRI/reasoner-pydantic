@@ -23,4 +23,7 @@ def test_openapi():
         schema = obj.schema_json(indent=4)
 
         print("  produced schema: ", schema)
-        print("  reference schema: ", json.dumps(reference_schemas[obj.__name__], indent=4))
+        print(
+            "  reference schema: ",
+            json.dumps(reference_schemas[obj.__name__], indent=4),
+        )

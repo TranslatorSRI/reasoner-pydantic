@@ -1,30 +1,34 @@
 """Test manipulation."""
 from reasoner_pydantic import (
-    Query, Message, QNode,
-    KnowledgeGraph, Node,
-    Result, NodeBinding,
+    Query,
+    Message,
+    QNode,
+    KnowledgeGraph,
+    Node,
+    Result,
+    NodeBinding,
 )
 
 
 def test_manipulation():
     """Test manipulation."""
-    request: Query = Query(**{
-        'message': {
-            'query_graph': {
-                'nodes': {
-                    "x": {}
-                },
-                'edges': {},
+    request: Query = Query(
+        **{
+            "message": {
+                "query_graph": {
+                    "nodes": {"x": {}},
+                    "edges": {},
+                }
             }
         }
-    })
+    )
 
     message: Message = request.message
     message.knowledge_graph = KnowledgeGraph(nodes={}, edges={})
     message.results = []
 
     # get query graph node
-    assert message.query_graph.nodes, 'Query graph contains no nodes!'
+    assert message.query_graph.nodes, "Query graph contains no nodes!"
     qnode_id = next(iter(message.query_graph.nodes))
 
     # add knowledge graph node
@@ -39,7 +43,7 @@ def test_manipulation():
     result: Result = Result(
         node_bindings={qnode_id: [node_binding]},
         edge_bindings={},
-        foo='bar',
+        foo="bar",
     )
     message.results.append(result)
 
@@ -48,7 +52,9 @@ def test_manipulation():
 
 def test_singletons():
     """Test that str-valued `categories` works."""
-    qnode = QNode(**{
-        "ids": ["MONDO:0005737"],
-        "categories": ["biolink:Disease"],
-    })
+    qnode = QNode(
+        **{
+            "ids": ["MONDO:0005737"],
+            "categories": ["biolink:Disease"],
+        }
+    )
