@@ -1,5 +1,5 @@
 import collections
-from typing import Callable, Dict, List, Generic, TypeVar
+from typing import Callable, Dict, List, Generic, Set, TypeVar
 
 from pydantic import PrivateAttr
 from pydantic.generics import GenericModel
@@ -107,6 +107,60 @@ class HashableSequence(
     def insert(self, i, v):
         self.invalidate_hash()
         self.__root__.insert(i, v)
+
+    def __hash__(self):
+        if self._hash is None:
+            self._hash = hash(tuple(self.__root__))
+        return self._hash
+
+    def invalidate_hash(self):
+        """Invalidate stored hash value"""
+        self._hash = None
+        # Propogate
+        if self._invalidate_hook:
+            self._invalidate_hook()
+
+
+class HashableSet(
+    GenericModel,
+    Generic[ValueType],
+    collections.abc.MutableSet,
+):
+    """
+    Custom class that implements MutableSet and is hashable
+
+    Hash will be recomputed if items are updated or deleted. The
+    hash can be considered valid if the values are immutable.
+    """
+
+    __root__: Set[ValueType]
+    _hash: int = PrivateAttr(default=None)
+    _invalidate_hook: Callable = PrivateAttr(default=None)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for value in self.__root__:
+            if hasattr(value, "_invalidate_hook"):
+                value._invalidate_hook = self.invalidate_hash
+
+    def __contains__(self, v):
+        return v in self.__root__
+
+    def __iter__(self):
+        return iter(self.__root__)
+
+    def __len__(self):
+        return len(self.__root__)
+
+    def add(self, v):
+        self.invalidate_hash()
+        if hasattr(v, "_invalidate_hook"):
+            v._invalidate_hook = self.invalidate_hash
+        self.__root__.add(v)
+
+    def discard(self, v):
+        self.invalidate_hash()
+        self.__root__.discard(v)
 
     def __hash__(self):
         if self._hash is None:
