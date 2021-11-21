@@ -47,3 +47,9 @@ class BaseModel(PydanticBaseModel):
         for value in self.__dict__.values():
             if hasattr(value, "_invalidate_hook"):
                 value._invalidate_hook = self.invalidate_hash
+
+    def update(self, other):
+        """Update fields on this object with fields from other object"""
+        raise NotImplementedError(
+            f"Model {self.__class__.__name__} has no update method"
+        )
