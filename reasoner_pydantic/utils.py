@@ -158,6 +158,10 @@ class HashableSet(
             v._invalidate_hook = self.invalidate_hash
         self.__root__.add(v)
 
+    def update(self, other):
+        self.invalidate_hash()
+        self.__root__.update(other)
+
     def discard(self, v):
         self.invalidate_hash()
         self.__root__.discard(v)

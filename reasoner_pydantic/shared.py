@@ -16,6 +16,12 @@ class CURIE(BaseModel):
     __root__: str
 
 
+class EdgeIdentifier(BaseModel):
+    """Identifier for an edge in a knowledge graph"""
+
+    __root__: str
+
+
 class SubAttribute(BaseModel):
     """Attribute subattribute."""
 

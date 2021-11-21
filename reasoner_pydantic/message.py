@@ -1,10 +1,10 @@
 """Reasoner API models."""
-from typing import Optional
+from typing import Optional, Set
 
 from pydantic import constr, Field
 
 from .base_model import BaseModel
-from .utils import HashableSequence
+from .utils import HashableSequence, HashableSet
 from .results import Result
 from .qgraph import QueryGraph
 from .kgraph import KnowledgeGraph
@@ -25,7 +25,7 @@ class Message(BaseModel):
         title="knowledge graph",
         nullable=True,
     )
-    results: Optional[HashableSequence[Result]] = Field(
+    results: Optional[HashableSet[Result]] = Field(
         None,
         title="list of results",
         nullable=True,
@@ -34,6 +34,16 @@ class Message(BaseModel):
     class Config:
         title = "message"
         extra = "forbid"
+
+    def update(self, other):
+        if other.query_graph:
+            raise NotImplementedError("Query graph merging not supported yet")
+        if other.knowledge_graph:
+            if not self.knowledge_graph:
+                self.knowledge_graph = KnowledgeGraph(nodes=[], edges=[])
+            self.knowledge_graph.update(other.knowledge_graph)
+        if other.results:
+            self.results.update(other.results)
 
 
 class Query(BaseModel):
