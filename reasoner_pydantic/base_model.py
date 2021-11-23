@@ -23,6 +23,10 @@ class BaseModel(PydanticBaseModel):
             self._hash = hash((self.__class__, tuple(self.__dict__.values())))
         return self._hash
 
+    def __eq__(self, other) -> bool:
+        """Equality function that calls hash function"""
+        return self.__hash__() == other.__hash__()
+
     def __setattr__(self, name, value):
         """Custom setattr that invalidates hash"""
 
