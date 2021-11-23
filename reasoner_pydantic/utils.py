@@ -55,6 +55,9 @@ class HashableMapping(
             self._hash = hash(tuple((k, v) for k, v in self.__root__.items()))
         return self._hash
 
+    def __eq__(self, other) -> bool:
+        return self.__hash__() == other.__hash__()
+
     def invalidate_hash(self):
         """Invalidate stored hash value"""
         self._hash = None
@@ -112,6 +115,9 @@ class HashableSequence(
         if self._hash is None:
             self._hash = hash(tuple(self.__root__))
         return self._hash
+
+    def __eq__(self, other) -> bool:
+        return self.__hash__() == other.__hash__()
 
     def invalidate_hash(self):
         """Invalidate stored hash value"""
