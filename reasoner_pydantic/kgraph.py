@@ -75,11 +75,11 @@ class Edge(BaseModel):
 class KnowledgeGraph(BaseModel):
     """Knowledge graph."""
 
-    nodes: HashableMapping[CURIE, Node] = Field(
+    nodes: HashableMapping[str, Node] = Field(
         ...,
         title="nodes",
     )
-    edges: HashableMapping[EdgeIdentifier, Edge] = Field(
+    edges: HashableMapping[str, Edge] = Field(
         ...,
         title="edges",
     )

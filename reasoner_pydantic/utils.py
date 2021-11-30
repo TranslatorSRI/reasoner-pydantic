@@ -185,8 +185,13 @@ class HashableSet(
             self._invalidate_hook()
 
     def dict(self, *args, **kwargs):
-        """Custom dict method to convert to list"""
-        return list(self.__root__)
+        """Custom serialization method to convert to list"""
+
+        # Normally, the dict method tries to cast to the __root__ type.
+        # This isn't an issue for most __root__ types, but here that causes:
+        # set({"hello" : "world"}) which doesn't work because dicts are not hashable
+        # This line overrides that functionality
+        return dict(super()._iter(to_dict=False))
 
 
 def nonzero_validator(v):

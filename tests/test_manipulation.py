@@ -45,7 +45,7 @@ def test_manipulation():
         edge_bindings={},
         foo="bar",
     )
-    message.results.append(result)
+    message.results.add(result)
 
     print(message.json())
 
