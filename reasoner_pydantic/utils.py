@@ -184,6 +184,10 @@ class HashableSet(
         if self._invalidate_hook:
             self._invalidate_hook()
 
+    def dict(self, *args, **kwargs):
+        """Custom dict method to convert to list"""
+        return list(self.__root__)
+
 
 def nonzero_validator(v):
     if v != None and len(v) == 0:
