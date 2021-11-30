@@ -57,3 +57,6 @@ class BaseModel(PydanticBaseModel):
         raise NotImplementedError(
             f"Model {self.__class__.__name__} has no update method"
         )
+
+    class Config:
+        validate_assignment = True
