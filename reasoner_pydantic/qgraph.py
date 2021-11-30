@@ -114,7 +114,6 @@ class QEdge(BaseModel):
     _nonzero_predicates = validator("predicates", allow_reuse=True)(nonzero_validator)
 
     constraints: Optional[HashableSequence[QueryConstraint]] = Field(
-        [],
         title="constraints",
     )
 

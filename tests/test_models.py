@@ -33,7 +33,11 @@ EXAMPLE_MESSAGE = {
             "n2": {"categories": ["biolink:Disease"]},
         },
         "edges": {
-            "n1n2": {"subject": "n1", "object": "n2", "predicate": "biolink:related_to"}
+            "n1n2": {
+                "subject": "n1",
+                "object": "n2",
+                "predicates": ["biolink:related_to"],
+            }
         },
     },
     "knowledge_graph": {
@@ -194,13 +198,3 @@ def test_utils_type_coercion():
     assert isinstance(tc.set, HashableSet)
     tc.map = {}
     assert isinstance(tc.map, HashableMapping)
-
-
-def test_hashable_set_dict():
-    h = HashableSet[str](__root__=[])
-    h.add("hi")
-    h.json()
-
-    h = HashableMapping[str, str](__root__={})
-    h["hello"] = "world"
-    h.json()
