@@ -1,5 +1,8 @@
+from typing import Optional
+from reasoner_pydantic.base_model import BaseModel
 from reasoner_pydantic.shared import Attribute, BiolinkEntity
 from reasoner_pydantic import Message, QNode, QEdge, QueryGraph
+from reasoner_pydantic.utils import HashableMapping, HashableSequence, HashableSet
 
 
 def test_qnode_null_properties():
@@ -25,11 +28,54 @@ def test_qedge_null_properties():
 
 EXAMPLE_MESSAGE = {
     "query_graph": {
-        "nodes": {"n1": {"categories": ["biolink:ChemicalSubstance"]}},
-        "edges": {},
+        "nodes": {
+            "n1": {"categories": ["biolink:ChemicalSubstance"]},
+            "n2": {"categories": ["biolink:Disease"]},
+        },
+        "edges": {
+            "n1n2": {"subject": "n1", "object": "n2", "predicate": "biolink:related_to"}
+        },
     },
-    "knowledge_graph": {"nodes": {}, "edges": {}},
-    "results": [],
+    "knowledge_graph": {
+        "nodes": {
+            "CHEBI:6801": {},
+            "MONDO:5148": {},
+        },
+        "edges": {
+            "CHEBI:6801-biolink:treats-MONDO:5148": {
+                "subject": "CHEBI:6801",
+                "object": "MONDO:5148",
+                "predicate": "biolink:treats",
+                "attributes": [
+                    {
+                        "attribute_type_id": "biolink:knowledge_source",
+                        "value": {"sources": ["a", "b", "c"]},
+                    }
+                ],
+            }
+        },
+    },
+    "results": [
+        {
+            "node_bindings": {
+                "n1": [{"id": "CHEBI:6801"}],
+                "n2": [{"id": "MONDO:5148"}],
+            },
+            "edge_bindings": {
+                "n1n2": [
+                    {
+                        "id": "CHEBI:6801-biolink:treats-MONDO:5148",
+                        "attributes": [
+                            {
+                                "attribute_type_id": "biolink:knowledge_source",
+                                "value": {"sources": ["a", "b", "c"]},
+                            }
+                        ],
+                    }
+                ]
+            },
+        }
+    ],
 }
 
 
@@ -44,6 +90,26 @@ def test_message_hashable():
     h2 = hash(m2)
 
     assert h == h2
+
+
+def test_message_jsonify():
+    """Check that we can jsonify a message"""
+
+    m = Message.parse_obj(EXAMPLE_MESSAGE)
+    m_json = m.json()
+    m2 = Message.parse_raw(m_json)
+
+    assert m == m2
+
+
+def test_message_dictify():
+    """Check that we can dictify a message"""
+
+    m = Message.parse_obj(EXAMPLE_MESSAGE)
+    m_dict = m.dict()
+    m2 = Message.parse_obj(m_dict)
+
+    assert m == m2
 
 
 def test_hash_property_update():
@@ -107,3 +173,34 @@ def test_hash_attribute_values():
         }
     )
     assert hash(a)
+
+
+def test_utils_type_coercion():
+    """
+    Test that when using a utility class (HashableSet, etc)
+    if we assign it, it will get converted to the correct type
+    """
+
+    class TestClass(BaseModel):
+        seq: Optional[HashableSequence[str]]
+        set: Optional[HashableSet[str]]
+        map: Optional[HashableMapping[str, str]]
+
+    tc = TestClass()
+
+    tc.seq = []
+    assert isinstance(tc.seq, HashableSequence)
+    tc.set = []
+    assert isinstance(tc.set, HashableSet)
+    tc.map = {}
+    assert isinstance(tc.map, HashableMapping)
+
+
+def test_hashable_set_dict():
+    h = HashableSet[str](__root__=[])
+    h.add("hi")
+    h.json()
+
+    h = HashableMapping[str, str](__root__={})
+    h["hello"] = "world"
+    h.json()
