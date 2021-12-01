@@ -115,6 +115,8 @@ def test_message_dictify():
 
     assert m == m2
 
+    assert type(next(iter(m_dict["results"]))) == dict
+
 
 def test_hash_property_update():
     """Check that we can update the property of an object and the hash changes"""
