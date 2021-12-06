@@ -15,6 +15,10 @@ class CURIE(BaseModel):
 
     __root__: str
 
+    def __hash__(self):
+        """Optimized hash function"""
+        return hash(self.__root__)
+
 
 class EdgeIdentifier(BaseModel):
     """Identifier for an edge in a knowledge graph"""
@@ -71,6 +75,10 @@ class BiolinkEntity(BaseModel):
     class Config:
         title = "biolink entity"
 
+    def __hash__(self):
+        """Optimized hash function"""
+        return hash(self.__root__)
+
 
 class BiolinkPredicate(BaseModel):
     """Biolink predicate."""
@@ -79,6 +87,10 @@ class BiolinkPredicate(BaseModel):
 
     class Config:
         title = "biolink predicate"
+
+    def __hash__(self):
+        """Optimized hash function"""
+        return hash(self.__root__)
 
 
 class LogLevelEnum(str, Enum):
