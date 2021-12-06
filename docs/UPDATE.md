@@ -1,6 +1,6 @@
 # Update Method
 
-The .update() method is a very important method, as it is used in Strider for fast, in-place message merging. This means merging messages from potentially thousands of KPs. During this merging, it is important that certain parts of the message, such as results and node categories, are deduplicated.
+The .update() method enables fast, in-place message merging. This means merging messages from potentially thousands of KPs. During this merging, it is important that certain parts of the message, such as results and node categories, are deduplicated.
 
 The only way to handle deduplication efficiently is to make objects hashable. This enables fast comparisons that would otherwise be too costly. However, Pydantic's built in hash functions are only enabled for immutable objects. This creates another problem because immutable objects cannot be merged in place, they need to be copied. This copying is also too costly for merging thousands of objects together.
 
@@ -36,7 +36,7 @@ def test_hash_deeply_nested_update():
     assert hash(m) != h
 ```
 
-We have to ensure that a deeply nested change is propogated upwards to invalidate the hash of all parent objects. To achieve this, we have a [custom model base model](reasoner_pydantic/base_model.py) for all objects that looks something like this:
+We have to ensure that a deeply nested change is propogated upwards to invalidate the hash of all parent objects. To achieve this, we have a [custom base model](reasoner_pydantic/base_model.py) for all objects that looks something like this:
 
 ```python
 class BaseModel(PydanticBaseModel):
