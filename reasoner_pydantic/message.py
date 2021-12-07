@@ -36,7 +36,7 @@ class Message(BaseModel):
         extra = "forbid"
 
     def update(self, other):
-        if other.query_graph:
+        if hash(self.query_graph) != hash(other.query_graph):
             raise NotImplementedError("Query graph merging not supported yet")
         if other.knowledge_graph:
             if not self.knowledge_graph:
