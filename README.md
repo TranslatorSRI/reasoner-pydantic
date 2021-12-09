@@ -11,7 +11,7 @@ These models are very handy when setting up a Reasoner API with [FastAPI](https:
 ```python
 from reasoner_pydantic import (
     Query, Message, QNode,
-    KnowledgeGraph, KNode,
+    KnowledgeGraph, Node,
     Result, NodeBinding,
 )
 
@@ -43,7 +43,7 @@ def answer_question(request):
         edge_bindings={},
         foo='bar',
     )
-    message.results.append(result)
+    message.results.add(result)
 
     return message.json()
 ```
