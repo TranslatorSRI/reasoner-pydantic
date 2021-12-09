@@ -10,20 +10,12 @@ from .base_model import BaseModel
 from .utils import HashableSequence, make_hashable
 
 
-class CURIE(BaseModel):
+class CURIE(str):
     """Compact URI."""
 
-    __root__: str
 
-    def __hash__(self):
-        """Optimized hash function"""
-        return hash(self.__root__)
-
-
-class EdgeIdentifier(BaseModel):
+class EdgeIdentifier(str):
     """Identifier for an edge in a knowledge graph"""
-
-    __root__: str
 
 
 class SubAttribute(BaseModel):
