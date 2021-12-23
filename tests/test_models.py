@@ -1,5 +1,10 @@
 from typing import Optional
+import pydantic
+
+import pytest
+
 from reasoner_pydantic.base_model import BaseModel
+from reasoner_pydantic.kgraph import Node
 from reasoner_pydantic.shared import Attribute, BiolinkEntity
 from reasoner_pydantic import Message, QNode, QEdge, QueryGraph
 from reasoner_pydantic.utils import HashableMapping, HashableSequence, HashableSet
@@ -162,7 +167,7 @@ def test_hash_deeply_nested_update():
     m = Message.parse_obj(EXAMPLE_MESSAGE)
     h = hash(m)
 
-    m.query_graph.nodes["n1"].categories.append(BiolinkEntity.parse_obj("biolink:Gene"))
+    m.query_graph.nodes["n1"].categories.append("biolink:Gene")
 
     assert hash(m) != h
 
@@ -200,3 +205,20 @@ def test_utils_type_coercion():
     assert isinstance(tc.set, HashableSet)
     tc.map = {}
     assert isinstance(tc.map, HashableMapping)
+
+
+def test_insertion_validation():
+    """
+    Check that when we insert/add
+    the inserted value is validated
+    """
+
+    node = QNode(categories=["biolink:Drug"])
+    node.categories.append("biolink:Disease")
+    with pytest.raises(pydantic.ValidationError):
+        node.categories.append("notACurie")
+
+    node = Node(categories=["biolink:Drug"])
+    node.categories.add("biolink:Disease")
+    with pytest.raises(pydantic.ValidationError):
+        node.categories.add("notACurie")

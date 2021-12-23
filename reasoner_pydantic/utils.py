@@ -1,7 +1,9 @@
 import collections
-from typing import Callable, Dict, List, Generic, Set, TypeVar
+from types import SimpleNamespace
+from typing import Callable, Dict, List, Generic, Set, TypeVar, get_args
 
-from pydantic import PrivateAttr
+from pydantic import PrivateAttr, BaseModel, ValidationError
+from pydantic.error_wrappers import ErrorWrapper
 from pydantic.generics import GenericModel
 
 KeyType = TypeVar("KeyType")
@@ -80,10 +82,12 @@ class HashableSequence(
 
     __root__: List[ValueType]
     _hash: int = PrivateAttr(default=None)
+    _internal_type = PrivateAttr(default=None)
     _invalidate_hook: Callable = PrivateAttr(default=None)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._internal_type = get_args(self.__annotations__["__root__"])[0]
         for value in self.__root__:
             if hasattr(value, "_invalidate_hook"):
                 value._invalidate_hook = self.invalidate_hash
@@ -101,7 +105,7 @@ class HashableSequence(
         self.invalidate_hash()
         if hasattr(v, "_invalidate_hook"):
             v._invalidate_hook = self.invalidate_hash
-        self.__root__[i] = v
+        self.__root__[i] = self.validate_item(v)
 
     def __delitem__(self, i):
         self.invalidate_hash()
@@ -109,7 +113,7 @@ class HashableSequence(
 
     def insert(self, i, v):
         self.invalidate_hash()
-        self.__root__.insert(i, v)
+        self.__root__.insert(i, self.validate_item(v))
 
     def __hash__(self):
         if self._hash is None:
@@ -126,6 +130,33 @@ class HashableSequence(
         if self._invalidate_hook:
             self._invalidate_hook()
 
+    def validate_item(self, v):
+        """
+        Run validation on an element in the list. If the bounded type is a custom type with a __get_validators__
+        method, use that to perform the validation - else attempt to initialize the value using the list's type
+
+        Fakes raising a pydantic ValidationError. The loc and Model is not known, so these values are meaningless.
+        """
+
+        try:
+            # Prefer a .validate() method if defined
+            validate_method = getattr(self._internal_type, "validate", None)
+            if validate_method:
+                return validate_method(v)
+
+            # Try using __get_validators__
+            validators_generator = getattr(self._internal_type, '__get_validators__', [])
+            if validators_generator:
+                for validator in validators_generator():
+                    v = validator(v)
+                return v
+
+            # Use the __init__ method
+            return v if isinstance(v, self._internal_type) else self._internal_type(v)
+
+        except (ValueError, TypeError, AssertionError) as exc:
+            raise ValidationError([ErrorWrapper(exc, loc='TypedList')], BaseModel)
+
 
 class HashableSet(
     GenericModel,
@@ -141,10 +172,12 @@ class HashableSet(
 
     __root__: Set[ValueType]
     _hash: int = PrivateAttr(default=None)
+    _internal_type = PrivateAttr(default=None)
     _invalidate_hook: Callable = PrivateAttr(default=None)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._internal_type = get_args(self.__annotations__["__root__"])[0]
         for value in self.__root__:
             if hasattr(value, "_invalidate_hook"):
                 value._invalidate_hook = self.invalidate_hash
@@ -162,11 +195,12 @@ class HashableSet(
         self.invalidate_hash()
         if hasattr(v, "_invalidate_hook"):
             v._invalidate_hook = self.invalidate_hash
-        self.__root__.add(v)
+        self.__root__.add(self.validate_item(v))
 
     def update(self, other):
         self.invalidate_hash()
-        self.__root__.update(other)
+        for v in other:
+            self.add(v)
 
     def discard(self, v):
         self.invalidate_hash()
@@ -192,6 +226,33 @@ class HashableSet(
         # set({"hello" : "world"}) which doesn't work because dicts are not hashable
         # This overrides that functionality to cast to a list instead
         return [self._get_value(v, to_dict=True, **kwargs) for v in self]
+
+    def validate_item(self, v):
+        """
+        Run validation on an element in the list. If the bounded type is a custom type with a __get_validators__
+        method, use that to perform the validation - else attempt to initialize the value using the list's type
+
+        Fakes raising a pydantic ValidationError. The loc and Model is not known, so these values are meaningless.
+        """
+
+        try:
+            # Prefer a .validate() method if defined
+            validate_method = getattr(self._internal_type, "validate", None)
+            if validate_method:
+                return validate_method(v)
+
+            # Try using __get_validators__
+            validators_generator = getattr(self._internal_type, '__get_validators__', [])
+            if validators_generator:
+                for validator in validators_generator():
+                    v = validator(v)
+                return v
+
+            # Use the __init__ method
+            return v if isinstance(v, self._internal_type) else self._internal_type(v)
+
+        except (ValueError, TypeError, AssertionError) as exc:
+            raise ValidationError([ErrorWrapper(exc, loc='TypedList')], BaseModel)
 
 
 def nonzero_validator(v):
