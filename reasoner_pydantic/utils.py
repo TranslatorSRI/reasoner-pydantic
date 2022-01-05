@@ -145,7 +145,9 @@ class HashableSequence(
                 return validate_method(v)
 
             # Try using __get_validators__
-            validators_generator = getattr(self._internal_type, '__get_validators__', [])
+            validators_generator = getattr(
+                self._internal_type, "__get_validators__", []
+            )
             if validators_generator:
                 for validator in validators_generator():
                     v = validator(v)
@@ -155,7 +157,7 @@ class HashableSequence(
             return v if isinstance(v, self._internal_type) else self._internal_type(v)
 
         except (ValueError, TypeError, AssertionError) as exc:
-            raise ValidationError([ErrorWrapper(exc, loc='TypedList')], BaseModel)
+            raise ValidationError([ErrorWrapper(exc, loc="TypedList")], BaseModel)
 
 
 class HashableSet(
@@ -242,7 +244,9 @@ class HashableSet(
                 return validate_method(v)
 
             # Try using __get_validators__
-            validators_generator = getattr(self._internal_type, '__get_validators__', [])
+            validators_generator = getattr(
+                self._internal_type, "__get_validators__", []
+            )
             if validators_generator:
                 for validator in validators_generator():
                     v = validator(v)
@@ -252,7 +256,7 @@ class HashableSet(
             return v if isinstance(v, self._internal_type) else self._internal_type(v)
 
         except (ValueError, TypeError, AssertionError) as exc:
-            raise ValidationError([ErrorWrapper(exc, loc='TypedList')], BaseModel)
+            raise ValidationError([ErrorWrapper(exc, loc="TypedList")], BaseModel)
 
 
 def nonzero_validator(v):
