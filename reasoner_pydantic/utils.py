@@ -20,7 +20,7 @@ class HashableMapping(
     hash can be considered valid if the values are immutable.
     """
 
-    __root__: Dict[KeyType, ValueType]
+    __root__: Dict[KeyType, ValueType] = dict()
 
     _hash: Optional[int] = PrivateAttr(default=None)
     _invalidate_hook: Optional[Callable] = PrivateAttr(default=None)
@@ -78,7 +78,7 @@ class HashableSequence(
     hash can be considered valid if the values are immutable.
     """
 
-    __root__: List[ValueType]
+    __root__: List[ValueType] = list()
     _hash: Optional[int] = PrivateAttr(default=None)
     _invalidate_hook: Optional[Callable] = PrivateAttr(default=None)
 
@@ -139,7 +139,7 @@ class HashableSet(
     hash can be considered valid if the values are immutable.
     """
 
-    __root__: Set[ValueType]
+    __root__: Set[ValueType] = set()
     _hash: Optional[int] = PrivateAttr(default=None)
     _invalidate_hook: Optional[Callable] = PrivateAttr(default=None)
 
