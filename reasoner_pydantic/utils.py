@@ -1,5 +1,5 @@
-import collections
-from typing import Callable, Dict, List, Generic, Set, TypeVar
+import collections.abc
+from typing import Callable, Dict, List, Generic, Set, TypeVar, Optional
 
 from pydantic import PrivateAttr
 from pydantic.generics import GenericModel
@@ -22,14 +22,14 @@ class HashableMapping(
 
     __root__: Dict[KeyType, ValueType]
 
-    _hash: int = PrivateAttr(default=None)
-    _invalidate_hook: Callable = PrivateAttr(default=None)
+    _hash: Optional[int] = PrivateAttr(default=None)
+    _invalidate_hook: Optional[Callable] = PrivateAttr(default=None)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for value in self.__root__.values():
             if hasattr(value, "_invalidate_hook"):
-                value._invalidate_hook = self.invalidate_hash
+                value._invalidate_hook = self.invalidate_hash # type: ignore
 
     def __getitem__(self, k):
         return self.__root__[k]
@@ -79,14 +79,14 @@ class HashableSequence(
     """
 
     __root__: List[ValueType]
-    _hash: int = PrivateAttr(default=None)
-    _invalidate_hook: Callable = PrivateAttr(default=None)
+    _hash: Optional[int] = PrivateAttr(default=None)
+    _invalidate_hook: Optional[Callable] = PrivateAttr(default=None)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for value in self.__root__:
             if hasattr(value, "_invalidate_hook"):
-                value._invalidate_hook = self.invalidate_hash
+                value._invalidate_hook = self.invalidate_hash # type: ignore
 
     def __getitem__(self, i):
         return self.__root__[i]
@@ -140,14 +140,14 @@ class HashableSet(
     """
 
     __root__: Set[ValueType]
-    _hash: int = PrivateAttr(default=None)
-    _invalidate_hook: Callable = PrivateAttr(default=None)
+    _hash: Optional[int] = PrivateAttr(default=None)
+    _invalidate_hook: Optional[Callable] = PrivateAttr(default=None)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for value in self.__root__:
             if hasattr(value, "_invalidate_hook"):
-                value._invalidate_hook = self.invalidate_hash
+                value._invalidate_hook = self.invalidate_hash # type: ignore
 
     def __contains__(self, v):
         return v in self.__root__
