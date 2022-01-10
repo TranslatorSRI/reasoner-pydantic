@@ -1,10 +1,12 @@
 """Shared models."""
+import re
 from datetime import datetime
 from enum import Enum
 from typing import Any, Optional
 
 from pydantic import constr, Field
 from pydantic.class_validators import validator
+from pydantic.types import ConstrainedStr
 
 from .base_model import BaseModel
 from .utils import HashableSequence, make_hashable
@@ -59,30 +61,22 @@ class Attribute(BaseModel):
         extra = "forbid"
 
 
-class BiolinkEntity(BaseModel):
+class BiolinkEntity(ConstrainedStr):
     """Biolink entity."""
 
-    __root__: constr(regex="^biolink:[A-Z][a-zA-Z]*$")
+    regex = re.compile("^biolink:[A-Z][a-zA-Z]*$")
 
     class Config:
         title = "biolink entity"
 
-    def __hash__(self):
-        """Optimized hash function"""
-        return hash(self.__root__)
 
-
-class BiolinkPredicate(BaseModel):
+class BiolinkPredicate(ConstrainedStr):
     """Biolink predicate."""
 
-    __root__: constr(regex="^biolink:[a-z][a-z_]*$")
+    regex = re.compile("^biolink:[a-z][a-z_]*$")
 
     class Config:
         title = "biolink predicate"
-
-    def __hash__(self):
-        """Optimized hash function"""
-        return hash(self.__root__)
 
 
 class LogLevelEnum(str, Enum):

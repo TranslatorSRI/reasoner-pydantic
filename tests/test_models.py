@@ -162,7 +162,7 @@ def test_hash_deeply_nested_update():
     m = Message.parse_obj(EXAMPLE_MESSAGE)
     h = hash(m)
 
-    m.query_graph.nodes["n1"].categories.append(BiolinkEntity.parse_obj("biolink:Gene"))
+    m.query_graph.nodes["n1"].categories.append(BiolinkEntity("biolink:Gene"))
 
     assert hash(m) != h
 
