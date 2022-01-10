@@ -8,6 +8,7 @@ from reasoner_pydantic import (
     Result,
     NodeBinding,
 )
+from reasoner_pydantic.utils import HashableSet
 
 
 def test_manipulation():
@@ -25,7 +26,7 @@ def test_manipulation():
 
     message: Message = request.message
     message.knowledge_graph = KnowledgeGraph(nodes={}, edges={})
-    message.results = []
+    message.results = HashableSet[Result]()
 
     # get query graph node
     assert message.query_graph.nodes, "Query graph contains no nodes!"

@@ -179,24 +179,3 @@ def test_hash_attribute_values():
         }
     )
     assert hash(a)
-
-
-def test_utils_type_coercion():
-    """
-    Test that when using a utility class (HashableSet, etc)
-    if we assign it, it will get converted to the correct type
-    """
-
-    class TestClass(BaseModel):
-        seq: Optional[HashableSequence[str]]
-        set: Optional[HashableSet[str]]
-        map: Optional[HashableMapping[str, str]]
-
-    tc = TestClass()
-
-    tc.seq = []
-    assert isinstance(tc.seq, HashableSequence)
-    tc.set = []
-    assert isinstance(tc.set, HashableSet)
-    tc.map = {}
-    assert isinstance(tc.map, HashableMapping)
