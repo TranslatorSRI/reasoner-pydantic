@@ -84,7 +84,7 @@ class QNode(BaseModel):
 
     is_set: bool = False
     constraints: Optional[HashableSequence[QueryConstraint]] = Field(
-        HashableSequence.parse_obj([]),
+        None,
         title="constraints",
     )
 
