@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, Optional
 import weakref
 from pydantic import BaseModel as PydanticBaseModel, PrivateAttr
 
@@ -14,7 +14,7 @@ class BaseModel(PydanticBaseModel):
     3. Able to call a hash invalidation hook on their own
     """
 
-    _hash: int = PrivateAttr(default=None)
+    _hash: Optional[int] = PrivateAttr(default=None)
     _invalidate_hook: Callable = PrivateAttr(default=None)
 
     def __hash__(self) -> int:
@@ -57,6 +57,3 @@ class BaseModel(PydanticBaseModel):
         raise NotImplementedError(
             f"Model {self.__class__.__name__} has no update method"
         )
-
-    class Config:
-        validate_assignment = True
