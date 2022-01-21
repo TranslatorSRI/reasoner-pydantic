@@ -84,7 +84,7 @@ class QNode(BaseModel):
 
     is_set: bool = False
     constraints: Optional[HashableSequence[QueryConstraint]] = Field(
-        None,
+        default=HashableSequence[QueryConstraint](__root__=[]),
         title="constraints",
     )
 
@@ -106,7 +106,7 @@ class QEdge(BaseModel):
         title="object node id",
     )
 
-    predicates: Union[HashableSequence[BiolinkPredicate], None] = Field(
+    predicates: Optional[HashableSequence[BiolinkPredicate]] = Field(
         None,
         title="predicates",
         nullable=True,
@@ -114,6 +114,7 @@ class QEdge(BaseModel):
     _nonzero_predicates = validator("predicates", allow_reuse=True)(nonzero_validator)
 
     constraints: Optional[HashableSequence[QueryConstraint]] = Field(
+        default=HashableSequence[QueryConstraint](__root__=[]),
         title="constraints",
     )
 
