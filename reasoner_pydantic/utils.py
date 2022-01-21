@@ -29,7 +29,7 @@ class HashableMapping(
         super().__init__(*args, **kwargs)
         for value in self.__root__.values():
             if hasattr(value, "_invalidate_hook"):
-                value._invalidate_hook = self.invalidate_hash # type: ignore
+                value._invalidate_hook = self.invalidate_hash  # type: ignore
 
     def __getitem__(self, k):
         return self.__root__[k]
@@ -86,7 +86,7 @@ class HashableSequence(
         super().__init__(*args, **kwargs)
         for value in self.__root__:
             if hasattr(value, "_invalidate_hook"):
-                value._invalidate_hook = self.invalidate_hash # type: ignore
+                value._invalidate_hook = self.invalidate_hash  # type: ignore
 
     def __getitem__(self, i):
         return self.__root__[i]
@@ -147,7 +147,7 @@ class HashableSet(
         super().__init__(*args, **kwargs)
         for value in self.__root__:
             if hasattr(value, "_invalidate_hook"):
-                value._invalidate_hook = self.invalidate_hash # type: ignore
+                value._invalidate_hook = self.invalidate_hash  # type: ignore
 
     def __contains__(self, v):
         return v in self.__root__
