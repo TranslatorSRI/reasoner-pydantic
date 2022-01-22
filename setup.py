@@ -3,9 +3,9 @@ from setuptools import setup
 
 setup(
     name="reasoner-pydantic",
-    version="2.0.0",
-    author="Patrick Wang",
-    author_email="patrick@covar.com",
+    version="2.1.0",
+    author="Kenneth Morton",
+    author_email="kenny@covar.com",
     url="https://github.com/TranslatorSRI/reasoner-pydantic",
     description="Pydantic models for the Reasoner API data formats",
     packages=["reasoner_pydantic"],
