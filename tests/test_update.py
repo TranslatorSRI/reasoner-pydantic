@@ -209,14 +209,7 @@ def test_normalize_knowledge_graph_edges():
                 }
             },
         },
-        "results": [
-            {
-                "node_bindings" : [],
-                "edge_bindings" : {
-                    "qe0" : [{"id" : "n0n1"}]
-                }
-            }
-        ],
+        "results": [{"node_bindings": [], "edge_bindings": {"qe0": [{"id": "n0n1"}]}}],
     }
 
     message_b = {
@@ -231,8 +224,7 @@ def test_normalize_knowledge_graph_edges():
                 }
             },
         },
-        "results": [
-        ],
+        "results": [],
     }
 
     m = Message()
