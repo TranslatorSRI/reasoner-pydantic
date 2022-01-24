@@ -191,10 +191,10 @@ def test_merge_knowledge_graph_nodes():
     assert ATTRIBUTE_B in node.attributes
 
 
-def test_merge_knowledge_graph_edges():
+def test_normalize_knowledge_graph_edges():
     """
-    Test that we do a smart merge when given knowledge
-    graph edges with the same subject, object, predicate
+    Test that KG edge IDs are normalized, so even if we pass
+    in edges with the same name they are not merged by default
     """
 
     message_a = {
@@ -209,7 +209,14 @@ def test_merge_knowledge_graph_edges():
                 }
             },
         },
-        "results": [],
+        "results": [
+            {
+                "node_bindings" : [],
+                "edge_bindings" : {
+                    "qe0" : [{"id" : "n0n1"}]
+                }
+            }
+        ],
     }
 
     message_b = {
@@ -224,7 +231,8 @@ def test_merge_knowledge_graph_edges():
                 }
             },
         },
-        "results": [],
+        "results": [
+        ],
     }
 
     m = Message()
@@ -232,13 +240,14 @@ def test_merge_knowledge_graph_edges():
     m.update(Message.parse_obj(message_a))
     m.update(Message.parse_obj(message_b))
 
-    # Validate output
+    # Check that we didn't combine edges
     edges = m.knowledge_graph.edges
-    assert len(edges) == 1
-    edge = next(iter(edges.values()))
+    assert len(edges) == 2
 
-    assert ATTRIBUTE_A in edge.attributes
-    assert ATTRIBUTE_B in edge.attributes
+    # Check that the result was updated to point to the correct edge
+    edge_id, edge = next(iter(edges.items()))
+    result = next(iter(m.results))
+    assert next(iter(result.edge_bindings["qe0"])).id == edge_id
 
 
 def test_merge_identical_attributes():
