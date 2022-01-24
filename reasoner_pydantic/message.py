@@ -1,5 +1,7 @@
 """Reasoner API models."""
-from typing import Optional, Set
+import hashlib
+
+from typing import Optional, Set, Callable
 
 from pydantic import constr, Field
 
@@ -35,15 +37,57 @@ class Message(BaseModel):
         title = "message"
         extra = "forbid"
 
-    def update(self, other):
+    def update(self, other: "Message"):
         if hash(self.query_graph) != hash(other.query_graph):
             raise NotImplementedError("Query graph merging not supported yet")
+        # Make a copy because normalization will modify results
+        other = other.copy(deep=True)
+
         if other.knowledge_graph:
             if not self.knowledge_graph:
                 self.knowledge_graph = KnowledgeGraph(nodes=[], edges=[])
+            # Normalize edges of incoming KG
+            other._normalize_kg_edge_ids()
             self.knowledge_graph.update(other.knowledge_graph)
         if other.results:
+            if not self.results:
+                self.results = HashableSet[Result]()
             self.results.update(other.results)
+
+    def _normalize_kg_edge_ids(self):
+        """
+        Replace edge IDs with a hash of the edge object
+        """
+        self._update_kg_edge_ids(
+            lambda edge: hashlib.blake2b(
+                hash(edge).to_bytes(16, byteorder="big", signed=True), digest_size=6
+            ).hexdigest(),
+        )
+
+    def _update_kg_edge_ids(self, update_func: Callable):
+        """
+        Replace edge IDs using the specified function
+        """
+
+        # Mapping of old to new edge IDs
+        edge_id_mapping = {}
+
+        # Make a copy of the edge keys because we're about to change them
+        for edge_id in list(self.knowledge_graph.edges.keys()):
+            edge = self.knowledge_graph.edges.pop(edge_id)
+            new_edge_id = update_func(edge)
+
+            edge_id_mapping[edge_id] = new_edge_id
+
+            # Update knowledge graph
+            self.knowledge_graph.edges[new_edge_id] = edge
+
+        # Update results
+        if self.results:
+            for result in self.results:
+                for edge_binding_list in result.edge_bindings.values():
+                    for eb in edge_binding_list:
+                        eb.id = edge_id_mapping[eb.id]
 
 
 class Query(BaseModel):
