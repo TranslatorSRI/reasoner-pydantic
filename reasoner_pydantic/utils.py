@@ -174,7 +174,9 @@ class HashableSet(
 
     def __hash__(self):
         if self._hash is None:
-            self._hash = hash(tuple(self.__root__))
+            # Use frozenset instead of tuple to ensure
+            # hash is computed without ordering of elements
+            self._hash = hash(frozenset(self.__root__))
         return self._hash
 
     def invalidate_hash(self):
