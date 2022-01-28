@@ -109,7 +109,7 @@ class HashableSet(
     def __hash__(self):
         # Use frozenset instead of tuple to ensure
         # hash is computed without ordering of elements
-        return hash(frozenset(self.__root__))
+        return hash(frozenset(self))
 
     def dict(self, *args, **kwargs):
         """Custom serialization method to convert to list"""
