@@ -113,7 +113,7 @@ class FillDenyParameters(BaseModel):
         extra = "forbid"
 
 
-class FillParameters(BaseModel):
+class FillParameters(BaseOperation):
     _root_: Union[FillAllowParameters, FillDenyParameters]
 
 
