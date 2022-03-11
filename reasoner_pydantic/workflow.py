@@ -13,8 +13,30 @@ def constant(s: str):
     """Generate a static enum."""
     return Enum(value=s, names={s: s}, type=str)
 
+class RunnerAllowList(BaseModel):
+    allowlist: HashableSequence[str]
+    _nonzero_allowlist = validator("allowlist", allow_reuse=True)(nonzero_validator)
 
-class OperationAnnotate(BaseModel):
+    class Config:
+        extra = "forbid"
+
+class RunnerDenyList(BaseModel):
+    denylist: HashableSequence[str]
+    _nonzero_denylist = validator("denylist", allow_reuse=True)(nonzero_validator)
+
+    class Config:
+        extra = "forbid"
+
+class RunnerParameters(BaseModel):
+    _root_: Union[RunnerAllowList, RunnerDenyList]
+
+class BaseOperation(BaseModel):
+    runner_parameters: Optional[RunnerParameters]
+
+    class Config:
+        extra = "forbid"
+
+class OperationAnnotate(BaseOperation):
     id: constant("annotate")
     parameters: Optional[Any]
 
@@ -26,7 +48,7 @@ class AnnotateEdgesParameters(BaseModel):
     attributes: Optional[HashableSequence[str]]
 
 
-class OperationAnnotateEdges(BaseModel):
+class OperationAnnotateEdges(BaseOperation):
     id: constant("annotate_edges")
     parameters: Optional[AnnotateEdgesParameters]
 
@@ -257,7 +279,7 @@ class OperationFilterKgraphTopN(BaseModel):
         extra = "forbid"
 
 
-class OperationLookup(BaseModel):
+class OperationLookup(BaseOperation):
     id: constant("lookup")
     parameters: Optional[Any]
 
