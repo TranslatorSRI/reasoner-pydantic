@@ -120,7 +120,6 @@ class FillParameters(BaseModel):
 class OperationFill(BaseOperation):
     id: constant("fill")
     parameters: Optional[FillParameters]
-    runner_parameters: Optional[RunnerParameters]
 
     class Config:
         extra = "forbid"
