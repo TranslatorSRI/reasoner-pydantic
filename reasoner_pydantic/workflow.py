@@ -113,11 +113,11 @@ class FillDenyParameters(BaseModel):
         extra = "forbid"
 
 
-class FillParameters(BaseOperation):
+class FillParameters(BaseModel):
     _root_: Union[FillAllowParameters, FillDenyParameters]
 
 
-class OperationFill(BaseModel):
+class OperationFill(BaseOperation):
     id: constant("fill")
     parameters: Optional[FillParameters]
     runner_parameters: Optional[RunnerParameters]
