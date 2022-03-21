@@ -5,16 +5,8 @@ query = {
     "workflow": [
         {
             "id": "fill",
-            "parameters": {
-                "denylist": [
-                    "ARAX"
-                ]
-            },
-            "runner_parameters": {
-                "allowlist": [
-                    "ARAGORN"
-                ]
-            }
+            "parameters": {"denylist": ["ARAX"]},
+            "runner_parameters": {"allowlist": ["ARAGORN"]},
         },
         {"id": "bind"},
         {

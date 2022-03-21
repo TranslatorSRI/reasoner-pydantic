@@ -13,12 +13,14 @@ def constant(s: str):
     """Generate a static enum."""
     return Enum(value=s, names={s: s}, type=str)
 
+
 class RunnerAllowList(BaseModel):
     allowlist: HashableSequence[str]
     _nonzero_allowlist = validator("allowlist", allow_reuse=True)(nonzero_validator)
 
     class Config:
         extra = "forbid"
+
 
 class RunnerDenyList(BaseModel):
     denylist: HashableSequence[str]
@@ -27,14 +29,17 @@ class RunnerDenyList(BaseModel):
     class Config:
         extra = "forbid"
 
+
 class RunnerParameters(BaseModel):
     __root__: Optional[Union[RunnerAllowList, RunnerDenyList]]
+
 
 class BaseOperation(BaseModel):
     runner_parameters: Optional[RunnerParameters]
 
     class Config:
         extra = "forbid"
+
 
 class OperationAnnotate(BaseOperation):
     id: constant("annotate")
