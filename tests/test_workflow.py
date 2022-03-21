@@ -3,7 +3,19 @@ from reasoner_pydantic import Query
 
 query = {
     "workflow": [
-        {"id": "fill"},
+        {
+            "id": "fill",
+            "parameters": {
+                "denylist": [
+                    "ARAX"
+                ]
+            },
+            "runner_parameters": {
+                "allowlist": [
+                    "ARAGORN"
+                ]
+            }
+        },
         {"id": "bind"},
         {
             "id": "overlay_compute_ngd",
@@ -38,4 +50,11 @@ query = {
 
 def test_workflow():
     """Test construction of a Query with a workflow."""
-    Query(**query)
+    query_obj = Query(**query)
+    query_dict = query_obj.dict()
+    assert "runner_parameters" in query_dict["workflow"][0].keys()
+    assert "parameters" in query_dict["workflow"][0].keys()
+    assert "allowlist" in query_dict["workflow"][0]["runner_parameters"].keys()
+    assert "denylist" in query_dict["workflow"][0]["parameters"].keys()
+    assert "ARAGORN" in query_dict["workflow"][0]["runner_parameters"]["allowlist"]
+    assert "ARAX" in query_dict["workflow"][0]["parameters"]["denylist"]
