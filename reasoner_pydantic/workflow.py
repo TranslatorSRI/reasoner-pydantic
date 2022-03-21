@@ -28,7 +28,7 @@ class RunnerDenyList(BaseModel):
         extra = "forbid"
 
 class RunnerParameters(BaseModel):
-    _root_: Union[RunnerAllowList, RunnerDenyList]
+    __root__: Optional[Union[RunnerAllowList, RunnerDenyList]]
 
 class BaseOperation(BaseModel):
     runner_parameters: Optional[RunnerParameters]
@@ -114,7 +114,7 @@ class FillDenyParameters(BaseModel):
 
 
 class FillParameters(BaseModel):
-    _root_: Union[FillAllowParameters, FillDenyParameters]
+    __root__: Union[FillAllowParameters, FillDenyParameters]
 
 
 class OperationFill(BaseOperation):
