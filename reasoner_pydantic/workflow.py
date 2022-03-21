@@ -15,7 +15,7 @@ def constant(s: str):
 
 
 class RunnerAllowList(BaseModel):
-    allowlist: HashableSequence[str]
+    allowlist: Optional[HashableSequence[str]]
     _nonzero_allowlist = validator("allowlist", allow_reuse=True)(nonzero_validator)
 
     class Config:
@@ -23,7 +23,7 @@ class RunnerAllowList(BaseModel):
 
 
 class RunnerDenyList(BaseModel):
-    denylist: HashableSequence[str]
+    denylist: Optional[HashableSequence[str]]
     _nonzero_denylist = validator("denylist", allow_reuse=True)(nonzero_validator)
 
     class Config:
