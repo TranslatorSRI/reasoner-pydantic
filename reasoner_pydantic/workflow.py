@@ -60,7 +60,7 @@ class AnnotateNodesParameters(BaseModel):
     attributes: Optional[HashableSequence[str]]
 
 
-class OperationAnnotateNodes(BaseModel):
+class OperationAnnotateNodes(BaseOperation):
     id: constant("annotate_nodes")
     parameters: Optional[AnnotateNodesParameters]
 
@@ -68,7 +68,7 @@ class OperationAnnotateNodes(BaseModel):
         extra = "forbid"
 
 
-class OperationBind(BaseModel):
+class OperationBind(BaseOperation):
     id: constant("bind")
     parameters: Optional[Any]
 
@@ -76,7 +76,7 @@ class OperationBind(BaseModel):
         extra = "forbid"
 
 
-class OperationCompleteResults(BaseModel):
+class OperationCompleteResults(BaseOperation):
     id: constant("complete_results")
     parameters: Optional[Any]
 
@@ -89,7 +89,7 @@ class EnrichResultsParameters(BaseModel):
     qnode_keys: Optional[HashableSequence[str]]
 
 
-class OperationEnrichResults(BaseModel):
+class OperationEnrichResults(BaseOperation):
     id: constant("enrich_results")
     parameters: Optional[EnrichResultsParameters]
 
@@ -125,7 +125,7 @@ class OperationFill(BaseOperation):
         extra = "forbid"
 
 
-class OperationFilterResults(BaseModel):
+class OperationFilterResults(BaseOperation):
     id: constant("filter_results")
     parameters: Optional[Any]
 
@@ -140,7 +140,7 @@ class FilterResultsTopNParameters(BaseModel):
         extra = "forbid"
 
 
-class OperationFilterResultsTopN(BaseModel):
+class OperationFilterResultsTopN(BaseOperation):
     id: constant("filter_results_top_n")
     parameters: Optional[FilterResultsTopNParameters]
 
@@ -148,7 +148,7 @@ class OperationFilterResultsTopN(BaseModel):
         extra = "forbid"
 
 
-class OperationFilterKgraph(BaseModel):
+class OperationFilterKgraph(BaseOperation):
     id: constant("filter_kgraph")
     parameters: Optional[Any]
 
@@ -171,7 +171,7 @@ class FilterKgraphContinuousKedgeAttributeParameters(BaseModel):
     qnode_keys: HashableSequence[str] = []
 
 
-class OperationFilterKgraphContinuousKedgeAttribute(BaseModel):
+class OperationFilterKgraphContinuousKedgeAttribute(BaseOperation):
     id: constant("filter_kgraph_continuous_kedge_attribute")
     parameters: FilterKgraphContinuousKedgeAttributeParameters
 
@@ -186,7 +186,7 @@ class FilterKgraphDiscreteKedgeAttributeParameters(BaseModel):
     qnode_keys: HashableSequence[str] = []
 
 
-class OperationFilterKgraphDiscreteKedgeAttribute(BaseModel):
+class OperationFilterKgraphDiscreteKedgeAttribute(BaseOperation):
     id: constant("filter_kgraph_discrete_kedge_attribute")
     parameters: FilterKgraphDiscreteKedgeAttributeParameters
 
@@ -200,7 +200,7 @@ class FilterKgraphDiscreteKnodeAttributeParameters(BaseModel):
     qnode_keys: Optional[HashableSequence[str]]
 
 
-class OperationFilterKgraphDiscreteKnodeAttribute(BaseModel):
+class OperationFilterKgraphDiscreteKnodeAttribute(BaseOperation):
     id: constant("filter_kgraph_discrete_knode_attribute")
     parameters: FilterKgraphDiscreteKnodeAttributeParameters
 
@@ -208,7 +208,7 @@ class OperationFilterKgraphDiscreteKnodeAttribute(BaseModel):
         extra = "forbid"
 
 
-class OperationFilterKgraphOrphans(BaseModel):
+class OperationFilterKgraphOrphans(BaseOperation):
     id: constant("filter_kgraph_orphans")
     parameters: Optional[Any]
 
@@ -239,7 +239,7 @@ class FilterKgraphPercentileParameters(BaseModel):
     qnode_keys: HashableSequence[str] = []
 
 
-class OperationFilterKgraphPercentile(BaseModel):
+class OperationFilterKgraphPercentile(BaseOperation):
     id: constant("filter_kgraph_percentile")
     parameters: FilterKgraphPercentileParameters
 
@@ -263,7 +263,7 @@ class FilterKgraphStdDevParameters(BaseModel):
     qnode_keys: HashableSequence[str] = []
 
 
-class OperationFilterKgraphStdDev(BaseModel):
+class OperationFilterKgraphStdDev(BaseOperation):
     id: constant("filter_kgraph_std_dev")
     parameters: FilterKgraphStdDevParameters
 
@@ -271,7 +271,7 @@ class OperationFilterKgraphStdDev(BaseModel):
         extra = "forbid"
 
 
-class OperationFilterKgraphTopN(BaseModel):
+class OperationFilterKgraphTopN(BaseOperation):
     id: constant("filter_kgraph_top_n")
     parameters: FilterKgraphTopNParameters
 
@@ -287,7 +287,7 @@ class OperationLookup(BaseOperation):
         extra = "forbid"
 
 
-class OperationOverlay(BaseModel):
+class OperationOverlay(BaseOperation):
     id: constant("overlay")
     parameters: Optional[Any]
 
@@ -301,7 +301,7 @@ class OverlayComputeJaccardParameters(BaseModel):
     virtual_relation_label: str
 
 
-class OperationOverlayComputeJaccard(BaseModel):
+class OperationOverlayComputeJaccard(BaseOperation):
     id: constant("overlay_compute_jaccard")
     parameters: OverlayComputeJaccardParameters
 
@@ -314,7 +314,7 @@ class OverlayComputeNgdParameters(BaseModel):
     virtual_relation_label: str
 
 
-class OperationOverlayComputeNgd(BaseModel):
+class OperationOverlayComputeNgd(BaseOperation):
     id: constant("overlay_compute_ngd")
     parameters: OverlayComputeNgdParameters
 
@@ -322,7 +322,7 @@ class OperationOverlayComputeNgd(BaseModel):
         extra = "forbid"
 
 
-class OperationOverlayConnectKnodes(BaseModel):
+class OperationOverlayConnectKnodes(BaseOperation):
     id: constant("overlay_connect_knodes")
     parameters: Optional[Any]
 
@@ -337,7 +337,7 @@ class OverlayFisherExactTestParameters(BaseModel):
     rel_edge_key: Optional[str]
 
 
-class OperationOverlayFisherExactTest(BaseModel):
+class OperationOverlayFisherExactTest(BaseOperation):
     id: constant("overlay_fisher_exact_test")
     parameters: OverlayFisherExactTestParameters
 
@@ -345,7 +345,7 @@ class OperationOverlayFisherExactTest(BaseModel):
         extra = "forbid"
 
 
-class OperationRestate(BaseModel):
+class OperationRestate(BaseOperation):
     id: constant("restate")
     parameters: Optional[Any]
 
@@ -353,7 +353,7 @@ class OperationRestate(BaseModel):
         extra = "forbid"
 
 
-class OperationScore(BaseModel):
+class OperationScore(BaseOperation):
     id: constant("score")
     parameters: Optional[Any]
 
@@ -361,7 +361,7 @@ class OperationScore(BaseModel):
         extra = "forbid"
 
 
-class OperationSortResults(BaseModel):
+class OperationSortResults(BaseOperation):
     id: constant("sort_results")
     parameters: Optional[Any]
 
@@ -382,7 +382,7 @@ class SortResultsEdgeAttributeParameters(BaseModel):
     qedge_keys: Optional[HashableSequence[str]]
 
 
-class OperationSortResultsEdgeAttribute(BaseModel):
+class OperationSortResultsEdgeAttribute(BaseOperation):
     id: constant("sort_results_edge_attribute")
     parameters: SortResultsEdgeAttributeParameters
 
@@ -396,7 +396,7 @@ class SortResultsNodeAttributeParameters(BaseModel):
     qnode_keys: Optional[HashableSequence[str]]
 
 
-class OperationSortResultsNodeAttribute(BaseModel):
+class OperationSortResultsNodeAttribute(BaseOperation):
     id: constant("sort_results_node_attribute")
     parameters: SortResultsNodeAttributeParameters
 
@@ -408,7 +408,7 @@ class SortResultsScoreParameters(BaseModel):
     ascending_or_descending: AscOrDescEnum
 
 
-class OperationSortResultsScore(BaseModel):
+class OperationSortResultsScore(BaseOperation):
     id: constant("sort_results_score")
     parameters: SortResultsScoreParameters
 
