@@ -1,10 +1,11 @@
 """Results models."""
-from typing import Optional
+from typing import Optional, Any
 
 from pydantic import Field
+from pydantic.class_validators import validator, root_validator
 
 from .base_model import BaseModel
-from .utils import HashableMapping, HashableSequence, HashableSet
+from .utils import HashableMapping, HashableSequence, HashableSet, make_hashable
 from .shared import Attribute, CURIE
 
 
@@ -61,6 +62,35 @@ class Result(BaseModel):
         None,
         format="float",
     )
+    # these lines work
+    # raw_data: Optional[Any] = Field(
+    #     None
+    # )
+    # _make_fields_hashable = validator("*", allow_reuse=True, check_fields=False)(make_hashable)
+
+    # this isn't working
+    @root_validator(pre=True, allow_reuse=True)
+    def make_hashable(cls, values):
+        """
+        Convert a generic Python object to a hashable one recursively
+
+        This is an expensive operation, so it is best used sparingly
+        """
+
+        # type(o) is faster than isinstance(o) because it doesn't
+        # traverse the inheritance hierarchy
+        o_type = str(type(values))
+        print(o_type)
+        print(values)
+
+        if "dict" in o_type:
+            print('got a dict')
+            return HashableMapping.parse_obj(((k, make_hashable(cls, v)) for k, v in values.items()))
+        if "list" in o_type:
+            print('got a list')
+            return HashableSequence.parse_obj(make_hashable(cls, v) for v in values)
+
+        return values
 
     class Config:
         title = "result"
