@@ -5,7 +5,7 @@ from pydantic import Field
 from pydantic.class_validators import validator, root_validator
 
 from .base_model import BaseModel
-from .utils import HashableMapping, HashableSequence, HashableSet, make_hashable
+from .utils import HashableMapping, HashableSequence, HashableSet
 from .shared import Attribute, CURIE
 
 
@@ -85,10 +85,10 @@ class Result(BaseModel):
 
         if "dict" in o_type:
             print('got a dict')
-            return HashableMapping.parse_obj(((k, make_hashable(cls, v)) for k, v in values.items()))
+            return HashableMapping.parse_obj(((k, cls.make_hashable(cls, v)) for k, v in values.items()))
         if "list" in o_type:
             print('got a list')
-            return HashableSequence.parse_obj(make_hashable(cls, v) for v in values)
+            return HashableSequence.parse_obj(cls.make_hashable(cls, v) for v in values)
 
         return values
 
