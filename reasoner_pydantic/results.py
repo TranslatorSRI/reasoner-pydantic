@@ -69,7 +69,7 @@ class Result(BaseModel):
     # _make_fields_hashable = validator("*", allow_reuse=True, check_fields=False)(make_hashable)
 
     # this isn't working
-    @root_validator(pre=True, allow_reuse=True)
+    @root_validator(allow_reuse=True)
     def make_hashable(cls, values):
         """
         Convert a generic Python object to a hashable one recursively
@@ -85,10 +85,12 @@ class Result(BaseModel):
 
         if "dict" in o_type:
             print('got a dict')
-            return HashableMapping.parse_obj(((k, cls.make_hashable(cls, v)) for k, v in values.items()))
+            return HashableMapping.parse_obj(((k, cls.make_hashable(v)) for k, v in values.items()))
         if "list" in o_type:
             print('got a list')
-            return HashableSequence.parse_obj(cls.make_hashable(cls, v) for v in values)
+            return HashableSequence.parse_obj(cls.make_hashable(v) for v in values)
+
+        print(f"values: {values}")
 
         return values
 
