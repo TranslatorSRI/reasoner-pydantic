@@ -2,12 +2,10 @@
 from typing import Optional, Any
 
 from pydantic import Field
-from pydantic.class_validators import validator, root_validator
 
 from .base_model import BaseModel
-from .utils import HashableMapping, HashableSequence, HashableSet
+from .utils import HashableMapping, HashableSet
 from .shared import Attribute, CURIE
-
 
 class EdgeBinding(BaseModel):
     """Edge binding."""
@@ -67,32 +65,6 @@ class Result(BaseModel):
     #     None
     # )
     # _make_fields_hashable = validator("*", allow_reuse=True, check_fields=False)(make_hashable)
-
-    # this isn't working
-    @root_validator(allow_reuse=True)
-    def make_hashable(cls, values):
-        """
-        Convert a generic Python object to a hashable one recursively
-
-        This is an expensive operation, so it is best used sparingly
-        """
-
-        # type(o) is faster than isinstance(o) because it doesn't
-        # traverse the inheritance hierarchy
-        o_type = str(type(values))
-        print(o_type)
-        print(values)
-
-        if "dict" in o_type:
-            print('got a dict')
-            return HashableMapping.parse_obj(((k, cls.make_hashable(v)) for k, v in values.items()))
-        if "list" in o_type:
-            print('got a list')
-            return HashableSequence.parse_obj(cls.make_hashable(v) for v in values)
-
-        print(f"values: {values}")
-
-        return values
 
     class Config:
         title = "result"
