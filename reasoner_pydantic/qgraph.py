@@ -3,7 +3,7 @@ from enum import Enum
 
 from pydantic.class_validators import validator
 from reasoner_pydantic.utils import HashableMapping
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
 from pydantic import Field
 

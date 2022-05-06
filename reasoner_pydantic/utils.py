@@ -1,7 +1,6 @@
 import collections.abc
-from typing import Callable, Dict, List, Generic, Set, TypeVar, Optional
+from typing import Dict, List, Generic, Set, TypeVar
 
-from pydantic import PrivateAttr
 from pydantic.generics import GenericModel
 
 KeyType = TypeVar("KeyType")

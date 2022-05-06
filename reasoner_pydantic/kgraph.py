@@ -1,11 +1,11 @@
 """Knowledge graph models."""
-from typing import Optional, Union
+from typing import Optional
 
 from pydantic import Field
 
 from .shared import Attribute, BiolinkEntity, BiolinkPredicate, CURIE, EdgeIdentifier
 from .base_model import BaseModel
-from .utils import HashableMapping, HashableSequence, HashableSet
+from .utils import HashableMapping, HashableSet
 
 
 class Node(BaseModel):
