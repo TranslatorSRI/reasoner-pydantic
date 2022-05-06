@@ -4,12 +4,11 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Optional
 
-from pydantic import constr, Field
-from pydantic.class_validators import validator
+from pydantic import Field
 from pydantic.types import ConstrainedStr
 
 from .base_model import BaseModel
-from .utils import HashableSequence, make_hashable
+from .utils import HashableSequence
 
 
 class CURIE(str):
@@ -25,7 +24,6 @@ class SubAttribute(BaseModel):
 
     attribute_type_id: CURIE = Field(..., title="type")
     value: Any = Field(..., title="value")
-    _make_value_hashable = validator("value", allow_reuse=True)(make_hashable)
     value_type_id: Optional[CURIE] = Field(
         None,
         title="value_type_id",
@@ -45,7 +43,6 @@ class Attribute(BaseModel):
 
     attribute_type_id: CURIE = Field(..., title="type")
     value: Any = Field(..., title="value")
-    _make_value_hashable = validator("value", allow_reuse=True)(make_hashable)
     value_type_id: Optional[CURIE] = Field(
         None,
         title="value_type_id",
