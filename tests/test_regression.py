@@ -1,4 +1,5 @@
 from reasoner_pydantic import Result
+from reasoner_pydantic.utils import HashableSequence
 
 EXAMPLE_RESULT = {
     "node_bindings": {
@@ -18,19 +19,16 @@ EXAMPLE_RESULT = {
             },
         ],
     },
-    "raw_data": ["test"]
+    "raw_data": ["test"],
 }
 
 
 def test_result_hashable():
-    """Check that we can hash a result"""
+    """Check that we can hash a result with extra properties"""
 
-    m = Result.parse_obj(EXAMPLE_RESULT)
-    print(m)
-    h = hash(m)
-    assert h
+    result_obj = Result.parse_obj(EXAMPLE_RESULT)
+    result_dict = result_obj.dict()
 
-    m2 = Result.parse_obj(EXAMPLE_RESULT)
-    h2 = hash(m2)
-
-    assert h == h2
+    assert len(result_dict["raw_data"]) == 1
+    assert type(result_obj.raw_data) == HashableSequence
+    assert result_obj.raw_data[0] == "test"
