@@ -6,7 +6,7 @@ from pydantic.class_validators import validator
 from pydantic.types import confloat, conint
 
 from .base_model import BaseModel
-from .utils import HashableMapping, HashableSequence, nonzero_validator
+from .utils import HashableSequence, nonzero_validator
 
 
 def constant(s: str):

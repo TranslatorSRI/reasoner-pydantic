@@ -1,7 +1,7 @@
 """Reasoner API models."""
 import hashlib
 
-from typing import Optional, Set, Callable
+from typing import Optional, Callable
 
 from pydantic import constr, Field
 
