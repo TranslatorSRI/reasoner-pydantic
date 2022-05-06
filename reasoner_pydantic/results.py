@@ -7,6 +7,7 @@ from .base_model import BaseModel
 from .utils import HashableMapping, HashableSet
 from .shared import Attribute, CURIE
 
+
 class EdgeBinding(BaseModel):
     """Edge binding."""
 
@@ -60,11 +61,6 @@ class Result(BaseModel):
         None,
         format="float",
     )
-    # these lines work
-    # raw_data: Optional[Any] = Field(
-    #     None
-    # )
-    # _make_fields_hashable = validator("*", allow_reuse=True, check_fields=False)(make_hashable)
 
     class Config:
         title = "result"
