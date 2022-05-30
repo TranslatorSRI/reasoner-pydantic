@@ -48,7 +48,7 @@ def test_manipulation():
     )
     message.results.add(result)
 
-    print(message.json())
+    message.json()
 
 
 def test_singletons():
