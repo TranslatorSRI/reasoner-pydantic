@@ -7,7 +7,7 @@ from reasoner_pydantic import Attribute, Message
 
 # Some sample attributes
 ATTRIBUTE_A = {
-    "attribute_type_id": "biolink:knowledge_source",
+    "attribute_type_id": "biolink:aggregate_knowledge_source",
     "value": "https://automat.renci.org/",
     "attributes": [
         {"attribute_type_id": "biolink:publication", "value": "pubmed_central"},
@@ -232,9 +232,9 @@ def test_normalize_knowledge_graph_edges():
     m.update(Message.parse_obj(message_a))
     m.update(Message.parse_obj(message_b))
 
-    # Check that we didn't combine edges
+    # Check that we combined edges without source
     edges = m.knowledge_graph.edges
-    assert len(edges) == 2
+    assert len(edges) == 1
 
     # Check that the result was updated to point to the correct edge
     edge_id, edge = next(iter(edges.items()))
@@ -451,3 +451,108 @@ def test_merge_edges_with_sources():
     
     edge = edges[list(edges.keys())[0]]
     assert len(edge['sources']) == 3
+
+
+def test_merge_edges_with_different_sources():
+    """
+    Tests that different original sources are not merged
+    """
+
+    kg = {
+        "nodes": {
+            "MONDO:1": {
+                "name": "Ebola",
+                "categories": ["biolink:Disease"],
+                "attributes": [ATTRIBUTE_A],
+            },
+            "NCBI:1": {
+                "name": "NPC1",
+                "categories": ["biolink:Gene"],
+                "attributes": [ATTRIBUTE_B],
+            }
+        },
+        "edges": {},
+    }
+    kg_a = copy.deepcopy(kg)
+    kg_a['edges'] = {
+        'e1': {
+            "subject": "MONDO:1",
+            "predicate": "biolink:is_related_to",
+            "object": "NCBI:1",
+            "sources": [
+                {
+                    "resource": "infores:ara1",
+                    "resource_role": "biolink:aggregator_knowledge_source",
+                    "retrievals": [
+                        {
+                            "retrieved_from": "infores:kp1",
+                        }
+                    ],
+                },
+                {
+                    "resource": "infores:kp1",
+                    "resource_role": "biolink:original_knowledge_source",
+                    "retrievals": [
+                        {
+                            "retrieved_from": "offline_db"
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+    message_a = {
+        "knowledge_graph": kg_a,
+        "results": [],
+    }
+
+    kg_b = copy.deepcopy(kg)
+    kg_b['edges'] = {
+        'e1': {
+            "subject": "MONDO:1",
+            "predicate": "biolink:is_related_to",
+            "object": "NCBI:1",
+            "sources": [
+                {
+                    "resource": "infores:ara2",
+                    "resource_role": "biolink:aggregator_knowledge_source",
+                    "retrievals": [
+                        {
+                            "retrieved_from": "infores:kp1",
+                        }
+                    ],
+                },
+                {
+                    "resource": "infores:kp2",
+                    "resource_role": "biolink:primary_knowledge_source",
+                    "retrievals": [
+                        {
+                            "retrieved_from": "offline_db"
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+
+    message_b = {
+        "knowledge_graph": kg_b,
+        "results": [],
+    }
+
+    m = Message()
+    m_a = Message.parse_obj(message_a)
+    m_b = Message.parse_obj(message_b)
+
+    m.update(m_a)
+    m.update(m_b)
+
+    # Validate output
+    m_dict = m.to_dict()
+    edges = m_dict['knowledge_graph']['edges']
+    
+    print(hash(m_a.knowledge_graph.edges))
+    print(hash(m_b.knowledge_graph.edges))
+    print(edges)
+    assert len(edges.keys()) == 2
+    
