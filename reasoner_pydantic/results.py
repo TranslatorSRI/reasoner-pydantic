@@ -53,8 +53,8 @@ class Analysis(BaseModel):
 
     source: InformationResource = Field(..., title="list of node bindings")
     methdod: Optional[str] = Field(None, title="")
-    node_binding_attributes: Optional[HashableMapping[str, HashableSet[Attribute]]]
-    edge_binding_attributes: Optional[HashableMapping[str, HashableSet[Attribute]]]
+    node_binding_attributes: Optional[HashableMapping[str, HashableMapping[str, HashableSet[Attribute]]]]
+    edge_binding_attributes: Optional[HashableMapping[str, HashableMapping[str, HashableSet[Attribute]]]]
 
     score: Optional[float] = Field(None, format="float")
 
