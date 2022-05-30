@@ -29,10 +29,7 @@ def test_result_merging():
     """Test that duplicate results are merged correctly"""
 
     kg = {
-        "nodes": {
-            "kn0": {},
-            "kn1": {}
-        },
+        "nodes": {"kn0": {}, "kn1": {}},
         "edges": {
             "ke0": {
                 "subject": "kn0",
@@ -50,14 +47,12 @@ def test_result_merging():
                 "analyses": [
                     {
                         "source": "infores:ara1",
-                        "edge_binding_attributes": {
-                            "e0": [ATTRIBUTE_A]
-                        },
-                        "score": 1
+                        "edge_binding_attributes": {"e0": {"ke0": [ATTRIBUTE_A]}},
+                        "score": 1,
                     }
-                ]
+                ],
             }
-        ]
+        ],
     }
 
     message_b = {
@@ -69,40 +64,34 @@ def test_result_merging():
                 "analyses": [
                     {
                         "source": "infores:ara2",
-                        "edge_binding_attributes": {
-                            "e0": [ATTRIBUTE_B]
-                        },
-                        "score": 2
+                        "edge_binding_attributes": {"e0": {"ke0": [ATTRIBUTE_B]}},
+                        "score": 2,
                     }
-                ]
+                ],
             },
         ],
     }
 
     m = Message.merge(message_a, message_b)
-    
+
     m_dict = m.to_dict()
-    assert len(m_dict['results']) == 1
-    assert len(m_dict['results'][0]['analyses']) == 2
+    assert len(m_dict["results"]) == 1
+    assert len(m_dict["results"][0]["analyses"]) == 2
 
 
 def test_different_result_merging():
     """Test that different results are not merged"""
 
-
     message_a = {
         "knowledge_graph": {
-            "nodes": {
-                "kn0": {},
-                "kn1": {}
-            },
+            "nodes": {"kn0": {}, "kn1": {}},
             "edges": {
                 "ke0": {
                     "subject": "kn0",
                     "object": "kn1",
                     "predicate": "biolink:ameliorates",
                 }
-            }
+            },
         },
         "results": [
             {
@@ -111,22 +100,17 @@ def test_different_result_merging():
                 "analyses": [
                     {
                         "source": "infores:ara1",
-                        "edge_binding_attributes": {
-                            "e0": [ATTRIBUTE_B]
-                        },
-                        "score": 2
+                        "edge_binding_attributes": {"e0": {"ke0": [ATTRIBUTE_B]}},
+                        "score": 2,
                     }
-                ]
+                ],
             }
-        ]
+        ],
     }
 
     message_b = {
         "knowledge_graph": {
-            "nodes": {
-                "kn0": {},
-                "kn1": {}
-            },
+            "nodes": {"kn0": {}, "kn1": {}},
             "edges": {
                 "ke1": {
                     "subject": "kn0",
@@ -142,14 +126,12 @@ def test_different_result_merging():
                 "analyses": [
                     {
                         "source": "infores:ara2",
-                        "edge_binding_attributes": {
-                            "e0": [ATTRIBUTE_A]
-                        },
-                        "score": 1
+                        "edge_binding_attributes": {"e0": {"ke1": [ATTRIBUTE_A]}},
+                        "score": 1,
                     }
-                ]
+                ],
             }
-        ]
+        ],
     }
 
     m = Message.merge(message_a, message_b)
@@ -366,16 +348,16 @@ def test_merge_edges():
                 "name": "NPC1",
                 "categories": ["biolink:Gene"],
                 "attributes": [ATTRIBUTE_B],
-            }
+            },
         },
         "edges": {},
     }
     kg_a = copy.deepcopy(kg)
-    kg_a['edges'] = {
-        'e1': {
+    kg_a["edges"] = {
+        "e1": {
             "subject": "MONDO:1",
             "predicate": "biolink:is_related_to",
-            "object": "NCBI:1"
+            "object": "NCBI:1",
         }
     }
     message_a = {
@@ -384,24 +366,24 @@ def test_merge_edges():
     }
 
     kg_b = copy.deepcopy(kg)
-    kg_b['edges'] = {
-        'e1': {
+    kg_b["edges"] = {
+        "e1": {
             "subject": "MONDO:1",
             "predicate": "biolink:is_related_to",
-            "object": "NCBI:1"
+            "object": "NCBI:1",
         }
     }
     message_b = {
         "knowledge_graph": kg_b,
         "results": [],
     }
-    
 
     m = Message.merge(message_a, message_b)
 
     # Validate output
     edges = m.knowledge_graph.edges
     assert len(edges) == 1
+
 
 def test_merge_edges_with_sources():
     """
@@ -419,13 +401,13 @@ def test_merge_edges_with_sources():
                 "name": "NPC1",
                 "categories": ["biolink:Gene"],
                 "attributes": [ATTRIBUTE_B],
-            }
+            },
         },
         "edges": {},
     }
     kg_a = copy.deepcopy(kg)
-    kg_a['edges'] = {
-        'e1': {
+    kg_a["edges"] = {
+        "e1": {
             "subject": "MONDO:1",
             "predicate": "biolink:is_related_to",
             "object": "NCBI:1",
@@ -442,13 +424,9 @@ def test_merge_edges_with_sources():
                 {
                     "resource": "infores:kp1",
                     "resource_role": "biolink:original_knowledge_source",
-                    "retrievals": [
-                        {
-                            "retrieved_from": "offline_db"
-                        }
-                    ]
-                }
-            ]
+                    "retrievals": [{"retrieved_from": "offline_db"}],
+                },
+            ],
         }
     }
     message_a = {
@@ -457,8 +435,8 @@ def test_merge_edges_with_sources():
     }
 
     kg_b = copy.deepcopy(kg)
-    kg_b['edges'] = {
-        'e1': {
+    kg_b["edges"] = {
+        "e1": {
             "subject": "MONDO:1",
             "predicate": "biolink:is_related_to",
             "object": "NCBI:1",
@@ -475,13 +453,9 @@ def test_merge_edges_with_sources():
                 {
                     "resource": "infores:kp1",
                     "resource_role": "biolink:original_knowledge_source",
-                    "retrievals": [
-                        {
-                            "retrieved_from": "offline_db"
-                        }
-                    ]
-                }
-            ]
+                    "retrievals": [{"retrieved_from": "offline_db"}],
+                },
+            ],
         }
     }
 
@@ -494,12 +468,12 @@ def test_merge_edges_with_sources():
 
     # Validate output
     m_dict = m.to_dict()
-    edges = m_dict['knowledge_graph']['edges']
-    
+    edges = m_dict["knowledge_graph"]["edges"]
+
     assert len(edges.keys()) == 1
-    
+
     edge = edges[list(edges.keys())[0]]
-    assert len(edge['sources']) == 3
+    assert len(edge["sources"]) == 3
 
 
 def test_merge_edges_with_different_sources():
@@ -518,13 +492,13 @@ def test_merge_edges_with_different_sources():
                 "name": "NPC1",
                 "categories": ["biolink:Gene"],
                 "attributes": [ATTRIBUTE_B],
-            }
+            },
         },
         "edges": {},
     }
     kg_a = copy.deepcopy(kg)
-    kg_a['edges'] = {
-        'e1': {
+    kg_a["edges"] = {
+        "e1": {
             "subject": "MONDO:1",
             "predicate": "biolink:is_related_to",
             "object": "NCBI:1",
@@ -541,13 +515,9 @@ def test_merge_edges_with_different_sources():
                 {
                     "resource": "infores:kp1",
                     "resource_role": "biolink:original_knowledge_source",
-                    "retrievals": [
-                        {
-                            "retrieved_from": "offline_db"
-                        }
-                    ]
-                }
-            ]
+                    "retrievals": [{"retrieved_from": "offline_db"}],
+                },
+            ],
         }
     }
     message_a = {
@@ -556,8 +526,8 @@ def test_merge_edges_with_different_sources():
     }
 
     kg_b = copy.deepcopy(kg)
-    kg_b['edges'] = {
-        'e1': {
+    kg_b["edges"] = {
+        "e1": {
             "subject": "MONDO:1",
             "predicate": "biolink:is_related_to",
             "object": "NCBI:1",
@@ -574,13 +544,9 @@ def test_merge_edges_with_different_sources():
                 {
                     "resource": "infores:kp2",
                     "resource_role": "biolink:primary_knowledge_source",
-                    "retrievals": [
-                        {
-                            "retrieved_from": "offline_db"
-                        }
-                    ]
-                }
-            ]
+                    "retrievals": [{"retrieved_from": "offline_db"}],
+                },
+            ],
         }
     }
 
@@ -593,6 +559,6 @@ def test_merge_edges_with_different_sources():
 
     # Validate output
     m_dict = m.to_dict()
-    edges = m_dict['knowledge_graph']['edges']
-    
+    edges = m_dict["knowledge_graph"]["edges"]
+
     assert len(edges) == 2

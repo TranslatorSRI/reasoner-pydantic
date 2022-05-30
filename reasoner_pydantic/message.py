@@ -69,7 +69,6 @@ class Message(BaseModel):
                 self.results.update(other.results)
             else:
                 self.results = other.results
-            
 
     def _normalize_kg_edge_ids(self):
         """
@@ -114,14 +113,15 @@ class Message(BaseModel):
         return m
 
     @staticmethod
-    def upgrade(from_ver, old_dict):
-        upgrades = {
-            "1.2": upgrade_from_1p2
-        }
+    def upgrade(from_ver, old_dict, **kwargs):
+        upgrades = {"1.2": upgrade_from_1p2}
         if from_ver in upgrades.keys():
-            return Message.parse_obj(upgrades[from_ver](old_dict))
+            return Message.parse_obj(upgrades[from_ver](old_dict, **kwargs))
         else:
-            raise Exception(f"Unknown upgradeable version {from_ver}. Options: {upgrades.keys()}")
+            raise Exception(
+                f"Unknown upgradeable version {from_ver}. Options: {upgrades.keys()}"
+            )
+
 
 class Query(BaseModel):
     """Request."""

@@ -60,6 +60,11 @@ EXAMPLE_MESSAGE_1p2 = {
 
 def test_1p2_upgrade():
 
-    m = Message.upgrade('1.2', EXAMPLE_MESSAGE_1p2)
+    m = Message.upgrade(
+        "1.2",
+        EXAMPLE_MESSAGE_1p2,
+        result_source="Test ARA",
+        result_method="Test Method",
+    )
     assert len(m.results) == 1
     # TODO: additional validation of the output

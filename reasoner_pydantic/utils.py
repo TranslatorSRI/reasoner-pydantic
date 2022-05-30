@@ -120,12 +120,13 @@ class HashableSet(
         return [self._get_value(v, to_dict=True, **kwargs) for v in self]
 
 
-class HashableSetCustomUpdate(GenericModel,
+class HashableSetCustomUpdate(
+    GenericModel,
     Generic[ValueType],
     collections.abc.MutableSet,
 ):
     """
-    Custom class that implements MutableSet and is hashable and the update 
+    Custom class that implements MutableSet and is hashable and the update
     function iteratively calls the update method of the value
     """
 
@@ -152,7 +153,7 @@ class HashableSetCustomUpdate(GenericModel,
                 self_dict[h].update(r)
             else:
                 self_dict[h] = r
-        
+
         self.__root__ = set(self_dict.values())
 
     def discard(self, v):
@@ -173,11 +174,11 @@ class HashableSetCustomUpdate(GenericModel,
         return [self._get_value(v, to_dict=True, **kwargs) for v in self]
 
 
-
 def nonzero_validator(v):
     if v != None and len(v) == 0:
         raise ValueError("Must have nonzero number of elements")
     return v
+
 
 def make_hashable(o):
     """

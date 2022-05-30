@@ -4,7 +4,14 @@ from typing import Optional
 
 from pydantic import Field
 
-from .shared import Attribute, BiolinkEntity, BiolinkPredicate, CURIE, EdgeIdentifier, InformationResource
+from .shared import (
+    Attribute,
+    BiolinkEntity,
+    BiolinkPredicate,
+    CURIE,
+    EdgeIdentifier,
+    InformationResource,
+)
 from .base_model import BaseModel
 from .utils import HashableMapping, HashableSequence, HashableSet
 
@@ -46,12 +53,15 @@ class Node(BaseModel):
             else:
                 self.attributes = other.attributes
 
+
 # For now qualifiers are unvalidated
 class Qualifier(BaseModel):
     """Knowledge graph edge qualifier."""
+
     class Config:
         title = "knowledge-graph edge qualifier"
         extra = "allow"
+
 
 class EdgeRetrieval(BaseModel):
     """Knowledge graph edge retrieval"""
@@ -62,22 +72,24 @@ class EdgeRetrieval(BaseModel):
     retrieval_version: Optional[str] = Field(None, nullable=True)
     retrieved_by: Optional[str] = Field(None, nullable=True)
     access_url: Optional[str] = Field(None, nullable=True)
-    
-    
+
     class Config:
         title = "knowledge-graph edge retrieval"
         extra = "allow"
 
+
 class EdgeSource(BaseModel):
     """Knowledge graph edge soruce"""
-    
+
     resource: InformationResource = Field(..., title="type")
-    resource_role: Optional[str] = Field(None, nullable=True) 
+    resource_role: Optional[str] = Field(None, nullable=True)
     retrievals: Optional[HashableSet[EdgeRetrieval]] = Field(None, nullabled=True)
+
     class Config:
         title = "knowledge-graph edge source"
         extra = "allow"
-    
+
+
 class Edge(BaseModel):
     """Knowledge graph edge."""
 
@@ -113,13 +125,13 @@ class Edge(BaseModel):
 
     def __hash__(self) -> int:
         """Hash function based on desired edge merging logic"""
-        desired_knowledge_source = ''
+        desired_knowledge_source = ""
         if self.sources:
             for s in self.sources:
-                if s.resource_role == 'biolink:original_knowledge_source':
+                if s.resource_role == "biolink:original_knowledge_source":
                     desired_knowledge_source = s
                     break
-                if s.resource_role == 'biolink:primary_knowledge_source':
+                if s.resource_role == "biolink:primary_knowledge_source":
                     desired_knowledge_source = s
                     break
 
