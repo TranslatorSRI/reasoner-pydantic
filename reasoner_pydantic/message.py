@@ -65,7 +65,6 @@ class Message(BaseModel):
         # handle concatenating properties when necessary.
         if other.results:
             if self.results:
-                print("Updating Results")
                 self.results.update(other.results)
             else:
                 self.results = other.results
