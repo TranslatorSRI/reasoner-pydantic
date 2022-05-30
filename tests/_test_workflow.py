@@ -7,7 +7,7 @@ import yaml
 from reasoner_pydantic.workflow import Workflow
 
 TAG = "v1.2"
-response = httpx.get(f"http://standards.ncats.io/workflow/1.0.0/schema")
+response = httpx.get(f"http://standards.ncats.io/workflow/1.3.2/schema")
 reference_schema = yaml.load(
     response.text,
     Loader=yaml.FullLoader,

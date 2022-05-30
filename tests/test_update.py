@@ -287,3 +287,167 @@ def test_merge_identical_attributes():
 
     assert ATTRIBUTE_A in node.attributes
     assert len(node.attributes) == 1
+
+
+def test_merge_edges():
+    """
+    Tests that edges are merged when simple
+    """
+
+    kg = {
+        "nodes": {
+            "MONDO:1": {
+                "name": "Ebola",
+                "categories": ["biolink:Disease"],
+                "attributes": [ATTRIBUTE_A],
+            },
+            "NCBI:1": {
+                "name": "NPC1",
+                "categories": ["biolink:Gene"],
+                "attributes": [ATTRIBUTE_B],
+            }
+        },
+        "edges": {},
+    }
+    kg_a = copy.deepcopy(kg)
+    kg_a['edges'] = {
+        'e1': {
+            "subject": "MONDO:1",
+            "predicate": "biolink:is_related_to",
+            "object": "NCBI:1"
+        }
+    }
+    message_a = {
+        "knowledge_graph": kg_a,
+        "results": [],
+    }
+
+    kg_b = copy.deepcopy(kg)
+    kg_b['edges'] = {
+        'e1': {
+            "subject": "MONDO:1",
+            "predicate": "biolink:is_related_to",
+            "object": "NCBI:1"
+        }
+    }
+    message_b = {
+        "knowledge_graph": kg_b,
+        "results": [],
+    }
+    
+
+    m = Message()
+
+    m.update(Message.parse_obj(message_a))
+    m.update(Message.parse_obj(message_b))
+
+    # Validate output
+    edges = m.knowledge_graph.edges
+    # print(m.json())
+    assert len(edges) == 1
+
+def test_merge_edges_with_sources():
+    """
+    Tests that identical attributes are merged
+    """
+
+    kg = {
+        "nodes": {
+            "MONDO:1": {
+                "name": "Ebola",
+                "categories": ["biolink:Disease"],
+                "attributes": [ATTRIBUTE_A],
+            },
+            "NCBI:1": {
+                "name": "NPC1",
+                "categories": ["biolink:Gene"],
+                "attributes": [ATTRIBUTE_B],
+            }
+        },
+        "edges": {},
+    }
+    kg_a = copy.deepcopy(kg)
+    kg_a['edges'] = {
+        'e1': {
+            "subject": "MONDO:1",
+            "predicate": "biolink:is_related_to",
+            "object": "NCBI:1",
+            "sources": [
+                {
+                    "resource": "infores:ara1",
+                    "resource_role": "biolink:aggregator_knowledge_source",
+                    "retrievals": [
+                        {
+                            "retrieved_from": "infores:kp1",
+                        }
+                    ],
+                },
+                {
+                    "resource": "infores:kp1",
+                    "resource_role": "biolink:original_knowledge_source",
+                    "retrievals": [
+                        {
+                            "retrieved_from": "offline_db"
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+    message_a = {
+        "knowledge_graph": kg_a,
+        "results": [],
+    }
+
+    kg_b = copy.deepcopy(kg)
+    kg_b['edges'] = {
+        'e1': {
+            "subject": "MONDO:1",
+            "predicate": "biolink:is_related_to",
+            "object": "NCBI:1",
+            "sources": [
+                {
+                    "resource": "infores:ara2",
+                    "resource_role": "biolink:aggregator_knowledge_source",
+                    "retrievals": [
+                        {
+                            "retrieved_from": "infores:kp1",
+                        }
+                    ],
+                },
+                {
+                    "resource": "infores:kp1",
+                    "resource_role": "biolink:original_knowledge_source",
+                    "retrievals": [
+                        {
+                            "retrieved_from": "offline_db"
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+
+    message_b = {
+        "knowledge_graph": kg_b,
+        "results": [],
+    }
+
+    m = Message()
+    m_a = Message.parse_obj(message_a)
+    m_b = Message.parse_obj(message_b)
+
+    m.update(m_a)
+    m.update(m_b)
+
+    # Validate output
+    m_dict = m.to_dict()
+    edges = m_dict['knowledge_graph']['edges']
+    
+    print(hash(m_a.knowledge_graph.edges))
+    print(hash(m_b.knowledge_graph.edges))
+    print(edges)
+    assert len(edges.keys()) == 1
+    
+    edge = edges[list(edges.keys())[0]]
+    assert len(edge['sources']) == 3

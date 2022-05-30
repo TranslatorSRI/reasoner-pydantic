@@ -39,7 +39,7 @@ class Message(BaseModel):
 
     def update(self, other: "Message"):
         if hash(self.query_graph) != hash(other.query_graph):
-            raise NotImplementedError("Query graph merging not supported yet")
+            raise NotImplementedError("Query graph merging not supported")
         # Make a copy because normalization will modify results
         other = other.copy(deep=True)
 

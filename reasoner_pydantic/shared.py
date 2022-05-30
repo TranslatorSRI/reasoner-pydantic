@@ -11,12 +11,17 @@ from .base_model import BaseModel
 from .utils import HashableSequence
 
 
+# TODO: potential add validation for structure of CURIE
 class CURIE(str):
     """Compact URI."""
 
 
 class EdgeIdentifier(str):
     """Identifier for an edge in a knowledge graph"""
+
+# TODO: potential add validation for structure of infores
+class InformationResource(str):
+    """Identifier for an information resource (infores)"""
 
 
 class SubAttribute(BaseModel):
