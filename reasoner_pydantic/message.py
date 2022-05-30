@@ -12,7 +12,7 @@ from .qgraph import QueryGraph
 from .kgraph import KnowledgeGraph
 from .shared import LogEntry, LogLevel
 from .workflow import Workflow
-import .upgrade
+from .upgrade import upgrade_from_1p2
 
 
 class Message(BaseModel):
@@ -113,6 +113,15 @@ class Message(BaseModel):
             m.update(Message.parse_obj(a))
         return m
 
+    @staticmethod
+    def upgrade(from_ver, old_dict):
+        upgrades = {
+            "1.2": upgrade_from_1p2
+        }
+        if from_ver in upgrades.keys():
+            return Message.parse_obj(upgrades[from_ver](old_dict))
+        else:
+            raise Exception(f"Unknown upgradeable version {from_ver}. Options: {upgrades.keys()}")
 
 class Query(BaseModel):
     """Request."""
