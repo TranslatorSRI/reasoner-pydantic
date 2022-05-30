@@ -120,11 +120,64 @@ class HashableSet(
         return [self._get_value(v, to_dict=True, **kwargs) for v in self]
 
 
+class HashableSetCustomUpdate(GenericModel,
+    Generic[ValueType],
+    collections.abc.MutableSet,
+):
+    """
+    Custom class that implements MutableSet and is hashable and the update 
+    function iteratively calls the update method of the value
+    """
+
+    __root__: Set[ValueType] = set()
+
+    def __contains__(self, v):
+        return v in self.__root__
+
+    def __iter__(self):
+        return iter(self.__root__)
+
+    def __len__(self):
+        return len(self.__root__)
+
+    def add(self, v):
+        self.__root__.add(v)
+
+    def update(self, other):
+
+        self_dict = {hash(r): r for r in self}
+        other_dict = {hash(r): r for r in other}
+        for h, r in other_dict.items():
+            if h in self_dict:
+                self_dict[h].update(r)
+            else:
+                self_dict[h] = r
+        
+        self.__root__ = set(self_dict.values())
+
+    def discard(self, v):
+        self.__root__.discard(v)
+
+    def __hash__(self):
+        # Use frozenset instead of tuple to ensure
+        # hash is computed without ordering of elements
+        return hash(frozenset(self))
+
+    def dict(self, *args, **kwargs):
+        """Custom serialization method to convert to list"""
+
+        # Normally, the dict method tries to cast to the __root__ type.
+        # This isn't an issue for most __root__ types, but here that causes:
+        # set({"hello" : "world"}) which doesn't work because dicts are not hashable
+        # This overrides that functionality to cast to a list instead
+        return [self._get_value(v, to_dict=True, **kwargs) for v in self]
+
+
+
 def nonzero_validator(v):
     if v != None and len(v) == 0:
         raise ValueError("Must have nonzero number of elements")
     return v
-
 
 def make_hashable(o):
     """

@@ -1,6 +1,4 @@
 import copy
-import json
-import pytest
 
 from reasoner_pydantic import Attribute, Message
 
@@ -30,60 +28,132 @@ ATTRIBUTE_B = Attribute.parse_obj(ATTRIBUTE_B)
 def test_result_merging():
     """Test that duplicate results are merged correctly"""
 
-    message = {
-        "knowledge_graph": {
-            "nodes": {},
-            "edges": {
-                "ke0": {
-                    "subject": "kn0",
-                    "object": "kn1",
-                    "predicate": "biolink:ameliorates",
-                }
-            },
+    kg = {
+        "nodes": {
+            "kn0": {},
+            "kn1": {}
         },
+        "edges": {
+            "ke0": {
+                "subject": "kn0",
+                "object": "kn1",
+                "predicate": "biolink:ameliorates",
+            }
+        },
+    }
+    message_a = {
+        "knowledge_graph": copy.deepcopy(kg),
         "results": [
             {
                 "node_bindings": {"n0": [{"id": "kn0"}]},
                 "edge_bindings": {"e0": [{"id": "ke0"}]},
-            },
+                "analyses": [
+                    {
+                        "source": "infores:ara1",
+                        "edge_binding_attributes": {
+                            "e0": [ATTRIBUTE_A]
+                        },
+                        "score": 1
+                    }
+                ]
+            }
+        ]
+    }
+
+    message_b = {
+        "knowledge_graph": copy.deepcopy(kg),
+        "results": [
             {
                 "node_bindings": {"n0": [{"id": "kn0"}]},
                 "edge_bindings": {"e0": [{"id": "ke0"}]},
+                "analyses": [
+                    {
+                        "source": "infores:ara2",
+                        "edge_binding_attributes": {
+                            "e0": [ATTRIBUTE_B]
+                        },
+                        "score": 2
+                    }
+                ]
             },
         ],
     }
 
-    m = Message.parse_obj(message)
-    assert len(m.results) == 1
+    m = Message.merge(message_a, message_b)
+    
+    m_dict = m.to_dict()
+    assert len(m_dict['results']) == 1
+    assert len(m_dict['results'][0]['analyses']) == 2
 
 
 def test_different_result_merging():
     """Test that different results are not merged"""
 
-    message = {
+
+    message_a = {
         "knowledge_graph": {
-            "nodes": {},
+            "nodes": {
+                "kn0": {},
+                "kn1": {}
+            },
             "edges": {
                 "ke0": {
                     "subject": "kn0",
                     "object": "kn1",
                     "predicate": "biolink:ameliorates",
                 }
-            },
+            }
         },
         "results": [
             {
                 "node_bindings": {"n0": [{"id": "kn0"}]},
                 "edge_bindings": {"e0": [{"id": "ke0"}]},
-            },
-            {
-                "node_bindings": {"n0": [{"id": "kn0"}]},
-                "edge_bindings": {"e0": [{"id": "ke0", "attributes": [ATTRIBUTE_A]}]},
-            },
-        ],
+                "analyses": [
+                    {
+                        "source": "infores:ara1",
+                        "edge_binding_attributes": {
+                            "e0": [ATTRIBUTE_B]
+                        },
+                        "score": 2
+                    }
+                ]
+            }
+        ]
     }
 
-    m = Message.parse_obj(message)
+    message_b = {
+        "knowledge_graph": {
+            "nodes": {
+                "kn0": {},
+                "kn1": {}
+            },
+            "edges": {
+                "ke1": {
+                    "subject": "kn0",
+                    "object": "kn1",
+                    "predicate": "biolink:is_related_to",
+                }
+            },
+        },
+        "results": [
+            {
+                "node_bindings": {"n0": [{"id": "kn0"}]},
+                "edge_bindings": {"e0": [{"id": "ke1"}]},
+                "analyses": [
+                    {
+                        "source": "infores:ara2",
+                        "edge_binding_attributes": {
+                            "e0": [ATTRIBUTE_A]
+                        },
+                        "score": 1
+                    }
+                ]
+            }
+        ]
+    }
+
+    m = Message.merge(message_a, message_b)
+
     assert len(m.results) == 2
 
 
@@ -177,10 +247,7 @@ def test_merge_knowledge_graph_nodes():
         "results": [],
     }
 
-    m = Message()
-
-    m.update(Message.parse_obj(message_a))
-    m.update(Message.parse_obj(message_b))
+    m = Message.merge(message_a, message_b)
 
     # Validate output
     nodes = m.knowledge_graph.nodes
@@ -227,10 +294,7 @@ def test_normalize_knowledge_graph_edges():
         "results": [],
     }
 
-    m = Message()
-
-    m.update(Message.parse_obj(message_a))
-    m.update(Message.parse_obj(message_b))
+    m = Message.merge(message_a, message_b)
 
     # Check that we combined edges without source
     edges = m.knowledge_graph.edges
@@ -275,10 +339,7 @@ def test_merge_identical_attributes():
         "results": [],
     }
 
-    m = Message()
-
-    m.update(Message.parse_obj(message_a))
-    m.update(Message.parse_obj(message_b))
+    m = Message.merge(message_a, message_b)
 
     # Validate output
     nodes = m.knowledge_graph.nodes
@@ -336,14 +397,10 @@ def test_merge_edges():
     }
     
 
-    m = Message()
-
-    m.update(Message.parse_obj(message_a))
-    m.update(Message.parse_obj(message_b))
+    m = Message.merge(message_a, message_b)
 
     # Validate output
     edges = m.knowledge_graph.edges
-    # print(m.json())
     assert len(edges) == 1
 
 def test_merge_edges_with_sources():
@@ -433,20 +490,12 @@ def test_merge_edges_with_sources():
         "results": [],
     }
 
-    m = Message()
-    m_a = Message.parse_obj(message_a)
-    m_b = Message.parse_obj(message_b)
-
-    m.update(m_a)
-    m.update(m_b)
+    m = Message.merge(message_a, message_b)
 
     # Validate output
     m_dict = m.to_dict()
     edges = m_dict['knowledge_graph']['edges']
     
-    print(hash(m_a.knowledge_graph.edges))
-    print(hash(m_b.knowledge_graph.edges))
-    print(edges)
     assert len(edges.keys()) == 1
     
     edge = edges[list(edges.keys())[0]]
@@ -540,19 +589,10 @@ def test_merge_edges_with_different_sources():
         "results": [],
     }
 
-    m = Message()
-    m_a = Message.parse_obj(message_a)
-    m_b = Message.parse_obj(message_b)
-
-    m.update(m_a)
-    m.update(m_b)
+    m = Message.merge(message_a, message_b)
 
     # Validate output
     m_dict = m.to_dict()
     edges = m_dict['knowledge_graph']['edges']
     
-    print(hash(m_a.knowledge_graph.edges))
-    print(hash(m_b.knowledge_graph.edges))
-    print(edges)
-    assert len(edges.keys()) == 2
-    
+    assert len(edges) == 2

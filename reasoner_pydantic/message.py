@@ -6,12 +6,13 @@ from typing import Optional, Callable
 from pydantic import constr, Field
 
 from .base_model import BaseModel
-from .utils import HashableSequence, HashableSet
+from .utils import HashableSequence, HashableSet, HashableSetCustomUpdate
 from .results import Result
 from .qgraph import QueryGraph
 from .kgraph import KnowledgeGraph
 from .shared import LogEntry, LogLevel
 from .workflow import Workflow
+import .upgrade
 
 
 class Message(BaseModel):
@@ -27,7 +28,7 @@ class Message(BaseModel):
         title="knowledge graph",
         nullable=True,
     )
-    results: Optional[HashableSet[Result]] = Field(
+    results: Optional[HashableSetCustomUpdate[Result]] = Field(
         None,
         title="list of results",
         nullable=True,
@@ -104,6 +105,13 @@ class Message(BaseModel):
                 for edge_binding_list in result.edge_bindings.values():
                     for eb in edge_binding_list:
                         eb.id = edge_id_mapping[eb.id]
+
+    @staticmethod
+    def merge(*args):
+        m = Message()
+        for a in args:
+            m.update(Message.parse_obj(a))
+        return m
 
 
 class Query(BaseModel):

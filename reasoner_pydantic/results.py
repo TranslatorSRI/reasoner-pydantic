@@ -4,7 +4,7 @@ from typing import Optional
 from pydantic import Field
 
 from .base_model import BaseModel
-from .utils import HashableMapping, HashableSet
+from .utils import HashableMapping, HashableSet, HashableSetCustomUpdate
 from .shared import Attribute, CURIE, InformationResource
 
 
@@ -75,6 +75,25 @@ class Result(BaseModel):
     )
     analyses: Optional[HashableSet[Analysis]] = Field(None, title="list of analyses")
     
+    def __hash__(self) -> int:
+        """Hash function based on desired result merging logic"""
+        
+        hash_payload = (
+            self.node_bindings,
+            self.edge_bindings,
+        )
+        return hash((self.__class__, hash_payload))
+
+    def update(self, other):
+        if other.analyses:
+            if self.analyses:
+                self.analyses.update(other.analyses)
+            else:
+                self.analyses = other.analyses
     class Config:
         title = "result"
         extra = "allow"
+
+class ResultSet(HashableSetCustomUpdate[Result]):
+    """Set of Results"""
+    
