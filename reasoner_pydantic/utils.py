@@ -100,7 +100,7 @@ class HashableSet(
         self.__root__.add(v)
 
     def update(self, other):
-        self.__root__.update(other)
+        self.__root__.update(other.__root__)
 
     def discard(self, v):
         self.__root__.discard(v)
