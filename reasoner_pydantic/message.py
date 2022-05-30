@@ -39,20 +39,37 @@ class Message(BaseModel):
 
     def update(self, other: "Message"):
         if hash(self.query_graph) != hash(other.query_graph):
+            # In practice this could be support but many decisions wouldn't need to be made
+            # For example must qnode keys match? Or is topology sufficient?
             raise NotImplementedError("Query graph merging not supported")
+
         # Make a copy because normalization will modify results
         other = other.copy(deep=True)
 
         if other.knowledge_graph:
             if not self.knowledge_graph:
                 self.knowledge_graph = KnowledgeGraph(nodes=[], edges=[])
+
             # Normalize edges of incoming KG
+            # This will place KG edge keys into the same hashing system
+            # So that equivalence is determined by hash collision
             other._normalize_kg_edge_ids()
+
+            # The knowledge graph can now be udated because edge keys will be
+            # hashed using the same method. The knowledge graph update method
+            # will handle concatenating properties when necessary.
             self.knowledge_graph.update(other.knowledge_graph)
+
+        # After updating edge keys above all results will reference the new edge
+        # keys. Results can be updated directly. The Result update method will
+        # handle concatenating properties when necessary.
         if other.results:
-            if not self.results:
-                self.results = HashableSet[Result]()
-            self.results.update(other.results)
+            if self.results:
+                print("Updating Results")
+                self.results.update(other.results)
+            else:
+                self.results = other.results
+            
 
     def _normalize_kg_edge_ids(self):
         """
@@ -82,7 +99,7 @@ class Message(BaseModel):
             # Update knowledge graph
             self.knowledge_graph.edges[new_edge_id] = edge
 
-        # Update results
+        # Update results to reference the new keys
         if self.results:
             for result in self.results:
                 for edge_binding_list in result.edge_bindings.values():
