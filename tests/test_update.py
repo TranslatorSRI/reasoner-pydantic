@@ -46,7 +46,7 @@ def test_result_merging():
                 "edge_bindings": {"e0": [{"id": "ke0"}]},
                 "analyses": [
                     {
-                        "source": "infores:ara1",
+                        "resource": "infores:ara1",
                         "edge_binding_attributes": {"e0": {"ke0": [ATTRIBUTE_A]}},
                         "score": 1,
                     }
@@ -63,7 +63,7 @@ def test_result_merging():
                 "edge_bindings": {"e0": [{"id": "ke0"}]},
                 "analyses": [
                     {
-                        "source": "infores:ara2",
+                        "resource": "infores:ara2",
                         "edge_binding_attributes": {"e0": {"ke0": [ATTRIBUTE_B]}},
                         "score": 2,
                     }
@@ -99,7 +99,7 @@ def test_different_result_merging():
                 "edge_bindings": {"e0": [{"id": "ke0"}]},
                 "analyses": [
                     {
-                        "source": "infores:ara1",
+                        "resource": "infores:ara1",
                         "edge_binding_attributes": {"e0": {"ke0": [ATTRIBUTE_B]}},
                         "score": 2,
                     }
@@ -125,7 +125,7 @@ def test_different_result_merging():
                 "edge_bindings": {"e0": [{"id": "ke1"}]},
                 "analyses": [
                     {
-                        "source": "infores:ara2",
+                        "resource": "infores:ara2",
                         "edge_binding_attributes": {"e0": {"ke1": [ATTRIBUTE_A]}},
                         "score": 1,
                     }

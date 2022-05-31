@@ -132,7 +132,7 @@ def upgrade_from_1p2(old_dict, result_source="ARA", result_method="default"):
             "edge_bindings": r["edge_bindings"],
             "analyses": [
                 {
-                    "source": result_source,
+                    "resource": result_source,
                     "method": result_method,
                     "node_binding_attributes": node_binding_attributes,
                     "edge_binding_attributes": edge_binding_attributes,
