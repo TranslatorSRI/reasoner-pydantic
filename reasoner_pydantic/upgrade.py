@@ -13,108 +13,67 @@ def upgrade_from_1p2(old_dict, result_source="ARA", result_method="default"):
         provenance_tree = []
         knegated = kedge.get("negated", False)
         kattributes = []
-        for attribute in kedge.get("attributes"):
-            if "biolink:original_knowledge_source" == attribute.get(
-                "attribute_type_id"
-            ):
-                ksource = attribute["value"]
-                attribute["attribute_type_id"] = "biolink:primary_knowledge_source"
-                if provenance_tree:
-                    last = provenance_tree[len(provenance_tree) - 1]
-                    for i in range(len(provenance_tree) - 1, 1, -1):
-                        if provenance_tree[i]["resource"] == attribute.get(
-                            "attribute_source"
-                        ):
-                            provenance_tree[1], provenance_tree[i] = (
-                                provenance_tree[i],
-                                provenance_tree[1],
-                            )
-                        provenance_tree[i] = provenance_tree[i - 1]
-                    provenance_tree[0] = {
-                        "resource": attribute["value"],
-                        "resource_role": attribute["attribute_type_id"],
+
+        # Separate source attributes from regular attributes
+        source_attribute_types = [
+            "biolink:knowledge_source", # This is not intended to be used but is
+            "biolink:primary_knowledge_source",
+            "biolink:original_knowledge_source",
+            "biolink:aggregator_knowledge_source"
+        ]
+        source_attributes = []
+        attrs = kedge.get("attributes")
+        for i_attr, attribute in enumerate(attrs):
+            attr_type = attribute.get("attribute_type_id", None)
+            if attr_type in source_attribute_types:
+                attrs.pop(i_attr) # Remove them from the original list
+                source_attributes.append(attribute)
+        
+        # attrs are now all the attributes we want to use
+        # We need to build the resouce and retrievals chain from the sources
+
+        # Find the root source (original or primary)
+        root_source = None
+        for i, source in enumerate(source_attributes):
+            attr_type = source.get("attribute_type_id")
+            if attr_type == "biolink:original_knowledge_source":
+                root_source = source
+                source_attributes.pop(i)
+                break
+            if attr_type == "biolink:primary_knowledge_source":
+                root_source = source
+                source_attributes.pop(i)
+                break
+        if not root_source and source_attributes:
+            # As a fail safe just use the first one as the root?
+            root_source = source_attributes.pop(0)
+        
+        if not root_source:
+            # Still no sources
+            new_sources = []
+        else:
+            # Build the list of sources with retrievals
+            
+            new_sources = [
+                {
+                    "resource": root_source["value"],
+                    "resource_role": root_source["attribute_type_id"],
+                    "retrievals": []
+                }
+            ]
+            for source in source_attributes:
+                new_sources[-1]["retrievals"].append({
+                    "retrieved_from": source["value"]
+                })
+                
+                new_sources.append(
+                    {
+                        "resource": source["value"],
+                        "resource_role": source["attribute_type_id"],
+                        "retrievals": []
                     }
-                    provenance_tree[1]["retrievals"] = provenance_tree[0]["resource"]
-                    provenance_tree.append(last)
-                else:
-                    provenance_tree.append(
-                        {
-                            "resource": attribute["value"],
-                            "resource_role": attribute["attribute_type_id"],
-                        }
-                    )
-            elif "biolink:primary_knowledge_source" == attribute["attribute_type_id"]:
-                ksource = attribute["value"]
-                if provenance_tree:
-                    last = provenance_tree[len(provenance_tree) - 1]
-                    for i in range(len(provenance_tree) - 1, 1, -1):
-                        if provenance_tree[i]["resource"] == attribute.get(
-                            "attribute_source"
-                        ):
-                            provenance_tree[1], provenance_tree[i] = (
-                                provenance_tree[i],
-                                provenance_tree[1],
-                            )
-                        provenance_tree[i] = provenance_tree[i - 1]
-                    provenance_tree[0] = {
-                        "resource": attribute["value"],
-                        "resource_role": attribute["attribute_type_id"],
-                    }
-                    provenance_tree[1]["retrievals"] = provenance_tree[0]["resource"]
-                    provenance_tree.append(last)
-                else:
-                    provenance_tree.append(
-                        {
-                            "resource": attribute["value"],
-                            "resource_role": attribute["attribute_type_id"],
-                        }
-                    )
-            elif attribute["attribute_type_id"] == "biolink:qualifiers":
-                hashing_qualifiers.append(attribute["value"])
-                kqualifiers.append(attribute)
-            elif (
-                attribute["attribute_type_id"] == "biolink:aggregator_knowledge_source"
-            ):
-                if provenance_tree:
-                    check = True
-                    for source in provenance_tree:
-                        if source["resource"] == attribute.get("attribute_source"):
-                            provenance_tree.append(
-                                provenance_tree[len(provenance_tree) - 1]
-                            )
-                            source["retrievals"] = attribute["value"]
-                            source_index = provenance_tree.index(source)
-                            for i in range(
-                                len(provenance_tree) - 1, source_index + 1, -1
-                            ):
-                                provenance_tree[i] = provenance_tree[i - 1]
-                            provenance_tree[source_index] = {
-                                "resource": attribute["value"],
-                                "resource_role": attribute["attribute_type_id"],
-                            }
-                            check = False
-                            break
-                    if check:
-                        provenance_tree.append(
-                            {
-                                "resource": attribute["value"],
-                                "resource_role": attribute["attribute_type_id"],
-                                "retrievals": [
-                                    provenance_tree[len(provenance_tree) - 1][
-                                        "resource"
-                                    ]
-                                ],
-                            }
-                        )
-                else:
-                    provenance_tree.append(
-                        {
-                            "resource": attribute["value"],
-                            "resource_role": attribute["attribute_type_id"],
-                        }
-                    )
-            else:
-                kattributes.append(attribute)
+                ) 
+
         edge_key = hash(
             (
                 ksubject,
@@ -131,8 +90,8 @@ def upgrade_from_1p2(old_dict, result_source="ARA", result_method="default"):
             "object": kpredicate,
             "negated": knegated,
             "qualifiers": kqualifiers,
-            "sources": provenance_tree,
-            "attributes": kattributes,
+            "sources": new_sources,
+            "attributes": attrs,
         }
         return edge_key, converted_edge
 
