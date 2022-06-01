@@ -19,16 +19,18 @@ def upgrade_from_1p2(old_dict, result_source="ARA", result_method="default"):
             "biolink:knowledge_source",  # This is not intended to be used but is
             "biolink:primary_knowledge_source",
             "biolink:original_knowledge_source",
-            "biolink:aggregator_knowledge_source",
+            "biolink:aggregator_knowledge_source"
         ]
         source_attributes = []
-        attrs = kedge.get("attributes")
-        for i_attr, attribute in enumerate(attrs):
+        attrs = list(kedge.get("attributes"))
+        removals = []
+        for attribute in attrs:
             attr_type = attribute.get("attribute_type_id", None)
             if attr_type in source_attribute_types:
-                attrs.pop(i_attr)  # Remove them from the original list
-                source_attributes.append(attribute)
-
+                removals.append(attribute)  # Remove them from the original list
+                source_attributes.append(attribute)    
+        for r in removals:
+            attrs.remove(r)
         # attrs are now all the attributes we want to use
         # We need to build the resouce and retrievals chain from the sources
 
@@ -53,22 +55,28 @@ def upgrade_from_1p2(old_dict, result_source="ARA", result_method="default"):
             new_sources = []
         else:
             # Build the list of sources with retrievals
-
+            # Assume order has meaning?
+            v = root_source["value"]
+            if isinstance(v,list):
+                v = v[0]
             new_sources = [
                 {
-                    "resource": root_source["value"][0],
+                    "resource": v,
                     "resource_role": root_source["attribute_type_id"],
                     "retrievals": [],
                 }
             ]
             for source in source_attributes:
+                v = source["value"]
+                if isinstance(v,list):
+                    v = v[0]
                 new_sources[-1]["retrievals"].append(
-                    {"retrieved_from": source["value"][0]}
+                    {"retrieved_from": v}
                 )
 
                 new_sources.append(
                     {
-                        "resource": source["value"][0],
+                        "resource": v,
                         "resource_role": source["attribute_type_id"],
                         "retrievals": [],
                     }
