@@ -39,10 +39,14 @@ class Message(BaseModel):
         extra = "forbid"
 
     def update(self, other: "Message"):
-        if hash(self.query_graph) != hash(other.query_graph):
-            # In practice this could be support but many decisions wouldn't need to be made
-            # For example must qnode keys match? Or is topology sufficient?
-            raise NotImplementedError("Query graph merging not supported")
+        if self.query_graph:
+            if hash(self.query_graph) != hash(other.query_graph):
+                # In practice this could be support but many decisions wouldn't need to be made
+                # For example must qnode keys match? Or is topology sufficient?
+                raise NotImplementedError("Query graph merging not supported")
+        else:
+            # To support merging with empty
+            self.query_graph = other.query_graph
 
         # Make a copy because normalization will modify results
         other = other.copy(deep=True)
