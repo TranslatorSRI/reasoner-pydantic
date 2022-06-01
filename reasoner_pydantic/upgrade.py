@@ -56,19 +56,19 @@ def upgrade_from_1p2(old_dict, result_source="ARA", result_method="default"):
             
             new_sources = [
                 {
-                    "resource": root_source["value"],
+                    "resource": root_source["value"][0],
                     "resource_role": root_source["attribute_type_id"],
                     "retrievals": []
                 }
             ]
             for source in source_attributes:
                 new_sources[-1]["retrievals"].append({
-                    "retrieved_from": source["value"]
+                    "retrieved_from": source["value"][0]
                 })
                 
                 new_sources.append(
                     {
-                        "resource": source["value"],
+                        "resource": source["value"][0],
                         "resource_role": source["attribute_type_id"],
                         "retrievals": []
                     }
