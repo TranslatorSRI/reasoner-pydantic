@@ -93,7 +93,7 @@ def upgrade_from_1p2(old_dict, result_source="ARA", result_method="default"):
         converted_edge = {
             "subject": ksubject,
             "predicate": kpredicate,
-            "object": kpredicate,
+            "object": kobject,
             "negated": knegated,
             "qualifiers": kqualifiers,
             "sources": new_sources,
