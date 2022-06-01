@@ -19,7 +19,7 @@ def upgrade_from_1p2(old_dict, result_source="ARA", result_method="default"):
             "biolink:knowledge_source",  # This is not intended to be used but is
             "biolink:primary_knowledge_source",
             "biolink:original_knowledge_source",
-            "biolink:aggregator_knowledge_source"
+            "biolink:aggregator_knowledge_source",
         ]
         source_attributes = []
         attrs = list(kedge.get("attributes"))
@@ -28,7 +28,7 @@ def upgrade_from_1p2(old_dict, result_source="ARA", result_method="default"):
             attr_type = attribute.get("attribute_type_id", None)
             if attr_type in source_attribute_types:
                 removals.append(attribute)  # Remove them from the original list
-                source_attributes.append(attribute)    
+                source_attributes.append(attribute)
         for r in removals:
             attrs.remove(r)
         # attrs are now all the attributes we want to use
@@ -57,7 +57,7 @@ def upgrade_from_1p2(old_dict, result_source="ARA", result_method="default"):
             # Build the list of sources with retrievals
             # Assume order has meaning?
             v = root_source["value"]
-            if isinstance(v,list):
+            if isinstance(v, list):
                 v = v[0]
             new_sources = [
                 {
@@ -68,11 +68,9 @@ def upgrade_from_1p2(old_dict, result_source="ARA", result_method="default"):
             ]
             for source in source_attributes:
                 v = source["value"]
-                if isinstance(v,list):
+                if isinstance(v, list):
                     v = v[0]
-                new_sources[-1]["retrievals"].append(
-                    {"retrieved_from": v}
-                )
+                new_sources[-1]["retrievals"].append({"retrieved_from": v})
 
                 new_sources.append(
                     {
