@@ -16,19 +16,19 @@ def upgrade_from_1p2(old_dict, result_source="ARA", result_method="default"):
 
         # Separate source attributes from regular attributes
         source_attribute_types = [
-            "biolink:knowledge_source", # This is not intended to be used but is
+            "biolink:knowledge_source",  # This is not intended to be used but is
             "biolink:primary_knowledge_source",
             "biolink:original_knowledge_source",
-            "biolink:aggregator_knowledge_source"
+            "biolink:aggregator_knowledge_source",
         ]
         source_attributes = []
         attrs = kedge.get("attributes")
         for i_attr, attribute in enumerate(attrs):
             attr_type = attribute.get("attribute_type_id", None)
             if attr_type in source_attribute_types:
-                attrs.pop(i_attr) # Remove them from the original list
+                attrs.pop(i_attr)  # Remove them from the original list
                 source_attributes.append(attribute)
-        
+
         # attrs are now all the attributes we want to use
         # We need to build the resouce and retrievals chain from the sources
 
@@ -47,32 +47,32 @@ def upgrade_from_1p2(old_dict, result_source="ARA", result_method="default"):
         if not root_source and source_attributes:
             # As a fail safe just use the first one as the root?
             root_source = source_attributes.pop(0)
-        
+
         if not root_source:
             # Still no sources
             new_sources = []
         else:
             # Build the list of sources with retrievals
-            
+
             new_sources = [
                 {
                     "resource": root_source["value"][0],
                     "resource_role": root_source["attribute_type_id"],
-                    "retrievals": []
+                    "retrievals": [],
                 }
             ]
             for source in source_attributes:
-                new_sources[-1]["retrievals"].append({
-                    "retrieved_from": source["value"][0]
-                })
-                
+                new_sources[-1]["retrievals"].append(
+                    {"retrieved_from": source["value"][0]}
+                )
+
                 new_sources.append(
                     {
                         "resource": source["value"][0],
                         "resource_role": source["attribute_type_id"],
-                        "retrievals": []
+                        "retrievals": [],
                     }
-                ) 
+                )
 
         edge_key = hash(
             (
