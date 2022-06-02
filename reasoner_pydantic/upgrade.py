@@ -111,18 +111,17 @@ def upgrade_from_1p2(old_dict, result_source="ARA", result_method="default"):
         if edge_key in new_edges:
             # Merge in coverted edge into existing new_edge
             current_new = new_edges[edge_key]
-            
+
             # (subject, predicate, object, negated, qualifiers) are all the same
             # We need to concatenate attributes and sources
             # There may be duplicates here, but the process of converting to a
             # Message() will deduplicate through the hashing process there
-            new_edges[edge_key]['sources'] += (current_new['sources'])
-            new_edges[edge_key]['attributes'] += (current_new['attributes'])
+            new_edges[edge_key]["sources"] += current_new["sources"]
+            new_edges[edge_key]["attributes"] += current_new["attributes"]
         else:
             new_edges[edge_key] = converted_edge
-    
+
     # Merge new_edges
-    
 
     new_results = []
     for r in old_dict["results"]:
