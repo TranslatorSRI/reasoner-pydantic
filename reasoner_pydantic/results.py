@@ -54,7 +54,7 @@ class Analysis(BaseModel):
     """Result analysis"""
 
     resource: InformationResource = Field(..., title="list of node bindings")
-    methdod: Optional[str] = Field(None, title="")
+    method: Optional[str] = Field(None, title="")
     node_binding_attributes: Optional[
         HashableMapping[str, HashableMapping[str, HashableSet[Attribute]]]
     ]
