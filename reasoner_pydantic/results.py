@@ -61,6 +61,15 @@ class Analysis(BaseModel):
     edge_binding_attributes: Optional[
         HashableMapping[str, HashableMapping[str, HashableSet[Attribute]]]
     ]
+    addional_node_bindings: HashableMapping[str, HashableSet[NodeBinding]] = Field(
+        ...,
+        title="list of additional node bindings",
+    )
+    addional_edge_bindings: HashableMapping[str, HashableSet[NodeBinding]] = Field(
+        ...,
+        title="list of additional edge bindings",
+    )
+    
 
     score: Optional[float] = Field(None, format="float")
 
