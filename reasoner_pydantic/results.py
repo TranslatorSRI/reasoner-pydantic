@@ -65,7 +65,7 @@ class Analysis(BaseModel):
         ...,
         title="list of additional node bindings",
     )
-    addional_edge_bindings: HashableMapping[str, HashableSet[NodeBinding]] = Field(
+    addional_edge_bindings: HashableMapping[str, HashableSet[EdgeBinding]] = Field(
         ...,
         title="list of additional edge bindings",
     )
