@@ -53,7 +53,9 @@ class NodeBinding(BaseModel):
 class Analysis(BaseModel):
     """Result analysis"""
 
-    resource: InformationResource = Field(..., title="information resource providing the analysis")
+    resource: InformationResource = Field(
+        ..., title="information resource providing the analysis"
+    )
     method: Optional[str] = Field(None, title="")
     node_binding_attributes: Optional[
         HashableMapping[str, HashableMapping[str, HashableSet[Attribute]]]
@@ -63,7 +65,7 @@ class Analysis(BaseModel):
     ]
     additional_node_bindings: Optional[
         HashableMapping[str, HashableSet[NodeBinding]]
-     ] = Field(
+    ] = Field(
         None,
         title="list of additional node bindings",
     )

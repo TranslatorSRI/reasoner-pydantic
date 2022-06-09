@@ -125,10 +125,10 @@ def upgrade_from_1p2(old_dict, result_source="ARA", result_method="default"):
     # Merge new_edges
 
     # Look at Q Graph so we can sort additional bindings from qgraph bindings
-    q_graph = old_dict.get('query_graph', None)
+    q_graph = old_dict.get("query_graph", None)
     if q_graph:
-        q_nodes = q_graph.get('nodes', dict()).keys()
-        q_edges = q_graph.get('edges', dict()).keys()
+        q_nodes = q_graph.get("nodes", dict()).keys()
+        q_edges = q_graph.get("edges", dict()).keys()
     else:
         q_nodes = []
         q_edges = []
@@ -157,13 +157,13 @@ def upgrade_from_1p2(old_dict, result_source="ARA", result_method="default"):
         # pop off the extra edge_bindings
         for k in add_edge_bindings.keys():
             r["edge_bindings"].pop(k)
-        
+
         for k, nb in r["node_bindings"].items():
             for b in nb:
                 b_a = b.pop("attributes", None)
                 if b_a:
                     node_binding_attributes[k][b["id"]] = b_a
-            
+
             if k not in q_nodes:
                 add_node_bindings[k] = eb
 

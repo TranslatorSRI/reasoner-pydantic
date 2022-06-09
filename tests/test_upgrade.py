@@ -50,7 +50,7 @@ EXAMPLE_MESSAGE_1p2 = {
             "node_bindings": {
                 "n1": [{"id": "CHEBI:6801"}],
                 "n2": [{"id": "MONDO:5148"}],
-                "extra_n": [{"id": "PUBCHEM.COMPOUND:1"}]
+                "extra_n": [{"id": "PUBCHEM.COMPOUND:1"}],
             },
             "edge_bindings": {
                 "n1n2": [
@@ -64,7 +64,7 @@ EXAMPLE_MESSAGE_1p2 = {
                         ],
                     },
                 ],
-                "extra_e": [{"id": "another_edge"}]
+                "extra_e": [{"id": "another_edge"}],
             },
             "score": 999,
         }
@@ -81,5 +81,5 @@ def test_1p2_upgrade():
         result_method="Test Method",
     )
     assert len(m.results) == 1
-    
+
     # TODO: additional validation of the output
