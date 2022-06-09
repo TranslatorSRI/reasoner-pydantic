@@ -53,7 +53,7 @@ class NodeBinding(BaseModel):
 class Analysis(BaseModel):
     """Result analysis"""
 
-    resource: InformationResource = Field(..., title="list of node bindings")
+    resource: InformationResource = Field(..., title="information resource providing the analysis")
     method: Optional[str] = Field(None, title="")
     node_binding_attributes: Optional[
         HashableMapping[str, HashableMapping[str, HashableSet[Attribute]]]
@@ -61,15 +61,18 @@ class Analysis(BaseModel):
     edge_binding_attributes: Optional[
         HashableMapping[str, HashableMapping[str, HashableSet[Attribute]]]
     ]
-    addional_node_bindings: HashableMapping[str, HashableSet[NodeBinding]] = Field(
-        ...,
+    additional_node_bindings: Optional[
+        HashableMapping[str, HashableSet[NodeBinding]]
+     ] = Field(
+        None,
         title="list of additional node bindings",
     )
-    addional_edge_bindings: HashableMapping[str, HashableSet[EdgeBinding]] = Field(
-        ...,
+    additional_edge_bindings: Optional[
+        HashableMapping[str, HashableSet[EdgeBinding]]
+    ] = Field(
+        None,
         title="list of additional edge bindings",
     )
-    
 
     score: Optional[float] = Field(None, format="float")
 

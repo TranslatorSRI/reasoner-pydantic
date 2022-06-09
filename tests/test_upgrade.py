@@ -18,6 +18,7 @@ EXAMPLE_MESSAGE_1p2 = {
         "nodes": {
             "CHEBI:6801": {},
             "MONDO:5148": {},
+            "PUBCHEM.COMPOUND:1": {},
         },
         "edges": {
             "CHEBI:6801-biolink:treats-MONDO:5148": {
@@ -30,7 +31,18 @@ EXAMPLE_MESSAGE_1p2 = {
                         "value": "inforres:kp1",
                     }
                 ],
-            }
+            },
+            "another_edge": {
+                "subject": "CHEBI:6801",
+                "object": "PUBCHEM.COMPOUND:1",
+                "predicate": "biolink:is_related_to",
+                "attributes": [
+                    {
+                        "attribute_type_id": "biolink:original_knowledge_source",
+                        "value": "inforres:kpx",
+                    }
+                ],
+            },
         },
     },
     "results": [
@@ -38,6 +50,7 @@ EXAMPLE_MESSAGE_1p2 = {
             "node_bindings": {
                 "n1": [{"id": "CHEBI:6801"}],
                 "n2": [{"id": "MONDO:5148"}],
+                "extra_n": [{"id": "PUBCHEM.COMPOUND:1"}]
             },
             "edge_bindings": {
                 "n1n2": [
@@ -49,8 +62,9 @@ EXAMPLE_MESSAGE_1p2 = {
                                 "value": 888,
                             }
                         ],
-                    }
-                ]
+                    },
+                ],
+                "extra_e": [{"id": "another_edge"}]
             },
             "score": 999,
         }
@@ -67,4 +81,5 @@ def test_1p2_upgrade():
         result_method="Test Method",
     )
     assert len(m.results) == 1
+    
     # TODO: additional validation of the output

@@ -115,7 +115,8 @@ def upgrade_from_1p2(old_dict, result_source="ARA", result_method="default"):
             # (subject, predicate, object, negated, qualifiers) are all the same
             # We need to concatenate attributes and sources
             # There may be duplicates here, but the process of converting to a
-            # Message() will deduplicate through the hashing process there
+            # Message() will deduplicate through the hashing process there in
+            # sources or attributes
             new_edges[edge_key]["sources"] += current_new["sources"]
             new_edges[edge_key]["attributes"] += current_new["attributes"]
         else:
@@ -123,8 +124,20 @@ def upgrade_from_1p2(old_dict, result_source="ARA", result_method="default"):
 
     # Merge new_edges
 
+    # Look at Q Graph so we can sort additional bindings from qgraph bindings
+    q_graph = old_dict.get('query_graph', None)
+    if q_graph:
+        q_nodes = q_graph.get('nodes', dict()).keys()
+        q_edges = q_graph.get('edges', dict()).keys()
+    else:
+        q_nodes = []
+        q_edges = []
+
     new_results = []
     for r in old_dict["results"]:
+        add_node_bindings = dict()
+        add_edge_bindings = dict()
+
         node_binding_attributes = defaultdict(dict)
         edge_binding_attributes = defaultdict(dict)
 
@@ -138,11 +151,25 @@ def upgrade_from_1p2(old_dict, result_source="ARA", result_method="default"):
 
                 b["id"] = edge_key_map[b["id"]]  # edit binding in place to new edge key
 
+            if k not in q_edges:
+                add_edge_bindings[k] = eb
+
+        # pop off the extra edge_bindings
+        for k in add_edge_bindings.keys():
+            r["edge_bindings"].pop(k)
+        
         for k, nb in r["node_bindings"].items():
             for b in nb:
                 b_a = b.pop("attributes", None)
                 if b_a:
                     node_binding_attributes[k][b["id"]] = b_a
+            
+            if k not in q_nodes:
+                add_node_bindings[k] = eb
+
+        # pop off the extra node_bindings
+        for k in add_node_bindings.keys():
+            r["node_bindings"].pop(k)
 
         score = r.pop("score", None)
 
@@ -153,6 +180,8 @@ def upgrade_from_1p2(old_dict, result_source="ARA", result_method="default"):
                 {
                     "resource": result_source,
                     "method": result_method,
+                    "additional_node_bindings": add_node_bindings,
+                    "additional_edge_bindings": add_edge_bindings,
                     "node_binding_attributes": node_binding_attributes,
                     "edge_binding_attributes": edge_binding_attributes,
                     "score": score,
