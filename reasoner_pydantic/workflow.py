@@ -103,8 +103,8 @@ class OperationEnrichResults(BaseOperation):
 
 
 class FillAllowParameters(BaseModel):
-    allowlist: HashableSequence[str]
-    qedge_keys: HashableSequence[str]
+    allowlist: Optional[HashableSequence[str]]
+    qedge_keys: Optional[HashableSequence[str]]
     _nonzero_allowlist = validator("allowlist", allow_reuse=True)(nonzero_validator)
 
     class Config:
@@ -112,8 +112,8 @@ class FillAllowParameters(BaseModel):
 
 
 class FillDenyParameters(BaseModel):
-    denylist: HashableSequence[str]
-    qedge_keys: HashableSequence[str]
+    denylist: Optional[HashableSequence[str]]
+    qedge_keys: Optional[HashableSequence[str]]
     _nonzero_denylist = validator("denylist", allow_reuse=True)(nonzero_validator)
 
     class Config:
