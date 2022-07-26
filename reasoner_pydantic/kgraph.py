@@ -3,7 +3,7 @@ from typing import Optional
 
 from pydantic import Field
 
-from .shared import Attribute, BiolinkEntity, BiolinkPredicate, CURIE, EdgeIdentifier
+from .shared import Attribute, BiolinkEntity, BiolinkPredicate, CURIE, EdgeIdentifier, Qualifier
 from .base_model import BaseModel
 from .utils import HashableMapping, HashableSet
 
@@ -58,6 +58,7 @@ class Edge(BaseModel):
         title="object node id",
     )
     predicate: Optional[BiolinkPredicate] = Field(None, nullable=True)
+    qualifiers: Optional[HashableSet[Qualifier]] = Field(None, nullable=True)
     attributes: Optional[HashableSet[Attribute]] = Field(None, nullable=True)
 
     class Config:
