@@ -9,20 +9,21 @@ from pydantic import Field
 
 from .base_model import BaseModel
 from .utils import HashableMapping, HashableSequence, nonzero_validator
-from .shared import BiolinkEntity, BiolinkPredicate, CURIE
+from .shared import BiolinkEntity, BiolinkPredicate, CURIE, KnowledgeType, Qualifier
 
 
 class Operator(str, Enum):
     """Operator."""
 
     equal_to = "=="
+    deep_equal_to = "==="
     greater_than = ">"
     less_than = "<"
     matches = "matches"
 
 
-class QueryConstraint(BaseModel):
-    """QNode or QEdge constraint."""
+class AttributeConstraint(BaseModel):
+    """QNode or QEdge attribute constraint."""
 
     name: str = Field(
         ...,
@@ -65,6 +66,15 @@ class QueryConstraint(BaseModel):
         return output
 
 
+class QualifierConstraint(BaseModel):
+    """QEdge Qualifier constraint."""
+
+    qualifier_set: HashableSequence[Qualifier] = Field(
+        defult=HashableSequence[Qualifier](__root__=[]),
+        title="qualifier set",
+    )
+
+
 class QNode(BaseModel):
     """Query node."""
 
@@ -83,9 +93,9 @@ class QNode(BaseModel):
     _nonzero_categories = validator("categories", allow_reuse=True)(nonzero_validator)
 
     is_set: bool = False
-    constraints: Optional[HashableSequence[QueryConstraint]] = Field(
-        default=HashableSequence[QueryConstraint](__root__=[]),
-        title="constraints",
+    constraints: Optional[HashableSequence[AttributeConstraint]] = Field(
+        default=HashableSequence[AttributeConstraint](__root__=[]),
+        title="attribute constraints",
     )
 
     class Config:
@@ -106,6 +116,11 @@ class QEdge(BaseModel):
         title="object node id",
     )
 
+    knowledge_type: Optional[KnowledgeType] = Field(
+        ...,
+        title="knowledge type"
+    )
+
     predicates: Optional[HashableSequence[BiolinkPredicate]] = Field(
         None,
         title="predicates",
@@ -113,9 +128,14 @@ class QEdge(BaseModel):
     )
     _nonzero_predicates = validator("predicates", allow_reuse=True)(nonzero_validator)
 
-    constraints: Optional[HashableSequence[QueryConstraint]] = Field(
-        default=HashableSequence[QueryConstraint](__root__=[]),
-        title="constraints",
+    attribute_constraints: Optional[HashableSequence[AttributeConstraint]] = Field(
+        default=HashableSequence[AttributeConstraint](__root__=[]),
+        title="attribute constraints",
+    )
+
+    qualifier_constraints: Optional[HashableSequence[QualifierConstraint]] = Fielf(
+        default=HashableSequence[QualifierConstraint](__root__=[]),
+        title="qualifier constraint",
     )
 
     class Config:
