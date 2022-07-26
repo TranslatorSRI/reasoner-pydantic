@@ -133,7 +133,7 @@ class QEdge(BaseModel):
         title="attribute constraints",
     )
 
-    qualifier_constraints: Optional[HashableSequence[QualifierConstraint]] = Fielf(
+    qualifier_constraints: Optional[HashableSequence[QualifierConstraint]] = Field(
         default=HashableSequence[QualifierConstraint](__root__=[]),
         title="qualifier constraint",
     )
