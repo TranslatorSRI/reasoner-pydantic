@@ -1,11 +1,11 @@
 """Shared models."""
+from __future__ import annotations
+
 import re
 from datetime import datetime
 from enum import Enum
 import string
 from typing import Any, Optional
-
-from __future__ import annotations
 
 from pydantic import Field
 from pydantic.types import ConstrainedStr
