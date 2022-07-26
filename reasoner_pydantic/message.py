@@ -47,12 +47,18 @@ class Message(BaseModel):
             if not self.knowledge_graph:
                 self.knowledge_graph = KnowledgeGraph(nodes=[], edges=[])
             # Normalize edges of incoming KG
+            # This will place KG edge keys into the same hashing system
+            # So that equivalence is determined by hash collision
             other._normalize_kg_edge_ids()
+            # The knowledge graph can now be udated because edge keys will be
+            # hashed using the same method. The knowledge graph update method
+            # will handle concatenating properties when necessary.
             self.knowledge_graph.update(other.knowledge_graph)
         if other.results:
-            if not self.results:
-                self.results = HashableSet[Result]()
-            self.results.update(other.results)
+            if self.results:
+                self.results.update(other.results)
+            else:
+                self.results = other.results
 
     def _normalize_kg_edge_ids(self):
         """
