@@ -30,3 +30,6 @@ class BaseModel(PydanticBaseModel):
     def make_hashable_root(cls, values):
         # The root validator must take and return a dict
         return {k: make_hashable(v) for k, v in values.items()}
+
+    def to_dict(self) -> dict:
+        return json.loads(self.json())
