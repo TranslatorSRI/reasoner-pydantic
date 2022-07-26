@@ -37,7 +37,7 @@ class NodeBinding(BaseModel):
     )
 
     query_id: Optional[CURIE] = Field(
-        ...,
+        None,
         title="query graph id"
     )
 
