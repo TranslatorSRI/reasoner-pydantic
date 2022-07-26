@@ -6,7 +6,7 @@ import yaml
 
 from reasoner_pydantic import components
 
-TAG = "v1.2"
+TAG = "v1.3"
 response = httpx.get(
     f"https://raw.githubusercontent.com/NCATSTranslator/ReasonerAPI/{TAG}/TranslatorReasonerAPI.yaml"
 )
