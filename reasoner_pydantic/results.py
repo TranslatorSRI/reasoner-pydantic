@@ -36,6 +36,13 @@ class NodeBinding(BaseModel):
         title="knowledge graph id",
     )
 
+    query_id: Optional[CURIE] = Field(
+        ...,
+        title="query graph id"
+    )
+
+    attributes: Optional[HashableSet[Attribute]] = Field(None, nullable=True)
+
     class Config:
         title = "node binding"
         schema_extra = {
