@@ -1,5 +1,5 @@
 from pydantic import validator
-from reasoner_pydantic.shared import CURIE
+from reasoner_pydantic.shared import CURIE, KnowledgeType
 from typing import Optional
 
 from reasoner_pydantic import BiolinkEntity, BiolinkPredicate
@@ -32,6 +32,7 @@ class MetaEdge(BaseModel):
     predicate: BiolinkPredicate
     object: BiolinkEntity
     attributes: Optional[HashableSequence[MetaAttribute]]
+    knowledge_types: Optional[HashableSequence[KnowledgeType]]
 
     class Config:
         extra = "forbid"
