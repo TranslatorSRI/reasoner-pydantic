@@ -28,6 +28,25 @@ class KnowledgeType(str, Enum):
 class EdgeIdentifier(str):
     """Identifier for an edge in a knowledge graph"""
 
+class RecurrsiveAttribute(BaseModel):
+    """Attribute subattribute."""
+
+    attribute_type_id: CURIE = Field(..., title="type")
+    value: Any = Field(..., title="value")
+    value_type_id: Optional[CURIE] = Field(
+        None,
+        title="value_type_id",
+        nullable=True,
+    )
+    original_attribute_name: Optional[str] = Field(None, nullable=True)
+    value_url: Optional[str] = Field(None, nullable=True)
+    attribute_source: Optional[str] = Field(None, nullable=True)
+    description: Optional[str] = Field(None, nullable=True)
+    attributes: Optional[HashableSequence[RecurrsiveAttribute]] = Field(None, nullable=True)
+
+    class Config:
+        extra = "forbid"
+
 
 class SubAttribute(BaseModel):
     """Attribute subattribute."""
@@ -43,7 +62,7 @@ class SubAttribute(BaseModel):
     value_url: Optional[str] = Field(None, nullable=True)
     attribute_source: Optional[str] = Field(None, nullable=True)
     description: Optional[str] = Field(None, nullable=True)
-    attributes: Optional[HashableSequence[SubAttribute]] = Field(None, nullable=True)
+    attributes: Optional[HashableSequence[RecurrsiveAttribute]] = Field(None, nullable=True)
 
     class Config:
         extra = "forbid"
@@ -129,3 +148,5 @@ class LogEntry(BaseModel):
 
     class Config:
         extra = "allow"
+
+RecurrsiveAttribute.update_forward_refs()
