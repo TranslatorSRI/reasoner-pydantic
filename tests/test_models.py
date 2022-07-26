@@ -67,11 +67,11 @@ EXAMPLE_MESSAGE = {
                                                 "attribute_type_id": "biolink:knowledge_source",
                                                 "value": {"sources": ["a", "b", "c"]},
                                             }
-                                        ]
+                                        ],
                                     }
-                                ]
+                                ],
                             }
-                        ]
+                        ],
                     }
                 ],
             }
