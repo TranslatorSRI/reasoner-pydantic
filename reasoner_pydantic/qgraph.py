@@ -117,7 +117,7 @@ class QEdge(BaseModel):
     )
 
     knowledge_type: Optional[KnowledgeType] = Field(
-        ...,
+        None,
         title="knowledge type"
     )
 

@@ -5,7 +5,7 @@ from .qgraph import (
     QueryGraph,
     QNode,
     QEdge,
-    QueryConstraint,
+    AttributeConstraint,
 )
 from .results import Result, NodeBinding, EdgeBinding
 from .message import (
@@ -53,7 +53,7 @@ components = [
     Result,
     Response,
     LogLevel,
-    QueryConstraint,
+    AttributeConstraint,
     MetaEdge,
     MetaNode,
     MetaKnowledgeGraph,
