@@ -2,7 +2,10 @@
 import re
 from datetime import datetime
 from enum import Enum
+import string
 from typing import Any, Optional
+
+from __future__ import annotations
 
 from pydantic import Field
 from pydantic.types import ConstrainedStr
@@ -10,9 +13,16 @@ from pydantic.types import ConstrainedStr
 from .base_model import BaseModel
 from .utils import HashableSequence
 
-
+# TODO: potential add validation for structure of CURIE
 class CURIE(str):
     """Compact URI."""
+
+
+class KnowledgeType(str, Enum):
+    "Knowledge Type."
+
+    lookup = "lookup"
+    inferred = "inferred"
 
 
 class EdgeIdentifier(str):
@@ -33,6 +43,7 @@ class SubAttribute(BaseModel):
     value_url: Optional[str] = Field(None, nullable=True)
     attribute_source: Optional[str] = Field(None, nullable=True)
     description: Optional[str] = Field(None, nullable=True)
+    attributes: Optional[HashableSequence[SubAttribute]] = Field(None, nullable=True)
 
     class Config:
         extra = "forbid"
@@ -56,6 +67,23 @@ class Attribute(BaseModel):
 
     class Config:
         extra = "forbid"
+
+
+class BiolinkQualifier(ConstrainedStr):
+    """Biolink Qualifier."""
+
+    regex = re.compile("^biolink:[a-z][a-z_]*$")
+
+    class Config:
+        title = "biolink entity"
+
+
+class Qualifier(BaseModel):
+    """Edge qualifier."""
+
+    qualifier_type_id: BiolinkQualifier = Field(..., title="type")
+
+    qualifier_value: str = Field(..., title="value")
 
 
 class BiolinkEntity(ConstrainedStr):
