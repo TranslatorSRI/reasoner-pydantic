@@ -3,7 +3,14 @@ from typing import Optional
 
 from pydantic import Field
 
-from .shared import Attribute, BiolinkEntity, BiolinkPredicate, CURIE, EdgeIdentifier, Qualifier
+from .shared import (
+    Attribute,
+    BiolinkEntity,
+    BiolinkPredicate,
+    CURIE,
+    EdgeIdentifier,
+    Qualifier,
+)
 from .base_model import BaseModel
 from .utils import HashableMapping, HashableSet
 

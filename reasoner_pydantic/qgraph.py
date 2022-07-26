@@ -116,10 +116,7 @@ class QEdge(BaseModel):
         title="object node id",
     )
 
-    knowledge_type: Optional[KnowledgeType] = Field(
-        None,
-        title="knowledge type"
-    )
+    knowledge_type: Optional[KnowledgeType] = Field(None, title="knowledge type")
 
     predicates: Optional[HashableSequence[BiolinkPredicate]] = Field(
         None,

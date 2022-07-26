@@ -36,10 +36,7 @@ class NodeBinding(BaseModel):
         title="knowledge graph id",
     )
 
-    query_id: Optional[CURIE] = Field(
-        None,
-        title="query graph id"
-    )
+    query_id: Optional[CURIE] = Field(None, title="query graph id")
 
     attributes: Optional[HashableSet[Attribute]] = Field(None, nullable=True)
 
