@@ -29,7 +29,7 @@ class EdgeIdentifier(str):
     """Identifier for an edge in a knowledge graph"""
 
 
-class RecurrsiveAttribute(BaseModel):
+class RecursiveAttribute(BaseModel):
     """Attribute subattribute."""
 
     attribute_type_id: CURIE = Field(..., title="type")
@@ -43,7 +43,7 @@ class RecurrsiveAttribute(BaseModel):
     value_url: Optional[str] = Field(None, nullable=True)
     attribute_source: Optional[str] = Field(None, nullable=True)
     description: Optional[str] = Field(None, nullable=True)
-    attributes: Optional[HashableSequence[RecurrsiveAttribute]] = Field(
+    attributes: Optional[HashableSequence[RecursiveAttribute]] = Field(
         None, nullable=True
     )
 
@@ -65,7 +65,7 @@ class SubAttribute(BaseModel):
     value_url: Optional[str] = Field(None, nullable=True)
     attribute_source: Optional[str] = Field(None, nullable=True)
     description: Optional[str] = Field(None, nullable=True)
-    attributes: Optional[HashableSequence[RecurrsiveAttribute]] = Field(
+    attributes: Optional[HashableSequence[RecursiveAttribute]] = Field(
         None, nullable=True
     )
 
