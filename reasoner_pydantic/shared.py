@@ -155,4 +155,4 @@ class LogEntry(BaseModel):
         extra = "allow"
 
 
-RecurrsiveAttribute.update_forward_refs()
+RecursiveAttribute.update_forward_refs()
