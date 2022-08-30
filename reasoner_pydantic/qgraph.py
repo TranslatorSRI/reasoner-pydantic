@@ -70,7 +70,7 @@ class QualifierConstraint(BaseModel):
     """QEdge Qualifier constraint."""
 
     qualifier_set: HashableSequence[Qualifier] = Field(
-        defult=HashableSequence[Qualifier](__root__=[]),
+        default=HashableSequence[Qualifier](__root__=[]),
         title="qualifier set",
     )
 
