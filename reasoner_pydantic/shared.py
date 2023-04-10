@@ -17,6 +17,12 @@ from .utils import HashableSequence
 class CURIE(str):
     """Compact URI."""
 
+class ResourceRoleEnum(str, Enum):
+    """Types of resources"""
+
+    aggregator_knowledge_source = "biolink:aggregator_knowledge_source"
+    primary_knowledge_source = "biolink:primary_knowledge_source"
+    supporting_data_source = "biolink:supporting_data_source"
 
 class KnowledgeType(str, Enum):
     "Knowledge Type."
