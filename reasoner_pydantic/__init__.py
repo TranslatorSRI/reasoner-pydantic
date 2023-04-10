@@ -8,6 +8,7 @@ from .qgraph import (
     AttributeConstraint,
 )
 from .results import Result, NodeBinding, EdgeBinding, Results
+from .auxgraphs import AuxiliaryGraphs, AuxiliaryGraph
 from .message import (
     Message,
     Query,
@@ -60,5 +61,7 @@ components = [
     MetaNode,
     MetaKnowledgeGraph,
     MetaAttribute,
-    Results
+    Results,
+    AuxiliaryGraph,
+    AuxiliaryGraphs
 ]
