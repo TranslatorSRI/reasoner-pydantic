@@ -58,6 +58,7 @@ class Message(BaseModel):
         if "auxiliary_graphs" in obj.keys() and obj["auxiliary_graphs"]:
             auxgraphs = AuxiliaryGraphs.from_obj(obj["auxiliary_graphs"])
         m = Message(query_graph=qgraph, knowledge_graph=kgraph, results=results, auxiliary_graphs=auxgraphs)
+        m._normalize_kg_edge_ids()
         m.update(message)
         return m
 
@@ -71,8 +72,6 @@ class Message(BaseModel):
         if other.knowledge_graph:
             if not self.knowledge_graph:
                 self.knowledge_graph = KnowledgeGraph(nodes=[], edges=[])
-            else: 
-                self._normalize_kg_edge_ids()
             # Normalize edges of incoming KG
             # This will place KG edge keys into the same hashing system
             # So that equivalence is determined by hash collision
