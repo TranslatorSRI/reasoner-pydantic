@@ -11,7 +11,7 @@ def test_hash_property_update():
     """Check that we can update the property of an object and the hash changes"""
 
     # Test on a QNode
-    qnode = QNode.parse_obj({"categories": ["biolink:ChemicalSubstance"]})
+    qnode = QNode.from_obj({"categories": ["biolink:ChemicalSubstance"]})
 
     h = hash(qnode)
 
