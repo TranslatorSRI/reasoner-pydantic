@@ -7,7 +7,7 @@ from .qgraph import (
     QEdge,
     AttributeConstraint,
 )
-from .results import Result, NodeBinding, EdgeBinding
+from .results import Result, NodeBinding, EdgeBinding, Results
 from .message import (
     Message,
     Query,
@@ -22,6 +22,7 @@ from .shared import (
     Attribute,
     BiolinkEntity,
     BiolinkPredicate,
+    BiolinkQualifier,
     CURIE,
     LogEntry,
     LogLevel,
@@ -37,6 +38,7 @@ components = [
     Attribute,
     BiolinkEntity,
     BiolinkPredicate,
+    BiolinkQualifier,
     CURIE,
     Edge,
     EdgeBinding,
@@ -58,4 +60,5 @@ components = [
     MetaNode,
     MetaKnowledgeGraph,
     MetaAttribute,
+    Results
 ]
