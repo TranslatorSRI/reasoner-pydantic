@@ -34,9 +34,7 @@ class Message(BaseModel):
         nullable=True,
     )
     auxiliary_graphs: Optional[AuxiliaryGraphs] = Field(
-        None,
-        title="list of auxiliary graphs",
-        nullable=True
+        None, title="list of auxiliary graphs", nullable=True
     )
 
     class Config:
@@ -57,11 +55,15 @@ class Message(BaseModel):
             results = Results.from_obj(obj["results"])
         if "auxiliary_graphs" in obj.keys() and obj["auxiliary_graphs"]:
             auxgraphs = AuxiliaryGraphs.from_obj(obj["auxiliary_graphs"])
-        m = Message(query_graph=qgraph, knowledge_graph=kgraph, results=results, auxiliary_graphs=auxgraphs)
+        m = Message(
+            query_graph=qgraph,
+            knowledge_graph=kgraph,
+            results=results,
+            auxiliary_graphs=auxgraphs,
+        )
         m._normalize_kg_edge_ids()
         m.update(message)
         return m
-
 
     def update(self, other: "Message"):
         if hash(self.query_graph) != hash(other.query_graph):

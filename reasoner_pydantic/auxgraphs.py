@@ -7,22 +7,18 @@ from .base_model import BaseModel
 from .utils import HashableMapping, HashableSet
 from .shared import Attribute, CURIE
 
+
 class AuxiliaryGraph(BaseModel):
     """Auxiliary Graph"""
 
-    edges: HashableSet[str] = Field(
-        ...,
-        title="edges in auxiliary graph"
-    )
+    edges: HashableSet[str] = Field(..., title="edges in auxiliary graph")
 
-    attributes: Optional[HashableSet[Attribute]] = Field(
-        None,
-        nullable=True
-    )
+    attributes: Optional[HashableSet[Attribute]] = Field(None, nullable=True)
 
     class Config:
         title = "auxiliary graph"
         extra = "allow"
+
 
 class AuxiliaryGraphs(BaseModel):
     """Auxiliary Graphs"""
@@ -32,7 +28,7 @@ class AuxiliaryGraphs(BaseModel):
     class Config:
         title = "auxiliary graphs"
         extra = "allow"
-    
+
     def add(self, graph):
         self.__root__.add(graph)
 
