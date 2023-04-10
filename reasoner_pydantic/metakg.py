@@ -2,7 +2,7 @@ from pydantic import validator
 from reasoner_pydantic.shared import CURIE, KnowledgeType
 from typing import Optional
 
-from reasoner_pydantic import BiolinkEntity, BiolinkPredicate
+from reasoner_pydantic import BiolinkEntity, BiolinkPredicate, BiolinkQualifier
 
 from .base_model import BaseModel
 from .utils import HashableMapping, HashableSequence, nonzero_validator
@@ -31,6 +31,7 @@ class MetaEdge(BaseModel):
     subject: BiolinkEntity
     predicate: BiolinkPredicate
     object: BiolinkEntity
+    qualifier: BiolinkQualifier
     attributes: Optional[HashableSequence[MetaAttribute]]
     knowledge_types: Optional[HashableSequence[KnowledgeType]]
 
