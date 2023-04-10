@@ -7,11 +7,12 @@ from pydantic import constr, Field
 
 from .base_model import BaseModel
 from .utils import HashableSequence, HashableSet
-from .results import Result
+from .results import Result, Results
 from .qgraph import QueryGraph
 from .kgraph import KnowledgeGraph
 from .shared import LogEntry, LogLevel
 from .workflow import Workflow
+from .auxgraphs import AuxiliaryGraphs
 
 
 class Message(BaseModel):
@@ -27,15 +28,39 @@ class Message(BaseModel):
         title="knowledge graph",
         nullable=True,
     )
-    results: Optional[HashableSet[Result]] = Field(
+    results: Optional[Results] = Field(
         None,
         title="list of results",
         nullable=True,
+    )
+    auxiliary_graphs: Optional[AuxiliaryGraphs] = Field(
+        None,
+        title="list of auxiliary graphs",
+        nullable=True
     )
 
     class Config:
         title = "message"
         extra = "forbid"
+
+    def from_obj(obj):
+        message = Message.parse_obj(obj)
+        qgraph = None
+        kgraph = None
+        results = None
+        auxgraphs = None
+        if "query_graph" in obj.keys() and obj["query_graph"]:
+            qgraph = QueryGraph.from_obj(obj["query_graph"])
+        if "knowledge_graph" in obj.keys() and obj["knowledge_graph"]:
+            kgraph = KnowledgeGraph.from_obj(obj["knowledge_graph"])
+        if "results" in obj.keys() and obj["results"]:
+            results = Results.from_obj(obj["results"])
+        if "auxiliary_graphs" in obj.keys() and obj["auxiliary_graphs"]:
+            auxgraphs = AuxiliaryGraphs.from_obj(obj["auxiliary_graphs"])
+        m = Message(query_graph=qgraph, knowledge_graph=kgraph, results=results, auxiliary_graphs=auxgraphs)
+        m.update(message)
+        return m
+
 
     def update(self, other: "Message"):
         if hash(self.query_graph) != hash(other.query_graph):
@@ -46,6 +71,8 @@ class Message(BaseModel):
         if other.knowledge_graph:
             if not self.knowledge_graph:
                 self.knowledge_graph = KnowledgeGraph(nodes=[], edges=[])
+            else: 
+                self._normalize_kg_edge_ids()
             # Normalize edges of incoming KG
             # This will place KG edge keys into the same hashing system
             # So that equivalence is determined by hash collision
@@ -90,10 +117,19 @@ class Message(BaseModel):
 
         # Update results
         if self.results:
-            for result in self.results:
-                for edge_binding_list in result.edge_bindings.values():
-                    for eb in edge_binding_list:
-                        eb.id = edge_id_mapping[eb.id]
+            for result in self.results.__root__:
+                if result and result.analyses:
+                    for analysis in result.analyses:
+                        for edge_binding_list in analysis.edge_bindings.values():
+                            for eb in edge_binding_list:
+                                eb.id = edge_id_mapping[eb.id]
+
+        # Update auxiliary graphs
+        if self.auxiliary_graphs:
+            for auxiliary_graph in self.auxiliary_graphs.__root__:
+                if auxiliary_graph.edges:
+                    for aux_edge in auxiliary_graph.edges:
+                        aux_edge = edge_id_mapping[aux_edge]
 
 
 class Query(BaseModel):
