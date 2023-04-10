@@ -10,7 +10,7 @@ from .shared import (
     CURIE,
     EdgeIdentifier,
     Qualifier,
-    ResourceRoleEnum
+    ResourceRoleEnum,
 )
 from .base_model import BaseModel
 from .utils import HashableMapping, HashableSet
@@ -53,27 +53,18 @@ class Node(BaseModel):
             else:
                 self.attributes = other.attributes
 
+
 class RetrievalSource(BaseModel):
     """A component of source retrieval provenance"""
-    resource_id: CURIE = Field(
-        ...,
-        title="infores for source"
-    )
 
-    resource_role: ResourceRoleEnum = Field(
-        ...,
-        title="source type"
-    )
+    resource_id: CURIE = Field(..., title="infores for source")
 
-    upstream_resource_ids: Optional[HashableSet[CURIE]] = Field(
-        None,
-        nullable=True
-    )
+    resource_role: ResourceRoleEnum = Field(..., title="source type")
 
-    source_record_urls: Optional[HashableSet[str]] = Field(
-        None,
-        nullable=True
-    )
+    upstream_resource_ids: Optional[HashableSet[CURIE]] = Field(None, nullable=True)
+
+    source_record_urls: Optional[HashableSet[str]] = Field(None, nullable=True)
+
 
 class Edge(BaseModel):
     """Knowledge graph edge."""
@@ -86,22 +77,12 @@ class Edge(BaseModel):
         ...,
         title="object node id",
     )
-    predicate: BiolinkPredicate = Field(
-        ...,
-        title="edge predicate"
-    )
+    predicate: BiolinkPredicate = Field(..., title="edge predicate")
     sources: HashableSet[RetrievalSource] = Field(
-        ...,
-        title="list of source retrievals"
+        ..., title="list of source retrievals"
     )
-    qualifiers: Optional[HashableSet[Qualifier]] = Field(
-        None, 
-        nullable=True
-    )
-    attributes: Optional[HashableSet[Attribute]] = Field(
-        None, 
-        nullable=True
-    )
+    qualifiers: Optional[HashableSet[Qualifier]] = Field(None, nullable=True)
+    attributes: Optional[HashableSet[Attribute]] = Field(None, nullable=True)
 
     class Config:
         title = "knowledge-graph edge"
@@ -126,8 +107,15 @@ class Edge(BaseModel):
 
     def __hash__(self) -> int:
         primary_knowledge_source = self.get_primary_knowedge_source()
-        return hash((self.subject, self.object, self.predicate, self.qualifiers, primary_knowledge_source))
-
+        return hash(
+            (
+                self.subject,
+                self.object,
+                self.predicate,
+                self.qualifiers,
+                primary_knowledge_source,
+            )
+        )
 
 
 class KnowledgeGraph(BaseModel):

@@ -16,10 +16,7 @@ class EdgeBinding(BaseModel):
         title="knowledge graph id",
     )
 
-    attributes: Optional[HashableSet[Attribute]] = Field(
-        None, 
-        nullable=True
-    )
+    attributes: Optional[HashableSet[Attribute]] = Field(None, nullable=True)
 
     class Config:
         title = "edge binding"
@@ -29,6 +26,7 @@ class EdgeBinding(BaseModel):
             },
         }
         extra = "allow"
+
 
 class Analysis(BaseModel):
     """Analysis."""
@@ -48,27 +46,26 @@ class Analysis(BaseModel):
         format="float",
     )
 
-    support_graphs: Optional[HashableSet[str]] = Field(
-        None, 
-        nullable=True
-    )
+    support_graphs: Optional[HashableSet[str]] = Field(None, nullable=True)
 
-    scoring_method: Optional[str] = Field(
-        None,
-        nullable=True
-    )
+    scoring_method: Optional[str] = Field(None, nullable=True)
 
-    attributes: Optional[HashableSet[Attribute]] = Field(
-        None, 
-        nullable=True
-    )
+    attributes: Optional[HashableSet[Attribute]] = Field(None, nullable=True)
 
     class Config:
         title = "analysis"
         extra = "allow"
 
     def __hash__(self) -> int:
-        return hash((self.resource_id, self.edge_bindings, self.score, self.support_graphs, self.scoring_method))
+        return hash(
+            (
+                self.resource_id,
+                self.edge_bindings,
+                self.score,
+                self.support_graphs,
+                self.scoring_method,
+            )
+        )
 
     def update(self, other):
         if other.attributes:
@@ -76,6 +73,7 @@ class Analysis(BaseModel):
                 self.attributes.update(other.attributes)
             else:
                 self.attributes = other.attributes
+
 
 class NodeBinding(BaseModel):
     """Node binding."""
@@ -85,15 +83,9 @@ class NodeBinding(BaseModel):
         title="knowledge graph id",
     )
 
-    query_id: Optional[CURIE] = Field(
-        None, 
-        title="query graph id"
-    )
+    query_id: Optional[CURIE] = Field(None, title="query graph id")
 
-    attributes: Optional[HashableSet[Attribute]] = Field(
-        None, 
-        nullable=True
-    )
+    attributes: Optional[HashableSet[Attribute]] = Field(None, nullable=True)
 
     class Config:
         title = "node binding"
@@ -114,9 +106,7 @@ class Result(BaseModel):
     )
 
     analyses: Optional[HashableSet[Analysis]] = Field(
-        None,
-        title="list of anlysis blocks",
-        nullable=True
+        None, title="list of anlysis blocks", nullable=True
     )
 
     class Config:
@@ -151,6 +141,7 @@ class Result(BaseModel):
         result.update(r)
         return result
 
+
 class Results(BaseModel):
     """Results."""
 
@@ -169,16 +160,16 @@ class Results(BaseModel):
                 results.add(old_result)
                 return
         results.add(result)
-    
+
     def __len__(self):
         return len(self.__root__)
 
     def update(self, other):
         for result in other.__root__:
             self.add(result)
-    
+
     def from_obj(obj):
-        results= Results.parse_obj(obj)
+        results = Results.parse_obj(obj)
         for result in obj:
             results.add(Result.from_obj(result))
         return results
