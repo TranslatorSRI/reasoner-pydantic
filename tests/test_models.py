@@ -7,7 +7,7 @@ from reasoner_pydantic.utils import HashableMapping, HashableSequence, HashableS
 
 def test_qnode_null_properties():
     """Check that we can parse a QNode with None property values"""
-    QNode.parse_obj(
+    QNode.from_obj(
         {
             "ids": None,
             "categories": None,
@@ -17,7 +17,7 @@ def test_qnode_null_properties():
 
 def test_qedge_null_properties():
     """Check that we can parse a QEdge with None property values"""
-    QEdge.parse_obj(
+    QEdge.from_obj(
         {
             "subject": "n0",
             "object": "n1",
@@ -50,21 +50,27 @@ EXAMPLE_MESSAGE = {
                 "subject": "CHEBI:6801",
                 "object": "MONDO:5148",
                 "predicate": "biolink:treats",
+                "sources": [
+                    {
+                        "resource_id": "kp0",
+                        "resource_role": "biolink:primary_knowledge_source"
+                    }
+                ],
                 "attributes": [
                     {
-                        "attribute_type_id": "biolink:knowledge_source",
+                        "attribute_type_id": "biolink:attribute",
                         "value": {"sources": ["a", "b", "c"]},
                         "attributes": [
                             {
-                                "attribute_type_id": "biolink:knowledge_source",
+                                "attribute_type_id": "biolink:attribute",
                                 "value": {"sources": ["a", "b", "c"]},
                                 "attributes": [
                                     {
-                                        "attribute_type_id": "biolink:knowledge_source",
+                                        "attribute_type_id": "biolink:attribute",
                                         "value": {"sources": ["a", "b", "c"]},
                                         "attributes": [
                                             {
-                                                "attribute_type_id": "biolink:knowledge_source",
+                                                "attribute_type_id": "biolink:attribute",
                                                 "value": {"sources": ["a", "b", "c"]},
                                             }
                                         ],
@@ -83,32 +89,44 @@ EXAMPLE_MESSAGE = {
                 "n1": [{"id": "CHEBI:6801"}],
                 "n2": [{"id": "MONDO:5148"}],
             },
-            "edge_bindings": {
-                "n1n2": [
-                    {
-                        "id": "CHEBI:6801-biolink:treats-MONDO:5148",
-                        "attributes": [
+            "analyses": [
+                {
+                    "resource_id": "ara0",
+                    "edge_bindings": {
+                        "n1n2": [
                             {
-                                "attribute_type_id": "biolink:knowledge_source",
-                                "value": {"sources": ["a", "b", "c"]},
+                                "id": "CHEBI:6801-biolink:treats-MONDO:5148",
+                                "attributes": [
+                                    {
+                                        "attribute_type_id": "biolink:knowledge_source",
+                                        "value": {"sources": ["a", "b", "c"]},
+                                    }
+                                ],
                             }
-                        ],
-                    }
-                ]
-            },
+                        ]
+                    },
+                }
+            ]
         }
     ],
+    "auxiliary_graphs": [
+        {
+            "edges": [
+                "CHEBI:6801-biolink:treats-MONDO:5148"
+            ]
+        }
+    ]
 }
 
 
 def test_message_hashable():
     """Check that we can hash a message"""
 
-    m = Message.parse_obj(EXAMPLE_MESSAGE)
+    m = Message.from_obj(EXAMPLE_MESSAGE)
     h = hash(m)
     assert h
 
-    m2 = Message.parse_obj(EXAMPLE_MESSAGE)
+    m2 = Message.from_obj(EXAMPLE_MESSAGE)
     h2 = hash(m2)
 
     assert h == h2
@@ -117,7 +135,7 @@ def test_message_hashable():
 def test_message_jsonify():
     """Check that we can jsonify a message"""
 
-    m = Message.parse_obj(EXAMPLE_MESSAGE)
+    m = Message.from_obj(EXAMPLE_MESSAGE)
     m_json = m.json()
     m2 = Message.parse_raw(m_json)
 
@@ -127,9 +145,9 @@ def test_message_jsonify():
 def test_message_dictify():
     """Check that we can dictify a message"""
 
-    m = Message.parse_obj(EXAMPLE_MESSAGE)
+    m = Message.from_obj(EXAMPLE_MESSAGE)
     m_dict = m.dict()
-    m2 = Message.parse_obj(m_dict)
+    m2 = Message.from_obj(m_dict)
 
     assert m == m2
 
@@ -140,7 +158,7 @@ def test_hash_property_update():
     """Check that we can update the property of an object and the hash changes"""
 
     # Test on a QNode
-    qnode = QNode.parse_obj({"categories": ["biolink:ChemicalSubstance"]})
+    qnode = QNode.from_obj({"categories": ["biolink:ChemicalSubstance"]})
 
     h = hash(qnode)
 
@@ -153,7 +171,7 @@ def test_hash_list_update():
     """Check that we can update a list property on an object and the hash changes"""
 
     # Test on a QNode
-    qnode = QNode.parse_obj({"categories": ["biolink:ChemicalSubstance"]})
+    qnode = QNode.from_obj({"categories": ["biolink:ChemicalSubstance"]})
     h = hash(qnode)
 
     qnode.categories.append("biolink:Disease")
@@ -164,7 +182,7 @@ def test_hash_dict_update():
     """Check that we can update a dict property on an object and the hash changes"""
 
     # Test on a QueryGraph
-    kg = QueryGraph.parse_obj(EXAMPLE_MESSAGE["query_graph"])
+    kg = QueryGraph.from_obj(EXAMPLE_MESSAGE["query_graph"])
     h = hash(kg)
 
     kg.nodes["n0"] = kg.nodes["n1"]
@@ -177,7 +195,7 @@ def test_hash_deeply_nested_update():
     Check that we can update a deeply nested object and the hash change is propogated
     """
 
-    m = Message.parse_obj(EXAMPLE_MESSAGE)
+    m = Message.from_obj(EXAMPLE_MESSAGE)
     h = hash(m)
 
     m.query_graph.nodes["n1"].categories.append(BiolinkEntity("biolink:Gene"))
@@ -190,7 +208,7 @@ def test_hash_attribute_values():
     Check that we can hash a dictionary valued attribute
     """
 
-    a = Attribute.parse_obj(
+    a = Attribute.from_obj(
         {
             "attribute_type_id": "biolink:knowledge_source",
             "value": {"sources": ["a", "b", "c"]},
