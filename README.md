@@ -21,22 +21,21 @@ from reasoner_pydantic import (
 
 
 def add_result_to_query(query_dict):
-    query = Query.parse_obj(query_dict)
+    query = Query.from_obj(query_dict)
     message: Message = query.message
 
     # get query graph node
     qnode_id = next(iter(message.query_graph.nodes))
 
     # add knowledge graph node
-    knode = Node.parse_obj({"categories": ["biolink:FooBar"]})
+    knode = Node.from_obj({"categories": ["biolink:FooBar"]})
     knode_id = "foo:bar"
     message.knowledge_graph.nodes[knode_id] = knode
 
     # add result
-    result: Result = Result.parse_obj(
+    result: Result = Result.from_obj(
         {
-            "node_bindings": {qnode_id: [{"id": knode_id}]},
-            "edge_bindings": {},
+            "node_bindings": {qnode_id: [{"id": knode_id}]}
         }
     )
 
