@@ -10,6 +10,7 @@ from .shared import (
     CURIE,
     EdgeIdentifier,
     Qualifier,
+    ResourceRoleEnum
 )
 from .base_model import BaseModel
 from .utils import HashableMapping, HashableSet
@@ -52,6 +53,27 @@ class Node(BaseModel):
             else:
                 self.attributes = other.attributes
 
+class RetrievalSource(BaseModel):
+    """A component of source retrieval provenance"""
+    resource_id: CURIE = Field(
+        ...,
+        title="infores for source"
+    )
+
+    resource_role: ResourceRoleEnum = Field(
+        ...,
+        title="source type"
+    )
+
+    upstream_resource_ids: Optional[HashableSet[CURIE]] = Field(
+        None,
+        nullable=True
+    )
+
+    source_record_urls: Optional[HashableSet[str]] = Field(
+        None,
+        nullable=True
+    )
 
 class Edge(BaseModel):
     """Knowledge graph edge."""
@@ -64,9 +86,22 @@ class Edge(BaseModel):
         ...,
         title="object node id",
     )
-    predicate: Optional[BiolinkPredicate] = Field(None, nullable=True)
-    qualifiers: Optional[HashableSet[Qualifier]] = Field(None, nullable=True)
-    attributes: Optional[HashableSet[Attribute]] = Field(None, nullable=True)
+    predicate: BiolinkPredicate = Field(
+        ...,
+        title="edge predicate"
+    )
+    sources: HashableSet[RetrievalSource] = Field(
+        ...,
+        title="list of source retrievals"
+    )
+    qualifiers: Optional[HashableSet[Qualifier]] = Field(
+        None, 
+        nullable=True
+    )
+    attributes: Optional[HashableSet[Attribute]] = Field(
+        None, 
+        nullable=True
+    )
 
     class Config:
         title = "knowledge-graph edge"
@@ -78,6 +113,21 @@ class Edge(BaseModel):
                 self.attributes.update(other.attributes)
             else:
                 self.attributes = other.attributes
+        if other.sources:
+            if self.sources:
+                self.sources.update(other.sources)
+            else:
+                self.sources = other.sources
+
+    def get_primary_knowedge_source(self):
+        for source in self.sources:
+            if source.resource_role == "biolink:primary_knowledge_source":
+                return source.resource_id
+
+    def __hash__(self) -> int:
+        primary_knowledge_source = self.get_primary_knowedge_source()
+        return hash((self.subject, self.object, self.predicate, self.qualifiers, primary_knowledge_source))
+
 
 
 class KnowledgeGraph(BaseModel):
