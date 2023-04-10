@@ -2,7 +2,7 @@ import copy
 import json
 import pytest
 
-from reasoner_pydantic import Attribute, Message
+from reasoner_pydantic import Attribute, Message, Results
 
 
 # Some sample attributes
@@ -23,12 +23,12 @@ ATTRIBUTE_B = {
     ],
 }
 
-ATTRIBUTE_A = Attribute.parse_obj(ATTRIBUTE_A)
-ATTRIBUTE_B = Attribute.parse_obj(ATTRIBUTE_B)
+ATTRIBUTE_A = Attribute.from_obj(ATTRIBUTE_A)
+ATTRIBUTE_B = Attribute.from_obj(ATTRIBUTE_B)
 
 
 def test_result_merging():
-    """Test that duplicate results are merged correctly"""
+    """Test that duplicate results and analyses are merged correctly"""
 
     message = {
         "knowledge_graph": {
@@ -38,23 +38,55 @@ def test_result_merging():
                     "subject": "kn0",
                     "object": "kn1",
                     "predicate": "biolink:ameliorates",
+                    "sources": [
+                        {
+                            "resource_id": "kp0",
+                            "resource_role": "biolink:primary_knowledge_source"
+                        }
+                    ]
+                },
+                "ke1": {
+                    "subject": "kn0",
+                    "object": "kn1",
+                    "predicate": "biolink:ameliorates",
+                    "sources": [
+                        {
+                            "resource_id": "kp1",
+                            "resource_role": "biolink:primary_knowledge_source"
+                        }
+                    ]
                 }
             },
         },
         "results": [
             {
                 "node_bindings": {"n0": [{"id": "kn0"}]},
-                "edge_bindings": {"e0": [{"id": "ke0"}]},
+                "analyses": [
+                    {
+                        "resource_id": "ara0",
+                        "edge_bindings": {"e0": [{"id": "ke0"}]},
+                    }
+                ]
             },
             {
                 "node_bindings": {"n0": [{"id": "kn0"}]},
-                "edge_bindings": {"e0": [{"id": "ke0"}]},
-            },
+                "analyses": [
+                    {
+                        "resource_id": "ara0",
+                        "edge_bindings": {"e0": [{"id": "ke0"}]},
+                    },
+                    {
+                        "resource_id": "ara1",
+                        "edge_bindings": {"e0": [{"id": "ke0"}]},
+                    }
+                ]
+            }
         ],
     }
 
-    m = Message.parse_obj(message)
+    m = Message.from_obj(message)
     assert len(m.results) == 1
+    assert len(next(iter(m.results.__root__)).analyses) == 2
 
 
 def test_different_result_merging():
@@ -68,22 +100,52 @@ def test_different_result_merging():
                     "subject": "kn0",
                     "object": "kn1",
                     "predicate": "biolink:ameliorates",
+                    "sources": [
+                        {
+                            "resource_id": "kp0",
+                            "resource_role": "biolink:primary_knowledge_source"
+                        }
+                    ]
+                },
+                "ke1": {
+                    "subject": "kn0",
+                    "object": "kn1",
+                    "predicate": "biolink:ameliorates",
+                    "sources": [
+                        {
+                            "resource_id": "kp1",
+                            "resource_role": "biolink:primary_knowledge_source"
+                        }
+                    ]
                 }
             },
         },
         "results": [
             {
                 "node_bindings": {"n0": [{"id": "kn0"}]},
-                "edge_bindings": {"e0": [{"id": "ke0"}]},
+                "analyses": [
+                    {
+                        "resource_id": "ara0",
+                        "edge_bindings": {"e0": [{"id": "ke0"}]},
+                    }
+                ]
             },
             {
-                "node_bindings": {"n0": [{"id": "kn0"}]},
-                "edge_bindings": {"e0": [{"id": "ke0", "attributes": [ATTRIBUTE_A]}]},
-            },
+                "node_bindings": {"n0": [{"id": "kn1"}]},
+                "analyses": [
+                    {
+                        "resource_id": "ara0",
+                        "edge_bindings": {"e0": [{"id": "ke0"}]},
+                    },
+                    {
+                        "resource_id": "ara1",
+                        "edge_bindings": {"e0": [{"id": "ke0"}]},
+                    }
+                ]
+            }
         ],
     }
-
-    m = Message.parse_obj(message)
+    m = Message.from_obj(message)
     assert len(m.results) == 2
 
 
@@ -94,24 +156,65 @@ def test_deduplicate_results_out_of_order():
     """
 
     message = {
-        "knowledge_graph": {"nodes": {}, "edges": {}},
+        "knowledge_graph": {
+            "nodes": {},
+            "edges": {
+                "ke0": {
+                    "subject": "kn0",
+                    "object": "kn1",
+                    "predicate": "biolink:ameliorates",
+                    "sources": [
+                        {
+                            "resource_id": "kp0",
+                            "resource_role": "biolink:primary_knowledge_source"
+                        }
+                    ]
+                },
+                "ke1": {
+                    "subject": "kn0",
+                    "object": "kn1",
+                    "predicate": "biolink:ameliorates",
+                    "sources": [
+                        {
+                            "resource_id": "kp1",
+                            "resource_role": "biolink:primary_knowledge_source"
+                        }
+                    ]
+                }
+            },
+        },
         "results": [
+            {
+                "node_bindings": {
+                    "a": [{"id": "MONDO:0011122"}, {"id": "CHEBI:88916"}]
+                },
+                "analyses": [
+                    {
+                        "resource_id": "ara0",
+                        "edge_bindings": {"e0": [{"id": "ke0"}]},
+                    }
+                ]
+            },
             {
                 "node_bindings": {
                     "a": [{"id": "CHEBI:88916"}, {"id": "MONDO:0011122"}],
                 },
-                "edge_bindings": {},
-            },
-            {
-                "node_bindings": {
-                    "a": [{"id": "MONDO:0011122"}, {"id": "CHEBI:88916"}],
-                },
-                "edge_bindings": {},
-            },
+                "analyses": [
+                    {
+                        "resource_id": "ara0",
+                        "edge_bindings": {"e0": [{"id": "ke0"}]},
+                    },
+                    {
+                        "resource_id": "ara1",
+                        "edge_bindings": {"e0": [{"id": "ke0"}]},
+                    }
+                ]
+            }
         ],
     }
 
-    m = Message.parse_obj(message)
+
+    m = Message.from_obj(message)
     assert len(m.results) == 1
 
 
@@ -139,7 +242,7 @@ def test_deduplicate_results_different():
         ],
     }
 
-    m = Message.parse_obj(message)
+    m = Message.from_obj(message)
     assert len(m.results) == 2
 
 
@@ -179,8 +282,8 @@ def test_merge_knowledge_graph_nodes():
 
     m = Message()
 
-    m.update(Message.parse_obj(message_a))
-    m.update(Message.parse_obj(message_b))
+    m.update(Message.from_obj(message_a))
+    m.update(Message.from_obj(message_b))
 
     # Validate output
     nodes = m.knowledge_graph.nodes
@@ -206,10 +309,21 @@ def test_normalize_knowledge_graph_edges():
                     "object": "CHEBI:1",
                     "predicate": "biolink:treated_by",
                     "attributes": [ATTRIBUTE_A],
+                    "sources": [
+                        {
+                            "resource_id": "kp0",
+                            "resource_role": "biolink:primary_knowledge_source"
+                        }
+                    ]
                 }
             },
         },
-        "results": [{"node_bindings": [], "edge_bindings": {"qe0": [{"id": "n0n1"}]}}],
+        "results": [
+            {
+                "node_bindings": [], 
+                "analyses": [
+                    {"resource_id": "ara0", "edge_bindings": {"qe0": [{"id": "n0n1"}]}}],}
+                ]
     }
 
     message_b = {
@@ -221,6 +335,12 @@ def test_normalize_knowledge_graph_edges():
                     "object": "CHEBI:1",
                     "predicate": "biolink:treated_by",
                     "attributes": [ATTRIBUTE_B],
+                    "sources": [
+                        {
+                            "resource_id": "kp1",
+                            "resource_role": "biolink:primary_knowledge_source"
+                        }
+                    ]
                 }
             },
         },
@@ -229,8 +349,11 @@ def test_normalize_knowledge_graph_edges():
 
     m = Message()
 
-    m.update(Message.parse_obj(message_a))
-    m.update(Message.parse_obj(message_b))
+    m_a = Message.from_obj(message_a)
+    m_b = Message.from_obj(message_b)
+
+    m.update(m_a)
+    m.update(m_b)
 
     # Check that we didn't combine edges
     edges = m.knowledge_graph.edges
@@ -238,8 +361,9 @@ def test_normalize_knowledge_graph_edges():
 
     # Check that the result was updated to point to the correct edge
     edge_id, edge = next(iter(edges.items()))
-    result = next(iter(m.results))
-    assert next(iter(result.edge_bindings["qe0"])).id == edge_id
+    result = next(iter(m.results.__root__))
+    analysis = next(iter(result.analyses))
+    assert next(iter(analysis.edge_bindings["qe0"])).id == edge_id
 
 
 def test_merge_identical_attributes():
@@ -277,8 +401,8 @@ def test_merge_identical_attributes():
 
     m = Message()
 
-    m.update(Message.parse_obj(message_a))
-    m.update(Message.parse_obj(message_b))
+    m.update(Message.from_obj(message_a))
+    m.update(Message.from_obj(message_b))
 
     # Validate output
     nodes = m.knowledge_graph.nodes
