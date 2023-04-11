@@ -53,7 +53,7 @@ EXAMPLE_MESSAGE = {
                 "sources": [
                     {
                         "resource_id": "kp0",
-                        "resource_role": "biolink:primary_knowledge_source"
+                        "resource_role": "biolink:primary_knowledge_source",
                     }
                 ],
                 "attributes": [
@@ -106,16 +106,10 @@ EXAMPLE_MESSAGE = {
                         ]
                     },
                 }
-            ]
+            ],
         }
     ],
-    "auxiliary_graphs": [
-        {
-            "edges": [
-                "CHEBI:6801-biolink:treats-MONDO:5148"
-            ]
-        }
-    ]
+    "auxiliary_graphs": [{"edges": ["CHEBI:6801-biolink:treats-MONDO:5148"]}],
 }
 
 

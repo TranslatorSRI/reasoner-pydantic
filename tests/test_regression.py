@@ -6,7 +6,6 @@ EXAMPLE_RESULT = {
         "n1": [{"id": "CHEBI:6801"}],
         "n2": [{"id": "MONDO:5148"}],
     },
-
     "edge_bindings": {
         "n1n2": [
             {

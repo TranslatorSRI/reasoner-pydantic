@@ -41,9 +41,9 @@ def test_result_merging():
                     "sources": [
                         {
                             "resource_id": "kp0",
-                            "resource_role": "biolink:primary_knowledge_source"
+                            "resource_role": "biolink:primary_knowledge_source",
                         }
-                    ]
+                    ],
                 },
                 "ke1": {
                     "subject": "kn0",
@@ -52,10 +52,10 @@ def test_result_merging():
                     "sources": [
                         {
                             "resource_id": "kp1",
-                            "resource_role": "biolink:primary_knowledge_source"
+                            "resource_role": "biolink:primary_knowledge_source",
                         }
-                    ]
-                }
+                    ],
+                },
             },
         },
         "results": [
@@ -66,7 +66,7 @@ def test_result_merging():
                         "resource_id": "ara0",
                         "edge_bindings": {"e0": [{"id": "ke0"}]},
                     }
-                ]
+                ],
             },
             {
                 "node_bindings": {"n0": [{"id": "kn0"}]},
@@ -78,9 +78,9 @@ def test_result_merging():
                     {
                         "resource_id": "ara1",
                         "edge_bindings": {"e0": [{"id": "ke0"}]},
-                    }
-                ]
-            }
+                    },
+                ],
+            },
         ],
     }
 
@@ -103,9 +103,9 @@ def test_different_result_merging():
                     "sources": [
                         {
                             "resource_id": "kp0",
-                            "resource_role": "biolink:primary_knowledge_source"
+                            "resource_role": "biolink:primary_knowledge_source",
                         }
-                    ]
+                    ],
                 },
                 "ke1": {
                     "subject": "kn0",
@@ -114,10 +114,10 @@ def test_different_result_merging():
                     "sources": [
                         {
                             "resource_id": "kp1",
-                            "resource_role": "biolink:primary_knowledge_source"
+                            "resource_role": "biolink:primary_knowledge_source",
                         }
-                    ]
-                }
+                    ],
+                },
             },
         },
         "results": [
@@ -128,7 +128,7 @@ def test_different_result_merging():
                         "resource_id": "ara0",
                         "edge_bindings": {"e0": [{"id": "ke0"}]},
                     }
-                ]
+                ],
             },
             {
                 "node_bindings": {"n0": [{"id": "kn1"}]},
@@ -140,9 +140,9 @@ def test_different_result_merging():
                     {
                         "resource_id": "ara1",
                         "edge_bindings": {"e0": [{"id": "ke0"}]},
-                    }
-                ]
-            }
+                    },
+                ],
+            },
         ],
     }
     m = Message.from_obj(message)
@@ -166,9 +166,9 @@ def test_deduplicate_results_out_of_order():
                     "sources": [
                         {
                             "resource_id": "kp0",
-                            "resource_role": "biolink:primary_knowledge_source"
+                            "resource_role": "biolink:primary_knowledge_source",
                         }
-                    ]
+                    ],
                 },
                 "ke1": {
                     "subject": "kn0",
@@ -177,10 +177,10 @@ def test_deduplicate_results_out_of_order():
                     "sources": [
                         {
                             "resource_id": "kp1",
-                            "resource_role": "biolink:primary_knowledge_source"
+                            "resource_role": "biolink:primary_knowledge_source",
                         }
-                    ]
-                }
+                    ],
+                },
             },
         },
         "results": [
@@ -193,7 +193,7 @@ def test_deduplicate_results_out_of_order():
                         "resource_id": "ara0",
                         "edge_bindings": {"e0": [{"id": "ke0"}]},
                     }
-                ]
+                ],
             },
             {
                 "node_bindings": {
@@ -207,12 +207,11 @@ def test_deduplicate_results_out_of_order():
                     {
                         "resource_id": "ara1",
                         "edge_bindings": {"e0": [{"id": "ke0"}]},
-                    }
-                ]
-            }
+                    },
+                ],
+            },
         ],
     }
-
 
     m = Message.from_obj(message)
     assert len(m.results) == 1
@@ -312,18 +311,20 @@ def test_normalize_knowledge_graph_edges():
                     "sources": [
                         {
                             "resource_id": "kp0",
-                            "resource_role": "biolink:primary_knowledge_source"
+                            "resource_role": "biolink:primary_knowledge_source",
                         }
-                    ]
+                    ],
                 }
             },
         },
         "results": [
             {
-                "node_bindings": [], 
+                "node_bindings": [],
                 "analyses": [
-                    {"resource_id": "ara0", "edge_bindings": {"qe0": [{"id": "n0n1"}]}}],}
-                ]
+                    {"resource_id": "ara0", "edge_bindings": {"qe0": [{"id": "n0n1"}]}}
+                ],
+            }
+        ],
     }
 
     message_b = {
@@ -338,9 +339,9 @@ def test_normalize_knowledge_graph_edges():
                     "sources": [
                         {
                             "resource_id": "kp1",
-                            "resource_role": "biolink:primary_knowledge_source"
+                            "resource_role": "biolink:primary_knowledge_source",
                         }
-                    ]
+                    ],
                 }
             },
         },
