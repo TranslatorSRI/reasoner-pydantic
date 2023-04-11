@@ -1,7 +1,7 @@
 """Auxiliary Graphs model"""
 from typing import Optional
 
-from pydantic import Field
+from pydantic import Field, parse_obj_as
 
 from .base_model import BaseModel
 from .utils import HashableMapping, HashableSet
@@ -35,10 +35,10 @@ class AuxiliaryGraphs(BaseModel):
     def update(self, other):
         self.__root__.update(other.__root__)
 
-    def from_obj(obj):
-        auxiliary_graphs = AuxiliaryGraphs.parse_obj(obj)
+    def parse_obj(obj):
+        auxiliary_graphs = parse_obj_as(AuxiliaryGraphs, obj)
         graphs = AuxiliaryGraphs()
         graphs.__root__ = HashableSet[AuxiliaryGraph]()
         for graph in obj:
-            graphs.add(AuxiliaryGraph.from_obj(graph))
+            graphs.add(AuxiliaryGraph.parse_obj(graph))
         return graphs.update(auxiliary_graphs)

@@ -27,10 +27,6 @@ class BaseModel(PydanticBaseModel):
             f"Model {self.__class__.__name__} has no update method"
         )
 
-    @classmethod
-    def from_obj(cls, obj):
-        return cls.parse_obj(obj)
-
     # After running validation on all known properties, make sure everything else is hashable
     @root_validator(allow_reuse=True, pre=False)
     def make_hashable_root(cls, values):

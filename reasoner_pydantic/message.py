@@ -3,7 +3,7 @@ import hashlib
 
 from typing import Optional, Callable
 
-from pydantic import constr, Field
+from pydantic import constr, Field, parse_obj_as
 
 from .base_model import BaseModel
 from .utils import HashableSequence, HashableSet
@@ -41,20 +41,20 @@ class Message(BaseModel):
         title = "message"
         extra = "forbid"
 
-    def from_obj(obj):
-        message = Message.parse_obj(obj)
+    def parse_obj(obj):
+        message = parse_obj_as(Message, obj)
         qgraph = None
         kgraph = None
         results = None
         auxgraphs = None
         if "query_graph" in obj.keys() and obj["query_graph"]:
-            qgraph = QueryGraph.from_obj(obj["query_graph"])
+            qgraph = QueryGraph.parse_obj(obj["query_graph"])
         if "knowledge_graph" in obj.keys() and obj["knowledge_graph"]:
-            kgraph = KnowledgeGraph.from_obj(obj["knowledge_graph"])
+            kgraph = KnowledgeGraph.parse_obj(obj["knowledge_graph"])
         if "results" in obj.keys() and obj["results"]:
-            results = Results.from_obj(obj["results"])
+            results = Results.parse_obj(obj["results"])
         if "auxiliary_graphs" in obj.keys() and obj["auxiliary_graphs"]:
-            auxgraphs = AuxiliaryGraphs.from_obj(obj["auxiliary_graphs"])
+            auxgraphs = AuxiliaryGraphs.parse_obj(obj["auxiliary_graphs"])
         m = Message(
             query_graph=qgraph,
             knowledge_graph=kgraph,

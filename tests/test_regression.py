@@ -26,7 +26,7 @@ EXAMPLE_RESULT = {
 def test_result_hashable():
     """Check that we can hash a result with extra properties"""
 
-    result_obj = Result.from_obj(EXAMPLE_RESULT)
+    result_obj = Result.parse_obj(EXAMPLE_RESULT)
     result_dict = result_obj.dict()
 
     assert len(result_dict["raw_data"]) == 1
