@@ -26,14 +26,19 @@ class MetaNode(BaseModel):
     class Config:
         extra = "forbid"
 
+class MetaQualifier(BaseModel):
+    qualifier_type_id: CURIE
+    applicable_values: Optional[HashableSequence[str]]
+
 
 class MetaEdge(BaseModel):
     subject: BiolinkEntity
     predicate: BiolinkPredicate
     object: BiolinkEntity
-    qualifier: BiolinkQualifier
+    qualifiers: Optional[HashableSequence[MetaQualifier]]
     attributes: Optional[HashableSequence[MetaAttribute]]
     knowledge_types: Optional[HashableSequence[KnowledgeType]]
+    association: Optional[BiolinkEntity]
 
     class Config:
         extra = "forbid"
