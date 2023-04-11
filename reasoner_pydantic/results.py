@@ -1,7 +1,7 @@
 """Results models."""
 from typing import Optional
 
-from pydantic import Field
+from pydantic import Field, parse_obj_as
 
 from .base_model import BaseModel
 from .utils import HashableMapping, HashableSet
@@ -130,13 +130,13 @@ class Result(BaseModel):
     def __hash__(self) -> int:
         return hash(self.node_bindings)
 
-    def from_obj(obj):
-        result = Result.parse_obj(obj)
+    def parse_obj(obj):
+        result = parse_obj_as(Result, obj)
         nbindings = HashableMapping.parse_obj(obj["node_bindings"])
         analyses = HashableSet[Analysis]()
         if "analyses" in obj.keys():
             for analysis in obj["analyses"]:
-                analyses.add(Analysis.from_obj(analysis))
+                analyses.add(Analysis.parse_obj(analysis))
         r = Result(node_bindings=nbindings, analyses=analyses)
         result.update(r)
         return result
@@ -168,8 +168,8 @@ class Results(BaseModel):
         for result in other.__root__:
             self.add(result)
 
-    def from_obj(obj):
-        results = Results.parse_obj(obj)
+    def parse_obj(obj):
+        results = parse_obj_as(Results, obj)
         for result in obj:
-            results.add(Result.from_obj(result))
+            results.add(Result.parse_obj(result))
         return results

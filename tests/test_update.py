@@ -23,8 +23,8 @@ ATTRIBUTE_B = {
     ],
 }
 
-ATTRIBUTE_A = Attribute.from_obj(ATTRIBUTE_A)
-ATTRIBUTE_B = Attribute.from_obj(ATTRIBUTE_B)
+ATTRIBUTE_A = Attribute.parse_obj(ATTRIBUTE_A)
+ATTRIBUTE_B = Attribute.parse_obj(ATTRIBUTE_B)
 
 
 def test_result_merging():
@@ -84,7 +84,7 @@ def test_result_merging():
         ],
     }
 
-    m = Message.from_obj(message)
+    m = Message.parse_obj(message)
     assert len(m.results) == 1
     assert len(next(iter(m.results.__root__)).analyses) == 2
 
@@ -145,7 +145,7 @@ def test_different_result_merging():
             },
         ],
     }
-    m = Message.from_obj(message)
+    m = Message.parse_obj(message)
     assert len(m.results) == 2
 
 
@@ -213,7 +213,7 @@ def test_deduplicate_results_out_of_order():
         ],
     }
 
-    m = Message.from_obj(message)
+    m = Message.parse_obj(message)
     assert len(m.results) == 1
 
 
@@ -241,7 +241,7 @@ def test_deduplicate_results_different():
         ],
     }
 
-    m = Message.from_obj(message)
+    m = Message.parse_obj(message)
     assert len(m.results) == 2
 
 
@@ -281,8 +281,8 @@ def test_merge_knowledge_graph_nodes():
 
     m = Message()
 
-    m.update(Message.from_obj(message_a))
-    m.update(Message.from_obj(message_b))
+    m.update(Message.parse_obj(message_a))
+    m.update(Message.parse_obj(message_b))
 
     # Validate output
     nodes = m.knowledge_graph.nodes
@@ -350,8 +350,8 @@ def test_normalize_knowledge_graph_edges():
 
     m = Message()
 
-    m_a = Message.from_obj(message_a)
-    m_b = Message.from_obj(message_b)
+    m_a = Message.parse_obj(message_a)
+    m_b = Message.parse_obj(message_b)
 
     m.update(m_a)
     m.update(m_b)
@@ -402,8 +402,8 @@ def test_merge_identical_attributes():
 
     m = Message()
 
-    m.update(Message.from_obj(message_a))
-    m.update(Message.from_obj(message_b))
+    m.update(Message.parse_obj(message_a))
+    m.update(Message.parse_obj(message_b))
 
     # Validate output
     nodes = m.knowledge_graph.nodes
