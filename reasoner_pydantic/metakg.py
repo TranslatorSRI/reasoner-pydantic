@@ -26,6 +26,7 @@ class MetaNode(BaseModel):
     class Config:
         extra = "forbid"
 
+
 class MetaQualifier(BaseModel):
     qualifier_type_id: CURIE
     applicable_values: Optional[HashableSequence[str]]
