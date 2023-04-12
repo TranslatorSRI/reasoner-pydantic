@@ -13,6 +13,7 @@ from pydantic.types import ConstrainedStr
 from .base_model import BaseModel
 from .utils import HashableSequence
 
+
 # TODO: potential add validation for structure of CURIE
 class CURIE(str):
     """Compact URI."""

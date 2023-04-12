@@ -10,7 +10,10 @@ TAG = "v1.3"
 response = httpx.get(
     f"https://raw.githubusercontent.com/NCATSTranslator/ReasonerAPI/{TAG}/TranslatorReasonerAPI.yaml"
 )
-reference_schemas = yaml.load(response.text, Loader=yaml.FullLoader,)[
+reference_schemas = yaml.load(
+    response.text,
+    Loader=yaml.FullLoader,
+)[
     "components"
 ]["schemas"]
 
