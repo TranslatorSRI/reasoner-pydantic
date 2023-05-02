@@ -2,6 +2,7 @@
 from setuptools import setup
 
 from pathlib import Path
+
 this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text()
 
@@ -13,7 +14,7 @@ setup(
     url="https://github.com/TranslatorSRI/reasoner-pydantic",
     description="Pydantic models for the Reasoner API data formats",
     long_description=long_description,
-    long_description_content_type='text/markdown',
+    long_description_content_type="text/markdown",
     packages=["reasoner_pydantic"],
     include_package_data=True,
     install_requires=["pydantic>=1.8"],
