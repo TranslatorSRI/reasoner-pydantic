@@ -34,7 +34,7 @@ class Message(BaseModel):
         nullable=True,
     )
     auxiliary_graphs: Optional[AuxiliaryGraphs] = Field(
-        None, title="list of auxiliary graphs", nullable=True
+        None, title="dict of auxiliary graphs", nullable=True
     )
 
     class Config:
@@ -87,6 +87,11 @@ class Message(BaseModel):
                 self.results.update(other.results)
             else:
                 self.results = other.results
+        if other.auxiliary_graphs:
+            if self.auxiliary_graphs:
+                self.auxiliary_graphs.update(other.auxiliary_graphs)
+            else:
+                self.auxiliary_graphs = other.auxiliary_graphs
 
     def _normalize_kg_edge_ids(self):
         """
@@ -116,6 +121,14 @@ class Message(BaseModel):
             # Update knowledge graph
             self.knowledge_graph.edges[new_edge_id] = edge
 
+        # Update auxiliary graphs
+        if self.auxiliary_graphs:
+            for auxiliary_graph in self.auxiliary_graphs.__root__.values():
+                if auxiliary_graph.edges:
+                    for aux_edge in auxiliary_graph.edges:
+                        auxiliary_graph.edges.discard(aux_edge)
+                        auxiliary_graph.edges.add(edge_id_mapping[aux_edge])
+
         # Update results
         if self.results:
             for result in self.results.__root__:
@@ -124,13 +137,6 @@ class Message(BaseModel):
                         for edge_binding_list in analysis.edge_bindings.values():
                             for eb in edge_binding_list:
                                 eb.id = edge_id_mapping[eb.id]
-
-        # Update auxiliary graphs
-        if self.auxiliary_graphs:
-            for auxiliary_graph in self.auxiliary_graphs.__root__:
-                if auxiliary_graph.edges:
-                    for aux_edge in auxiliary_graph.edges:
-                        aux_edge = edge_id_mapping[aux_edge]
 
 
 class Query(BaseModel):

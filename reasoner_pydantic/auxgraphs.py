@@ -23,14 +23,11 @@ class AuxiliaryGraph(BaseModel):
 class AuxiliaryGraphs(BaseModel):
     """Auxiliary Graphs"""
 
-    __root__: Optional[HashableSet[AuxiliaryGraph]]
+    __root__: Optional[HashableMapping[str, AuxiliaryGraph]]
 
     class Config:
         title = "auxiliary graphs"
         extra = "allow"
-
-    def add(self, graph):
-        self.__root__.add(graph)
 
     def update(self, other):
         self.__root__.update(other.__root__)
@@ -38,7 +35,8 @@ class AuxiliaryGraphs(BaseModel):
     def parse_obj(obj):
         auxiliary_graphs = parse_obj_as(AuxiliaryGraphs, obj)
         graphs = AuxiliaryGraphs()
-        graphs.__root__ = HashableSet[AuxiliaryGraph]()
-        for graph in obj:
-            graphs.add(AuxiliaryGraph.parse_obj(graph))
-        return graphs.update(auxiliary_graphs)
+        graphs.__root__ = HashableMapping[str, AuxiliaryGraph]()
+        for id, graph in obj.items():
+            graphs.__root__[id] = AuxiliaryGraph.parse_obj(graph)
+        graphs.update(auxiliary_graphs)
+        return graphs
