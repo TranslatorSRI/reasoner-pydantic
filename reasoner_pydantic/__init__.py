@@ -7,7 +7,7 @@ from .qgraph import (
     QEdge,
     AttributeConstraint,
 )
-from .results import Result, NodeBinding, EdgeBinding, Results
+from .results import Result, NodeBinding, EdgeBinding, Results, Analysis
 from .auxgraphs import AuxiliaryGraphs, AuxiliaryGraph
 from .message import (
     Message,
@@ -64,4 +64,7 @@ components = [
     Results,
     AuxiliaryGraph,
     AuxiliaryGraphs,
+    Operation,
+    Workflow,
+    Analysis
 ]
