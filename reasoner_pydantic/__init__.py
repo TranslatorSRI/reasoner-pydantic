@@ -66,5 +66,5 @@ components = [
     AuxiliaryGraphs,
     Operation,
     Workflow,
-    Analysis
+    Analysis,
 ]
