@@ -102,7 +102,7 @@ class Edge(BaseModel):
 
     def get_primary_knowedge_source(self):
         for source in self.sources:
-            if source.resource_role == "biolink:primary_knowledge_source":
+            if source.resource_role == "primary_knowledge_source":
                 return source.resource_id
 
     def __hash__(self) -> int:
