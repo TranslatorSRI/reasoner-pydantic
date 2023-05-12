@@ -41,7 +41,7 @@ def test_result_merging():
                     "sources": [
                         {
                             "resource_id": "kp0",
-                            "resource_role": "biolink:primary_knowledge_source",
+                            "resource_role": "primary_knowledge_source",
                         }
                     ],
                 },
@@ -52,7 +52,7 @@ def test_result_merging():
                     "sources": [
                         {
                             "resource_id": "kp1",
-                            "resource_role": "biolink:primary_knowledge_source",
+                            "resource_role": "primary_knowledge_source",
                         }
                     ],
                 },
@@ -103,7 +103,7 @@ def test_different_result_merging():
                     "sources": [
                         {
                             "resource_id": "kp0",
-                            "resource_role": "biolink:primary_knowledge_source",
+                            "resource_role": "primary_knowledge_source",
                         }
                     ],
                 },
@@ -114,7 +114,7 @@ def test_different_result_merging():
                     "sources": [
                         {
                             "resource_id": "kp1",
-                            "resource_role": "biolink:primary_knowledge_source",
+                            "resource_role": "primary_knowledge_source",
                         }
                     ],
                 },
@@ -166,7 +166,7 @@ def test_deduplicate_results_out_of_order():
                     "sources": [
                         {
                             "resource_id": "kp0",
-                            "resource_role": "biolink:primary_knowledge_source",
+                            "resource_role": "primary_knowledge_source",
                         }
                     ],
                 },
@@ -177,7 +177,7 @@ def test_deduplicate_results_out_of_order():
                     "sources": [
                         {
                             "resource_id": "kp1",
-                            "resource_role": "biolink:primary_knowledge_source",
+                            "resource_role": "primary_knowledge_source",
                         }
                     ],
                 },
@@ -311,7 +311,7 @@ def test_normalize_knowledge_graph_edges():
                     "sources": [
                         {
                             "resource_id": "kp0",
-                            "resource_role": "biolink:primary_knowledge_source",
+                            "resource_role": "primary_knowledge_source",
                         }
                     ],
                 }
@@ -339,7 +339,7 @@ def test_normalize_knowledge_graph_edges():
                     "sources": [
                         {
                             "resource_id": "kp1",
-                            "resource_role": "biolink:primary_knowledge_source",
+                            "resource_role": "primary_knowledge_source",
                         }
                     ],
                 }

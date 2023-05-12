@@ -53,7 +53,7 @@ EXAMPLE_MESSAGE = {
                 "sources": [
                     {
                         "resource_id": "kp0",
-                        "resource_role": "biolink:primary_knowledge_source",
+                        "resource_role": "primary_knowledge_source",
                     }
                 ],
                 "attributes": [
