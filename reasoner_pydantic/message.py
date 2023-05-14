@@ -61,7 +61,8 @@ class Message(BaseModel):
             results=results,
             auxiliary_graphs=auxgraphs,
         )
-        m._normalize_kg_edge_ids()
+        if m.knowledge_graph:
+            m._normalize_kg_edge_ids()
         m.update(message)
         return m
 
@@ -196,4 +197,41 @@ class Response(BaseModel):
 
     class Config:
         title = "response"
+        extra = "allow"
+
+class AsyncQueryResponse(BaseModel):
+    """"Async Query Response."""
+    
+    status: Optional[str] = Field(None, nullable=True)
+
+    description: Optional[str] = Field(None, nullable=True)
+
+    job_id: str = Field(
+        ...,
+        title="job id"
+    )
+
+    class Config:
+        title = "async query response"
+        extra = "allow"
+
+class AsyncQueryStatusResponse(BaseModel):
+    """Async Query Status Response."""
+
+    status: str = Field(
+        ...,
+        title="status"
+        )
+
+    description: str = Field(
+        ..., 
+        title="description"
+        )
+
+    logs: Optional[str] = Field(None, nullable=True)
+
+    response_url: Optional[str] = Field(None, nullable=True)
+
+    class Config:
+        title = "async query response"
         extra = "allow"
