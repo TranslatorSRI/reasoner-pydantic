@@ -128,7 +128,7 @@ class Message(BaseModel):
                 if auxiliary_graph.edges:
                     for aux_edge in auxiliary_graph.edges:
                         auxiliary_graph.edges.discard(aux_edge)
-                        auxiliary_graph.edges.add(edge_id_mapping[aux_edge])
+                        auxiliary_graph.edges.add(edge_id_mapping.get(aux_edge, aux_edge))
 
         # Update results
         if self.results:
@@ -221,7 +221,7 @@ class AsyncQueryStatusResponse(BaseModel):
 
     description: str = Field(..., title="description")
 
-    logs: Optional[str] = Field(None, nullable=True)
+    logs: Optional[HashableSet[LogEntry]] = Field(None, nullable=True)
 
     response_url: Optional[str] = Field(None, nullable=True)
 
