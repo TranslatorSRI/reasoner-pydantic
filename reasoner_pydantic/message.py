@@ -226,5 +226,5 @@ class AsyncQueryStatusResponse(BaseModel):
     response_url: Optional[str] = Field(None, nullable=True)
 
     class Config:
-        title = "async query response"
+        title = "async query status response"
         extra = "allow"
