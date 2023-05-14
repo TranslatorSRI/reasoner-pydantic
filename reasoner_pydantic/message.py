@@ -199,34 +199,27 @@ class Response(BaseModel):
         title = "response"
         extra = "allow"
 
+
 class AsyncQueryResponse(BaseModel):
-    """"Async Query Response."""
-    
+    """ "Async Query Response."""
+
     status: Optional[str] = Field(None, nullable=True)
 
     description: Optional[str] = Field(None, nullable=True)
 
-    job_id: str = Field(
-        ...,
-        title="job id"
-    )
+    job_id: str = Field(..., title="job id")
 
     class Config:
         title = "async query response"
         extra = "allow"
 
+
 class AsyncQueryStatusResponse(BaseModel):
     """Async Query Status Response."""
 
-    status: str = Field(
-        ...,
-        title="status"
-        )
+    status: str = Field(..., title="status")
 
-    description: str = Field(
-        ..., 
-        title="description"
-        )
+    description: str = Field(..., title="description")
 
     logs: Optional[str] = Field(None, nullable=True)
 

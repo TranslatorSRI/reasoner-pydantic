@@ -15,7 +15,7 @@ from .message import (
     Response,
     AsyncQuery,
     AsyncQueryResponse,
-    AsyncQueryStatusResponse
+    AsyncQueryStatusResponse,
 )
 from .workflow import (
     Operation,
