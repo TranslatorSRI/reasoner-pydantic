@@ -128,7 +128,9 @@ class Message(BaseModel):
                 if auxiliary_graph.edges:
                     for aux_edge in auxiliary_graph.edges:
                         auxiliary_graph.edges.discard(aux_edge)
-                        auxiliary_graph.edges.add(edge_id_mapping.get(aux_edge, aux_edge))
+                        auxiliary_graph.edges.add(
+                            edge_id_mapping.get(aux_edge, aux_edge)
+                        )
 
         # Update results
         if self.results:
