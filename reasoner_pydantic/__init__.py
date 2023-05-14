@@ -14,6 +14,8 @@ from .message import (
     Query,
     Response,
     AsyncQuery,
+    AsyncQueryResponse,
+    AsyncQueryStatusResponse
 )
 from .workflow import (
     Operation,
@@ -55,6 +57,8 @@ components = [
     AsyncQuery,
     Result,
     Response,
+    AsyncQueryResponse,
+    AsyncQueryStatusResponse,
     LogLevel,
     AttributeConstraint,
     MetaEdge,
