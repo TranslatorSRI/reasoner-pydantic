@@ -163,6 +163,9 @@ class Results(BaseModel):
 
     def __len__(self):
         return len(self.__root__)
+    
+    def __iter__(self):
+        return self.__root__.__iter__()
 
     def update(self, other):
         for result in other.__root__:
