@@ -32,6 +32,15 @@ class AuxiliaryGraphs(BaseModel):
     def update(self, other):
         self.__root__.update(other.__root__)
 
+    def values(self):
+        return self.__root__.values()
+    
+    def items(self):
+        return self.__root__.items()
+    
+    def keys(self):
+        return self.__root__.keys()
+
     def parse_obj(obj):
         auxiliary_graphs = parse_obj_as(AuxiliaryGraphs, obj)
         graphs = AuxiliaryGraphs()
