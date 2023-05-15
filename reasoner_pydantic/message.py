@@ -124,7 +124,7 @@ class Message(BaseModel):
 
         # Update auxiliary graphs
         if self.auxiliary_graphs:
-            for auxiliary_graph in self.auxiliary_graphs.__root__.values():
+            for auxiliary_graph in self.auxiliary_graphs.values():
                 if auxiliary_graph.edges:
                     for aux_edge in auxiliary_graph.edges:
                         auxiliary_graph.edges.discard(aux_edge)
@@ -134,7 +134,7 @@ class Message(BaseModel):
 
         # Update results
         if self.results:
-            for result in self.results.__root__:
+            for result in self.results:
                 if result and result.analyses:
                     for analysis in result.analyses:
                         for edge_binding_list in analysis.edge_bindings.values():
