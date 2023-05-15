@@ -34,10 +34,10 @@ class AuxiliaryGraphs(BaseModel):
 
     def values(self):
         return self.__root__.values()
-    
+
     def items(self):
         return self.__root__.items()
-    
+
     def keys(self):
         return self.__root__.keys()
 
