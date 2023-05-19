@@ -51,7 +51,7 @@ class Message(BaseModel):
             qgraph = QueryGraph.parse_obj(obj["query_graph"])
         if "knowledge_graph" in obj.keys() and obj["knowledge_graph"]:
             kgraph = KnowledgeGraph.parse_obj(obj["knowledge_graph"])
-        if "results" in obj.keys() and obj["results"]:
+        if "results" in obj.keys() and obj["results"] is not None:
             results = Results.parse_obj(obj["results"])
         if "auxiliary_graphs" in obj.keys() and obj["auxiliary_graphs"]:
             auxgraphs = AuxiliaryGraphs.parse_obj(obj["auxiliary_graphs"])
