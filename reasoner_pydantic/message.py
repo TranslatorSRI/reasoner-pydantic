@@ -47,13 +47,13 @@ class Message(BaseModel):
         kgraph = None
         results = None
         auxgraphs = None
-        if "query_graph" in obj.keys() and obj["query_graph"]:
+        if "query_graph" in obj.keys() and obj["query_graph"] is not None:
             qgraph = QueryGraph.parse_obj(obj["query_graph"])
-        if "knowledge_graph" in obj.keys() and obj["knowledge_graph"]:
+        if "knowledge_graph" in obj.keys() and obj["knowledge_graph"] is not None:
             kgraph = KnowledgeGraph.parse_obj(obj["knowledge_graph"])
         if "results" in obj.keys() and obj["results"] is not None:
             results = Results.parse_obj(obj["results"])
-        if "auxiliary_graphs" in obj.keys() and obj["auxiliary_graphs"]:
+        if "auxiliary_graphs" in obj.keys() and obj["auxiliary_graphs"] is not None:
             auxgraphs = AuxiliaryGraphs.parse_obj(obj["auxiliary_graphs"])
         m = Message(
             query_graph=qgraph,
