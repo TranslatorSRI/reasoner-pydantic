@@ -150,17 +150,17 @@ class Result(BaseModel):
         result.update(r)
         return result
 
-    def combine_analyses_by_resource_id(self): 
-        combine = HashableMapping[str, Analysis]() 
+    def combine_analyses_by_resource_id(self):
+        combine = HashableMapping[str, Analysis]()
         analyses = HashableSequence.parse_obj([analysis for analysis in self.analyses])
-        for i, analysis in enumerate(analyses): 
+        for i, analysis in enumerate(analyses):
             if analysis.resource_id not in combine.keys():
                 combine[analysis.resource_id] = analysis
-            for j, analysis_to_compare in enumerate(analyses[i + 1:]):
-                if ( 
-                    analysis.resource_id == analysis_to_compare.resource_id and 
-                    analysis != analysis_to_compare 
-                    ):
+            for j, analysis_to_compare in enumerate(analyses[i + 1 :]):
+                if (
+                    analysis.resource_id == analysis_to_compare.resource_id
+                    and analysis != analysis_to_compare
+                ):
                     combine[analysis.resource_id].update(analysis_to_compare)
 
         combined_analyses = HashableSet[Analysis]()
@@ -168,8 +168,6 @@ class Result(BaseModel):
             combined_analyses.add(analysis)
 
         self.analyses = combined_analyses
-                
-        
 
 
 class Results(BaseModel):
