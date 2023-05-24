@@ -4,7 +4,7 @@ from typing import Optional
 from pydantic import Field, parse_obj_as
 
 from .base_model import BaseModel
-from .utils import HashableMapping, HashableSet
+from .utils import HashableMapping, HashableSet, HashableSequence
 from .shared import Attribute, CURIE
 
 
@@ -68,11 +68,20 @@ class Analysis(BaseModel):
         )
 
     def update(self, other):
+        for k in self.edge_bindings.keys():
+            eb = other.edge_bindings.get(k)
+            if eb:
+                self.edge_bindings[k].update(eb)
         if other.attributes:
             if self.attributes:
                 self.attributes.update(other.attributes)
             else:
                 self.attributes = other.attributes
+        if other.support_graphs:
+            if self.support_graphs:
+                self.support_graphs.update(other.support_graphs)
+            else:
+                self.support_graphs = other.support_graphs
 
 
 class NodeBinding(BaseModel):
@@ -105,7 +114,7 @@ class Result(BaseModel):
         title="list of node bindings",
     )
 
-    analyses: Optional[HashableSet[Analysis]] = Field(
+    analyses: Optional[HashableSequence[Analysis]] = Field(
         None, title="list of anlysis blocks", nullable=True
     )
 
@@ -123,7 +132,7 @@ class Result(BaseModel):
                             ana.update(analysis)
                             check = False
                     if check:
-                        self.analyses.add(analysis)
+                        self.analyses.append(analysis)
             else:
                 self.analyses = other.analyses
 
@@ -133,13 +142,20 @@ class Result(BaseModel):
     def parse_obj(obj):
         result = parse_obj_as(Result, obj)
         nbindings = HashableMapping.parse_obj(obj["node_bindings"])
-        analyses = HashableSet[Analysis]()
+        analyses = HashableSequence[Analysis]()
         if "analyses" in obj.keys():
             for analysis in obj["analyses"]:
-                analyses.add(Analysis.parse_obj(analysis))
+                analyses.append(Analysis.parse_obj(analysis))
         r = Result(node_bindings=nbindings, analyses=analyses)
         result.update(r)
         return result
+    
+    def combine_anlyeses_by_resource_id(self):
+        for analysis in self.analyses:
+            for ana in self.analyses:
+                if analysis.resource_id == ana.resource_id and ana != analysis:
+                        self.analyses.remove(ana)
+                        analysis.update(ana)
 
 
 class Results(BaseModel):
