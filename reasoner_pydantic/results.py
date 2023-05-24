@@ -154,7 +154,10 @@ class Result(BaseModel):
         analyses = self.analyses
         for i in range(len(analyses)):
             for analysis in self.analyses[i:]:
-                if analyses[i].resource_id == analysis.resource_id and analyses[i] != analysis:
+                if (
+                    analyses[i].resource_id == analysis.resource_id
+                    and analyses[i] != analysis
+                ):
                     analyses.remove(analysis)
                     analyses[i].update(analysis)
 
