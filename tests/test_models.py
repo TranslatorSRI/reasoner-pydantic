@@ -1,7 +1,7 @@
 from typing import Optional
 from reasoner_pydantic.base_model import BaseModel
 from reasoner_pydantic.shared import Attribute, BiolinkEntity
-from reasoner_pydantic import Message, QNode, QEdge, QueryGraph
+from reasoner_pydantic import Message, QNode, QEdge, QueryGraph, Result
 from reasoner_pydantic.utils import HashableMapping, HashableSequence, HashableSet
 
 
@@ -44,6 +44,7 @@ EXAMPLE_MESSAGE = {
         "nodes": {
             "CHEBI:6801": {},
             "MONDO:5148": {},
+            "CHEBI:6802": {},
         },
         "edges": {
             "CHEBI:6801-biolink:treats-MONDO:5148": {
@@ -80,6 +81,17 @@ EXAMPLE_MESSAGE = {
                         ],
                     }
                 ],
+            },
+            "CHEBI:6802-biolink:treats-MONDO:5148": {
+                "subject": "CHEBI:6802",
+                "object": "MONDO:5148",
+                "predicate": "biolink:treats",
+                "sources": [
+                    {
+                        "resource_id": "kp0",
+                        "resource_role": "primary_knowledge_source",
+                    }
+                ],
             }
         },
     },
@@ -105,7 +117,27 @@ EXAMPLE_MESSAGE = {
                             }
                         ]
                     },
-                }
+                },
+                {
+                    "resource_id": "ara0",
+                    "edge_bindings": {
+                        "n1n2": [
+                            {
+                                "id": "CHEBI:6802-biolink:treats-MONDO:5148",
+                            }
+                        ]
+                    },
+                },
+                {
+                    "resource_id": "ara1",
+                    "edge_bindings": {
+                        "n1n2": [
+                            {
+                                "id": "CHEBI:6801-biolink:treats-MONDO:5148",
+                            }
+                        ]
+                    },
+                },
             ],
         }
     ],
@@ -209,3 +241,13 @@ def test_hash_attribute_values():
         }
     )
     assert hash(a)
+
+def test_combine_analyses():
+    """
+    Test that combine analyses function combines analyses
+    """
+    result = Result.parse_obj(EXAMPLE_MESSAGE["results"][0])
+    result.combine_anlyeses_by_resource_id()
+    r = result.dict()
+    assert len(r["analyses"]) == 2
+    assert len(r["analyses"][0]["edge_bindings"]["n1n2"]) == 2
