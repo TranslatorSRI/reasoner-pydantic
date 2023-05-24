@@ -65,6 +65,16 @@ class RetrievalSource(BaseModel):
 
     source_record_urls: Optional[HashableSet[str]] = Field(None, nullable=True)
 
+    def __hash__(self) -> int:
+        return hash((self.resource_id, self.resource_role))
+    
+    def update(self, other):
+        if other.upstream_resource_ids:
+            if self.upstream_resource_ids:
+                self.upstream_resource_ids.update(other.upstream_resource_ids)
+            else:
+                self.upstream_resource_ids = other.upstream_resource_ids
+
 
 class Edge(BaseModel):
     """Knowledge graph edge."""
