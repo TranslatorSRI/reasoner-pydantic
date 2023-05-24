@@ -251,4 +251,6 @@ def test_combine_analyses():
     result.combine_analyses_by_resource_id()
     r = result.dict()
     assert len(r["analyses"]) == 2
-    assert len(r["analyses"][0]["edge_bindings"]["n1n2"]) == 2
+    for analysis in r["analyses"]:
+        if analysis["resource_id"] == "ara0":
+            assert len(analysis["edge_bindings"]["n1n2"]) == 2
