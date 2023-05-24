@@ -150,7 +150,7 @@ class Result(BaseModel):
         result.update(r)
         return result
 
-    def combine_anlyeses_by_resource_id(self):
+    def combine_analyses_by_resource_id(self):
         for analysis in self.analyses:
             for ana in self.analyses:
                 if analysis.resource_id == ana.resource_id and ana != analysis:
