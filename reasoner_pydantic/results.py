@@ -114,7 +114,7 @@ class Result(BaseModel):
         title="list of node bindings",
     )
 
-    analyses: Optional[HashableSequence[Analysis]] = Field(
+    analyses: Optional[HashableSet[Analysis]] = Field(
         None, title="list of anlysis blocks", nullable=True
     )
 
@@ -132,7 +132,7 @@ class Result(BaseModel):
                             ana.update(analysis)
                             check = False
                     if check:
-                        self.analyses.append(analysis)
+                        self.analyses.add(analysis)
             else:
                 self.analyses = other.analyses
 
@@ -142,24 +142,36 @@ class Result(BaseModel):
     def parse_obj(obj):
         result = parse_obj_as(Result, obj)
         nbindings = HashableMapping.parse_obj(obj["node_bindings"])
-        analyses = HashableSequence[Analysis]()
+        analyses = HashableSet[Analysis]()
         if "analyses" in obj.keys():
             for analysis in obj["analyses"]:
-                analyses.append(Analysis.parse_obj(analysis))
+                analyses.add(Analysis.parse_obj(analysis))
         r = Result(node_bindings=nbindings, analyses=analyses)
         result.update(r)
         return result
 
-    def combine_analyses_by_resource_id(self):
-        analyses = self.analyses
-        for i in range(len(analyses)):
-            for analysis in self.analyses[i:]:
-                if (
-                    analyses[i].resource_id == analysis.resource_id
-                    and analyses[i] != analysis
-                ):
-                    analyses.remove(analysis)
-                    analyses[i].update(analysis)
+    def combine_analyses_by_resource_id(self): 
+        combine = HashableMapping[str, Analysis]() 
+        analyses = HashableSequence.parse_obj([analysis for analysis in self.analyses])
+        for i, analysis in enumerate(analyses): 
+            if analysis.resource_id not in combine.keys():
+                combine[analysis.resource_id] = analysis
+            print(analysis) 
+            for j, analysis_to_compare in enumerate(analyses[i + 1:]): 
+                print(analysis_to_compare) 
+                if ( 
+                    analysis.resource_id == analysis_to_compare.resource_id and 
+                    analysis != analysis_to_compare 
+                    ):
+                    combine[analysis.resource_id].update(analysis_to_compare)
+
+        combined_analyses = HashableSet[Analysis]()
+        for analysis in combine.values():
+            combined_analyses.add(analysis)
+
+        self.analyses = combined_analyses
+                
+        
 
 
 class Results(BaseModel):
