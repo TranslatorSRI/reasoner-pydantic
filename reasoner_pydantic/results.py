@@ -156,9 +156,7 @@ class Result(BaseModel):
         for i, analysis in enumerate(analyses): 
             if analysis.resource_id not in combine.keys():
                 combine[analysis.resource_id] = analysis
-            print(analysis) 
-            for j, analysis_to_compare in enumerate(analyses[i + 1:]): 
-                print(analysis_to_compare) 
+            for j, analysis_to_compare in enumerate(analyses[i + 1:]):
                 if ( 
                     analysis.resource_id == analysis_to_compare.resource_id and 
                     analysis != analysis_to_compare 
