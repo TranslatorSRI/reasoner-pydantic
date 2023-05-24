@@ -151,11 +151,12 @@ class Result(BaseModel):
         return result
 
     def combine_analyses_by_resource_id(self):
-        for analysis in self.analyses:
-            for ana in self.analyses:
-                if analysis.resource_id == ana.resource_id and ana != analysis:
-                    self.analyses.remove(ana)
-                    analysis.update(ana)
+        analyses = self.analyses
+        for i in range(len(analyses)):
+            for analysis in self.analyses[i:]:
+                if analyses[i].resource_id == analysis.resource_id and analyses[i] != analysis:
+                    analyses.remove(analysis)
+                    analyses[i].update(analysis)
 
 
 class Results(BaseModel):
