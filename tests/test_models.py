@@ -248,7 +248,7 @@ def test_combine_analyses():
     Test that combine analyses function combines analyses
     """
     result = Result.parse_obj(EXAMPLE_MESSAGE["results"][0])
-    result.combine_anlyeses_by_resource_id()
+    result.combine_analyses_by_resource_id()
     r = result.dict()
     assert len(r["analyses"]) == 2
     assert len(r["analyses"][0]["edge_bindings"]["n1n2"]) == 2
