@@ -92,7 +92,7 @@ EXAMPLE_MESSAGE = {
                         "resource_role": "primary_knowledge_source",
                     }
                 ],
-            }
+            },
         },
     },
     "results": [
@@ -241,6 +241,7 @@ def test_hash_attribute_values():
         }
     )
     assert hash(a)
+
 
 def test_combine_analyses():
     """

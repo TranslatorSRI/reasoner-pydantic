@@ -149,13 +149,13 @@ class Result(BaseModel):
         r = Result(node_bindings=nbindings, analyses=analyses)
         result.update(r)
         return result
-    
+
     def combine_anlyeses_by_resource_id(self):
         for analysis in self.analyses:
             for ana in self.analyses:
                 if analysis.resource_id == ana.resource_id and ana != analysis:
-                        self.analyses.remove(ana)
-                        analysis.update(ana)
+                    self.analyses.remove(ana)
+                    analysis.update(ana)
 
 
 class Results(BaseModel):
