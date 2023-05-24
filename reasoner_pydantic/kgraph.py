@@ -67,7 +67,7 @@ class RetrievalSource(BaseModel):
 
     def __hash__(self) -> int:
         return hash((self.resource_id, self.resource_role))
-    
+
     def update(self, other):
         if other.upstream_resource_ids:
             if self.upstream_resource_ids:
