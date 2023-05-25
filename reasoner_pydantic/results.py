@@ -154,7 +154,7 @@ class Result(BaseModel):
         combine = HashableMapping[str, Analysis]()
         analyses = HashableSequence.parse_obj([analysis for analysis in self.analyses])
         for i, analysis in enumerate(analyses):
-            if analysis.resource_id not in combine.keys():
+            if analysis.resource_id not in combine:
                 combine[analysis.resource_id] = analysis
             for j, analysis_to_compare in enumerate(analyses[i + 1 :]):
                 if (
