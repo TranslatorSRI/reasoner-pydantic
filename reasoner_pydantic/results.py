@@ -181,13 +181,14 @@ class Results(BaseModel):
 
     def add(self, result):
         results = self.__root__
-        for old_result in results:
-            if result == old_result:
-                results.remove(result)
-                old_result.update(result)
-                results.add(old_result)
-                return
-        results.add(result)
+        if result in results:
+            # this is slow for larger results
+            for original_result in results:
+                if result == original_result:
+                    original_result.update(result)
+                    return
+        else:
+            results.add(result)
 
     def __len__(self):
         return len(self.__root__)
