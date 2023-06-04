@@ -155,13 +155,13 @@ EXAMPLE_MESSAGE_MULT = {
             "n0n1": {
                 "subject": "n0",
                 "object": "n1",
-                "predicates": ["biolink:related_to"] 
+                "predicates": ["biolink:related_to"],
             },
             "n1n2": {
                 "subject": "n1",
                 "object": "n2",
                 "predicates": ["biolink:related_to"],
-            }
+            },
         },
     },
     "knowledge_graph": {
@@ -169,7 +169,7 @@ EXAMPLE_MESSAGE_MULT = {
             "CHEBI:6801": {},
             "MONDO:5148": {},
             "CHEBI:6802": {},
-            "CHEBI:6803": {}
+            "CHEBI:6803": {},
         },
         "edges": {
             "CHEBI:6801-biolink:related_to-MONDO:5148": {
@@ -210,7 +210,7 @@ EXAMPLE_MESSAGE_MULT = {
     "results": [
         {
             "node_bindings": {
-                "n0":[{"id": "CHEBI:6803"}],
+                "n0": [{"id": "CHEBI:6803"}],
                 "n1": [{"id": "CHEBI:6801"}, {"id": "CHEBI:6802"}],
                 "n2": [{"id": "MONDO:5148"}],
             },
@@ -260,7 +260,7 @@ EXAMPLE_MESSAGE_MULT = {
                             }
                         ]
                     },
-                }
+                },
             ],
         }
     ],
