@@ -68,10 +68,11 @@ class Analysis(BaseModel):
         )
 
     def update(self, other):
-        for k in self.edge_bindings.keys():
-            eb = other.edge_bindings.get(k)
-            if eb:
-                self.edge_bindings[k].update(eb)
+        for k in other.edge_bindings:
+            if k in self.edge_bindings:
+                self.edge_bindings[k].update(other.edge_bindings[k])
+            else:
+                self.edge_bindings[k] = other.edge_bindings[k]
         if other.attributes:
             if self.attributes:
                 self.attributes.update(other.attributes)
