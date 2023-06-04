@@ -144,6 +144,129 @@ EXAMPLE_MESSAGE = {
     "auxiliary_graphs": {"a1": {"edges": ["CHEBI:6801-biolink:treats-MONDO:5148"]}},
 }
 
+EXAMPLE_MESSAGE_MULT = {
+    "query_graph": {
+        "nodes": {
+            "n0": {"categories": ["biolink:ChemicalSubstance"]},
+            "n1": {"categories": ["biolink:Gene"]},
+            "n2": {"categories": ["biolink:Disease"]},
+        },
+        "edges": {
+            "n0n1": {
+                "subject": "n0",
+                "object": "n1",
+                "predicates": ["biolink:related_to"] 
+            },
+            "n1n2": {
+                "subject": "n1",
+                "object": "n2",
+                "predicates": ["biolink:related_to"],
+            }
+        },
+    },
+    "knowledge_graph": {
+        "nodes": {
+            "CHEBI:6801": {},
+            "MONDO:5148": {},
+            "CHEBI:6802": {},
+            "CHEBI:6803": {}
+        },
+        "edges": {
+            "CHEBI:6801-biolink:related_to-MONDO:5148": {
+                "subject": "CHEBI:6801",
+                "object": "MONDO:5148",
+                "predicate": "biolink:related_to",
+                "sources": [
+                    {
+                        "resource_id": "kp0",
+                        "resource_role": "primary_knowledge_source",
+                    }
+                ],
+            },
+            "CHEBI:6802-biolink:related_t0-MONDO:5148": {
+                "subject": "CHEBI:6802",
+                "object": "MONDO:5148",
+                "predicate": "biolink:related_to",
+                "sources": [
+                    {
+                        "resource_id": "kp0",
+                        "resource_role": "primary_knowledge_source",
+                    }
+                ],
+            },
+            "CHEBI:6803-biolink:related_to-MONDO:5148": {
+                "subject": "CHEBI:6803",
+                "object": "MONDO:5148",
+                "predicate": "biolink:related_to",
+                "sources": [
+                    {
+                        "resource_id": "kp0",
+                        "resource_role": "primary_knowledge_source",
+                    }
+                ],
+            },
+        },
+    },
+    "results": [
+        {
+            "node_bindings": {
+                "n0":[{"id": "CHEBI:6803"}],
+                "n1": [{"id": "CHEBI:6801"}, {"id": "CHEBI:6802"}],
+                "n2": [{"id": "MONDO:5148"}],
+            },
+            "analyses": [
+                {
+                    "resource_id": "ara0",
+                    "edge_bindings": {
+                        "n1n2": [
+                            {
+                                "id": "CHEBI:6801-biolink:treats-MONDO:5148",
+                                "attributes": [
+                                    {
+                                        "attribute_type_id": "biolink:knowledge_source",
+                                        "value": {"sources": ["a", "b", "c"]},
+                                    }
+                                ],
+                            }
+                        ]
+                    },
+                },
+                {
+                    "resource_id": "ara0",
+                    "edge_bindings": {
+                        "n1n2": [
+                            {
+                                "id": "CHEBI:6802-biolink:treats-MONDO:5148",
+                            }
+                        ]
+                    },
+                },
+                {
+                    "resource_id": "ara1",
+                    "edge_bindings": {
+                        "n1n2": [
+                            {
+                                "id": "CHEBI:6801-biolink:treats-MONDO:5148",
+                            }
+                        ]
+                    },
+                },
+                {
+                    "resource_id": "ara0",
+                    "edge_bindings": {
+                        "n0n1": [
+                            {
+                                "id": "CHEBI:6803-biolink:treats-MONDO:5148",
+                            }
+                        ]
+                    },
+                }
+            ],
+        }
+    ],
+    "auxiliary_graphs": {"a1": {"edges": ["CHEBI:6801-biolink:treats-MONDO:5148"]}},
+}
+
 
 def test_message_hashable():
     """Check that we can hash a message"""
@@ -247,10 +370,11 @@ def test_combine_analyses():
     """
     Test that combine analyses function combines analyses
     """
-    result = Result.parse_obj(EXAMPLE_MESSAGE["results"][0])
+    result = Result.parse_obj(EXAMPLE_MESSAGE_MULT["results"][0])
     result.combine_analyses_by_resource_id()
     r = result.dict()
     assert len(r["analyses"]) == 2
     for analysis in r["analyses"]:
         if analysis["resource_id"] == "ara0":
             assert len(analysis["edge_bindings"]["n1n2"]) == 2
+            assert len(analysis["edge_bindings"]["n0n1"]) == 1
