@@ -181,7 +181,7 @@ class Results(BaseModel):
         extra = "allow"
 
     def append(self, result):
-        self.add(result)
+        self.__root__.append(result)
 
     def add(self, result):
         results = self.__root__
