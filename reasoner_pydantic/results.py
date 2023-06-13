@@ -174,28 +174,34 @@ class Result(BaseModel):
 class Results(BaseModel):
     """Results."""
 
-    __root__: Optional[HashableSet[Result]]
+    __root__: Optional[HashableSequence[Result]]
 
     class Config:
         title = "results"
         extra = "allow"
 
+    def append(self, result):
+        self.add(result)
+
     def add(self, result):
         results = self.__root__
         if result in results:
             # this is slow for larger results
-            for original_result in results:
-                if result == original_result:
-                    original_result.update(result)
-                    return
+            results[results.index(result)].update(result)
         else:
-            results.add(result)
+            results.append(result)
 
     def __len__(self):
         return len(self.__root__)
 
     def __iter__(self):
         return self.__root__.__iter__()
+    
+    def __contains__(self, v):
+        return self.__root__.__contains__(v)
+    
+    def __getitem__(self, i):
+        return self.__root__.__getitem__(i)
 
     def update(self, other):
         for result in other.__root__:
@@ -203,6 +209,8 @@ class Results(BaseModel):
 
     def parse_obj(obj):
         results = parse_obj_as(Results, obj)
+        new_results = parse_obj_as(Results, [])
         for result in obj:
-            results.add(Result.parse_obj(result))
-        return results
+            new_results.add(Result.parse_obj(result))
+        new_results.update(results)
+        return new_results

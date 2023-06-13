@@ -51,6 +51,9 @@ class HashableSequence(
 
     __root__: List[ValueType] = list()
 
+    def __contains__(self, v):
+        return v in self.__root__
+
     def __getitem__(self, i):
         return self.__root__[i]
 

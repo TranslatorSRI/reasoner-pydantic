@@ -40,6 +40,9 @@ class AuxiliaryGraphs(BaseModel):
 
     def keys(self):
         return self.__root__.keys()
+    
+    def __iter__(self):
+        return iter(self.__root__)
 
     def parse_obj(obj):
         auxiliary_graphs = parse_obj_as(AuxiliaryGraphs, obj)
