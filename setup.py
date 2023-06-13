@@ -9,8 +9,8 @@ long_description = (this_directory / "README.md").read_text()
 setup(
     name="reasoner-pydantic",
     version="4.0.8",
-    author="Kenneth Morton",
-    author_email="kenny@covar.com",
+    author="Abrar Mesbah",
+    author_email="amesbah@covar.com",
     url="https://github.com/TranslatorSRI/reasoner-pydantic",
     description="Pydantic models for the Reasoner API data formats",
     long_description=long_description,
