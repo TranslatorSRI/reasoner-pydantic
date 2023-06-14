@@ -1,6 +1,11 @@
 """Reasoner-pydantic module."""
 
-from .kgraph import KnowledgeGraph, Node, Edge
+from .kgraph import (
+    KnowledgeGraph,
+    Node,
+    Edge,
+    RetrievalSource,
+)
 from .qgraph import (
     QueryGraph,
     QNode,
@@ -36,6 +41,9 @@ from .metakg import (
     MetaKnowledgeGraph,
     MetaAttribute,
 )
+from .utils import (
+    HashableSequence,
+)
 
 components = [
     Attribute,
@@ -46,6 +54,7 @@ components = [
     Edge,
     EdgeBinding,
     KnowledgeGraph,
+    RetrievalSource,
     LogEntry,
     Message,
     Node,
@@ -71,4 +80,5 @@ components = [
     Operation,
     Workflow,
     Analysis,
+    HashableSequence,
 ]
