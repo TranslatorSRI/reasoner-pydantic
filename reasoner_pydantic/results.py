@@ -1,4 +1,5 @@
 """Results models."""
+import copy
 from typing import Optional
 
 from pydantic import Field, parse_obj_as
@@ -70,9 +71,9 @@ class Analysis(BaseModel):
     def update(self, other):
         for k in other.edge_bindings:
             if k in self.edge_bindings:
-                self.edge_bindings[k].update(other.edge_bindings[k])
+                self.edge_bindings[k].update(copy.deepcopy(other.edge_bindings[k]))
             else:
-                self.edge_bindings[k] = other.edge_bindings[k]
+                self.edge_bindings[k] = copy.deepcopy(other.edge_bindings[k])
         if other.attributes:
             if self.attributes:
                 self.attributes.update(other.attributes)
