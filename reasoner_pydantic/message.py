@@ -203,6 +203,11 @@ class Response(BaseModel):
     class Config:
         title = "response"
         extra = "allow"
+    
+    def parse_obj(obj, normalize=True):
+        response = parse_obj_as(Response, obj)
+        response.message = Message.parse_obj(obj["message"], normalize)
+        return response
 
 
 class AsyncQueryResponse(BaseModel):
