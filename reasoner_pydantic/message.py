@@ -63,9 +63,6 @@ class Message(BaseModel):
         )
         if m.knowledge_graph and normalize:
             m._normalize_kg_edge_ids()
-            m.update(message)
-        else:
-            m.update(message, normalize=False)
         return m
 
     def update(self, other: "Message", normalize=True):
@@ -203,11 +200,6 @@ class Response(BaseModel):
     class Config:
         title = "response"
         extra = "allow"
-    
-    def parse_obj(obj, normalize=True):
-        response = parse_obj_as(Response, obj)
-        response.message = Message.parse_obj(obj["message"], normalize)
-        return response
 
 
 class AsyncQueryResponse(BaseModel):
