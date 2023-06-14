@@ -41,7 +41,7 @@ class Message(BaseModel):
         title = "message"
         extra = "forbid"
 
-    def parse_obj(obj):
+    def parse_obj(obj, normalize=True):
         message = parse_obj_as(Message, obj)
         qgraph = None
         kgraph = None
@@ -61,7 +61,7 @@ class Message(BaseModel):
             results=results,
             auxiliary_graphs=auxgraphs,
         )
-        if m.knowledge_graph:
+        if m.knowledge_graph and normalize:
             m._normalize_kg_edge_ids()
         m.update(message)
         return m
