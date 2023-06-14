@@ -63,10 +63,12 @@ class Message(BaseModel):
         )
         if m.knowledge_graph and normalize:
             m._normalize_kg_edge_ids()
-        m.update(message)
+            m.update(message)
+        else:
+            m.update(message, normalize=False)
         return m
 
-    def update(self, other: "Message"):
+    def update(self, other: "Message", normalize=True):
         if hash(self.query_graph) != hash(other.query_graph):
             raise NotImplementedError("Query graph merging not supported yet")
         # Make a copy because normalization will modify results
@@ -78,7 +80,8 @@ class Message(BaseModel):
             # Normalize edges of incoming KG
             # This will place KG edge keys into the same hashing system
             # So that equivalence is determined by hash collision
-            other._normalize_kg_edge_ids()
+            if normalize:
+                other._normalize_kg_edge_ids()
             # The knowledge graph can now be udated because edge keys will be
             # hashed using the same method. The knowledge graph update method
             # will handle concatenating properties when necessary.
