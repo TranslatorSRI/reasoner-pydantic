@@ -185,10 +185,10 @@ class Results(BaseModel):
 
     def add(self, result):
         results = self.__root__
-        if result in results:
+        try:
             # this is slow for larger results
             results[results.index(result)].update(result)
-        else:
+        except ValueError:
             results.append(result)
 
     def __len__(self):
