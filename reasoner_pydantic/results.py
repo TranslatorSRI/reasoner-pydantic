@@ -205,13 +205,23 @@ class Results(BaseModel):
         return self.__root__.__getitem__(i)
 
     def update(self, other):
-        for result in other.__root__:
-            self.add(result)
+        results = parse_obj_as(HashableMapping, {})
+        for result in other:
+            result = Result.parse_obj(result)
+            result_hash = hash(result)
+            if result_hash in results:
+                results[result_hash].update(result)
+            else:
+                results[hash(result)] = result
 
     def parse_obj(obj):
-        results = parse_obj_as(Results, obj)
-        new_results = parse_obj_as(Results, [])
+        parse_obj_as(Results, obj)
+        results = parse_obj_as(HashableMapping, {})
         for result in obj:
-            new_results.add(Result.parse_obj(result))
-        new_results.update(results)
-        return new_results
+            result = Result.parse_obj(result)
+            result_hash = hash(result)
+            if result_hash in results:
+                results[result_hash].update(result)
+            else:
+                results[hash(result)] = result
+        return parse_obj_as(Results, list(results.values()))
