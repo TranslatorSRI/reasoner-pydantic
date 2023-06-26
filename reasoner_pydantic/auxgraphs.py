@@ -41,6 +41,9 @@ class AuxiliaryGraphs(BaseModel):
     def keys(self):
         return self.__root__.keys()
     
+    def __getitem__(self, k):
+        return self.__root__[k]
+    
     def __iter__(self):
         return iter(self.__root__)
 
