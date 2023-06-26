@@ -197,10 +197,10 @@ class Results(BaseModel):
 
     def __iter__(self):
         return self.__root__.__iter__()
-    
+
     def __contains__(self, v):
         return self.__root__.__contains__(v)
-    
+
     def __getitem__(self, i):
         return self.__root__.__getitem__(i)
 

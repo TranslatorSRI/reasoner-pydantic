@@ -57,7 +57,12 @@ class Message(BaseModel):
         if "auxiliary_graphs" in obj.keys() and obj["auxiliary_graphs"] is not None:
             auxgraphs = AuxiliaryGraphs.parse_obj(obj["auxiliary_graphs"])
         m = parse_obj_as(Message, {})
-        m.query_graph, m.knowledge_graph, m.results, m.auxiliary_graphs = qgraph, kgraph, results, auxgraphs
+        m.query_graph, m.knowledge_graph, m.results, m.auxiliary_graphs = (
+            qgraph,
+            kgraph,
+            results,
+            auxgraphs,
+        )
         if m.knowledge_graph and normalize:
             m._normalize_kg_edge_ids()
         return m
