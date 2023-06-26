@@ -1,6 +1,5 @@
 """Reasoner API models."""
 import hashlib
-import time
 
 from typing import Optional, Callable
 
