@@ -116,8 +116,9 @@ class Result(BaseModel):
         title="list of node bindings",
     )
 
-    analyses: Optional[HashableSet[Analysis]] = Field(
-        None, title="list of anlysis blocks", nullable=True
+    analyses: HashableSet[Analysis] = Field(
+        ...,
+        title="list of anlysis blocks",
     )
 
     class Config:
