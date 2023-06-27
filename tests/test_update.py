@@ -230,13 +230,13 @@ def test_deduplicate_results_different():
                 "node_bindings": {
                     "b": [{"id": "CHEBI:88916"}, {"id": "MONDO:0011122"}],
                 },
-                "edge_bindings": {},
+                "analyses": [],
             },
             {
                 "node_bindings": {
                     "a": [{"id": "MONDO:0011122"}, {"id": "CHEBI:88916"}],
                 },
-                "edge_bindings": {},
+                "analyses": [],
             },
         ],
     }

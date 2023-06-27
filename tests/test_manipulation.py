@@ -43,7 +43,7 @@ def test_manipulation():
     )
     result: Result = Result(
         node_bindings={qnode_id: [node_binding]},
-        edge_bindings={},
+        analyses=[],
         foo="bar",
     )
     message.results.add(result)

@@ -6,19 +6,24 @@ EXAMPLE_RESULT = {
         "n1": [{"id": "CHEBI:6801"}],
         "n2": [{"id": "MONDO:5148"}],
     },
-    "edge_bindings": {
-        "n1n2": [
-            {
-                "id": "CHEBI:6801-biolink:treats-MONDO:5148",
-                "attributes": [
+    "analyses": [
+        {
+            "resource_id": "infores:test",
+            "edge_bindings": {
+                "n1n2": [
                     {
-                        "attribute_type_id": "biolink:knowledge_source",
-                        "value": {"sources": ["a", "b", "c"]},
-                    }
+                        "id": "CHEBI:6801-biolink:treats-MONDO:5148",
+                        "attributes": [
+                            {
+                                "attribute_type_id": "biolink:knowledge_source",
+                                "value": {"sources": ["a", "b", "c"]},
+                            }
+                        ],
+                    },
                 ],
             },
-        ],
-    },
+        },
+    ],
     "raw_data": ["test"],
 }
 
