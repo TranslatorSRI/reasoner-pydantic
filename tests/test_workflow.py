@@ -8,9 +8,7 @@ query = {
             "parameters": {"denylist": ["ARAX"]},
             "runner_parameters": {"allowlist": ["ARAGORN"], "timeout": 60.0},
         },
-        {
-            "id": "bind",
-            "runner_parameters": {"denylist": ["ARAGORN"]}},
+        {"id": "bind", "runner_parameters": {"denylist": ["ARAGORN"]}},
         {
             "id": "overlay_compute_ngd",
             "parameters": {
