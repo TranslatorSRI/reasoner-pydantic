@@ -6,9 +6,11 @@ query = {
         {
             "id": "fill",
             "parameters": {"denylist": ["ARAX"]},
-            "runner_parameters": {"allowlist": ["ARAGORN"]},
+            "runner_parameters": {"allowlist": ["ARAGORN"], "timeout": 60.0},
         },
-        {"id": "bind"},
+        {
+            "id": "bind",
+            "runner_parameters": {"denylist": ["ARAGORN"]}},
         {
             "id": "overlay_compute_ngd",
             "parameters": {
