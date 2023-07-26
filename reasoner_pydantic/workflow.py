@@ -16,6 +16,7 @@ def constant(s: str):
 
 class RunnerAllowList(BaseModel):
     allowlist: Optional[HashableSequence[str]]
+    timeout: Optional[float]
     _nonzero_allowlist = validator("allowlist", allow_reuse=True)(nonzero_validator)
 
     class Config:
@@ -24,14 +25,22 @@ class RunnerAllowList(BaseModel):
 
 class RunnerDenyList(BaseModel):
     denylist: Optional[HashableSequence[str]]
+    timeout: Optional[float]
     _nonzero_denylist = validator("denylist", allow_reuse=True)(nonzero_validator)
 
     class Config:
         extra = "forbid"
 
 
+class RunnerTimeout(BaseModel):
+    timeout: Optional[float]
+
+    class Config:
+        extra = "forbid"
+
+
 class RunnerParameters(BaseModel):
-    __root__: Optional[Union[RunnerAllowList, RunnerDenyList]]
+    __root__: Optional[Union[RunnerAllowList, RunnerDenyList, RunnerTimeout]]
 
 
 class BaseOperation(BaseModel):
