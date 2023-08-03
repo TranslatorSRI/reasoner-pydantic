@@ -17,7 +17,6 @@ def constant(s: str):
 class RunnerAllowList(BaseModel):
     allowlist: Optional[HashableSequence[str]]
     timeout: Optional[float]
-    _nonzero_allowlist = validator("allowlist", allow_reuse=True)(nonzero_validator)
 
     class Config:
         extra = "forbid"
@@ -26,7 +25,6 @@ class RunnerAllowList(BaseModel):
 class RunnerDenyList(BaseModel):
     denylist: Optional[HashableSequence[str]]
     timeout: Optional[float]
-    _nonzero_denylist = validator("denylist", allow_reuse=True)(nonzero_validator)
 
     class Config:
         extra = "forbid"
@@ -114,7 +112,6 @@ class OperationEnrichResults(BaseOperation):
 class FillAllowParameters(BaseModel):
     allowlist: Optional[HashableSequence[str]]
     qedge_keys: Optional[HashableSequence[str]]
-    _nonzero_allowlist = validator("allowlist", allow_reuse=True)(nonzero_validator)
 
     class Config:
         extra = "forbid"
@@ -123,7 +120,6 @@ class FillAllowParameters(BaseModel):
 class FillDenyParameters(BaseModel):
     denylist: Optional[HashableSequence[str]]
     qedge_keys: Optional[HashableSequence[str]]
-    _nonzero_denylist = validator("denylist", allow_reuse=True)(nonzero_validator)
 
     class Config:
         extra = "forbid"
