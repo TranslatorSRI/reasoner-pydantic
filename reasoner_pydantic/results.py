@@ -208,7 +208,8 @@ class Results(BaseModel):
     def update(self, other):
         results = parse_obj_as(HashableMapping, {})
         for result in other:
-            result = Result.parse_obj(result)
+            if not isinstance(result, Result):
+                result = Result.parse_obj(result)
             result_hash = hash(result)
             if result_hash in results:
                 results[result_hash].update(result)
