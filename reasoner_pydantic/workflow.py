@@ -7,6 +7,7 @@ from pydantic.types import confloat, conint
 
 from .base_model import BaseModel
 from .utils import HashableSequence, nonzero_validator
+from .shared import BiolinkPredicate
 
 
 def constant(s: str):
@@ -99,6 +100,7 @@ class OperationCompleteResults(BaseOperation):
 class EnrichResultsParameters(BaseModel):
     pvalue_threshold: confloat(ge=0.0, le=1.0) = 1e-6
     qnode_keys: Optional[HashableSequence[str]]
+    predicates_to_exclude: Optional[HashableSequence[BiolinkPredicate]]
 
 
 class OperationEnrichResults(BaseOperation):
