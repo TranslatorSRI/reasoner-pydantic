@@ -17,7 +17,7 @@ setup(
     long_description_content_type="text/markdown",
     packages=["reasoner_pydantic"],
     include_package_data=True,
-    install_requires=["pydantic>=1.8,<=1.10"],
+    install_requires=["pydantic>=1.8,<2"],
     zip_safe=False,
     license="MIT",
     python_requires=">=3.6",
