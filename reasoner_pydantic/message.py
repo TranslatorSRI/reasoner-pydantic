@@ -142,7 +142,9 @@ class Message(BaseModel):
                             auxiliary_graph.edges.add(new_edge_id)
                             edge_id_mapping[new_edge_id] = new_edge_id
                         except KeyError:
-                            raise Exception(f"Aux graph edge id {aux_edge} not found in edge id mapping")
+                            raise Exception(
+                                f"Aux graph edge id {aux_edge} not found in edge id mapping"
+                            )
                     if edges_len != edges_num:
                         raise Exception("Missed an aux graph edge normalization.")
                 else:
