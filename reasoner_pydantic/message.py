@@ -1,4 +1,5 @@
 """Reasoner API models."""
+import copy
 import hashlib
 
 from typing import Optional, Callable
@@ -125,13 +126,29 @@ class Message(BaseModel):
 
         # Update auxiliary graphs
         if self.auxiliary_graphs:
+            aux_len = len(self.auxiliary_graphs.values())
+            aux_num = 0
             for auxiliary_graph in self.auxiliary_graphs.values():
+                aux_num += 1
                 if auxiliary_graph.edges:
-                    for aux_edge in auxiliary_graph.edges:
+                    edges_len = len(auxiliary_graph.edges)
+                    edges_num = 0
+                    aux_edges = copy.deepcopy(auxiliary_graph.edges)
+                    for aux_edge in aux_edges:
+                        edges_num += 1
                         auxiliary_graph.edges.discard(aux_edge)
-                        auxiliary_graph.edges.add(
-                            edge_id_mapping.get(aux_edge, aux_edge)
-                        )
+                        try:
+                            new_edge_id = edge_id_mapping[aux_edge]
+                            auxiliary_graph.edges.add(new_edge_id)
+                            edge_id_mapping[new_edge_id] = new_edge_id
+                        except KeyError:
+                            raise Exception(f"Aux graph edge id {aux_edge} not found in edge id mapping")
+                    if edges_len != edges_num:
+                        raise Exception("Missed an aux graph edge normalization.")
+                else:
+                    raise Exception(f"This aux graph has no edges")
+            if aux_len != aux_num:
+                raise Exception(f"Missed an aux graph normalization.")
 
         # Update results
         if self.results:
