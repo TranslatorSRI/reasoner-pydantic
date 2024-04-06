@@ -19,13 +19,14 @@ from .utils import HashableMapping, HashableSet
 class Node(BaseModel):
     """Knowledge graph node."""
 
-    categories: Optional[HashableSet[BiolinkEntity]] = Field(
-        None,
+    categories: HashableSet[BiolinkEntity] = Field(
+        ...,
         title="categories",
-        nullable=True,
+        nullable=False,
     )
     name: Optional[str] = Field(None, nullable=True)
-    attributes: Optional[HashableSet[Attribute]] = Field(None, nullable=True)
+    attributes: HashableSet[Attribute] = Field(..., nullable=False)
+    is_set: Optional[bool]
 
     class Config:
         title = "knowledge-graph node"
@@ -92,7 +93,7 @@ class Edge(BaseModel):
         ..., title="list of source retrievals"
     )
     qualifiers: Optional[HashableSet[Qualifier]] = Field(None, nullable=True)
-    attributes: Optional[HashableSet[Attribute]] = Field(None, nullable=True)
+    attributes: Optional[HashableSet[Attribute]] = Field(..., nullable=False)
 
     class Config:
         title = "knowledge-graph edge"

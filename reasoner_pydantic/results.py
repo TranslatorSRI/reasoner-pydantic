@@ -15,9 +15,10 @@ class EdgeBinding(BaseModel):
     id: str = Field(
         ...,
         title="knowledge graph id",
+        nullable=False
     )
 
-    attributes: Optional[HashableSet[Attribute]] = Field(None, nullable=True)
+    attributes: HashableSet[Attribute] = Field(..., nullable=False)
 
     class Config:
         title = "edge binding"
@@ -92,11 +93,12 @@ class NodeBinding(BaseModel):
     id: CURIE = Field(
         ...,
         title="knowledge graph id",
+        nullable=False
     )
 
     query_id: Optional[CURIE] = Field(None, title="query graph id")
 
-    attributes: Optional[HashableSet[Attribute]] = Field(None, nullable=True)
+    attributes: HashableSet[Attribute] = Field(..., nullable=False)
 
     class Config:
         title = "node binding"
@@ -114,11 +116,13 @@ class Result(BaseModel):
     node_bindings: HashableMapping[str, HashableSet[NodeBinding]] = Field(
         ...,
         title="list of node bindings",
+        nullable=False
     )
 
     analyses: HashableSet[Analysis] = Field(
         ...,
         title="list of anlysis blocks",
+        nullable=False
     )
 
     class Config:

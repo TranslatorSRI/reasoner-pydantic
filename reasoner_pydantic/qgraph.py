@@ -74,6 +74,13 @@ class QualifierConstraint(BaseModel):
         title="qualifier set",
     )
 
+class SetInterpretationEnum(str, Enum):
+    """Enumeration for set interpretation."""
+
+    BATCH = "BATCH"
+    ALL = "ALL"
+    MANY = "MANY"
+
 
 class QNode(BaseModel):
     """Query node."""
@@ -92,7 +99,7 @@ class QNode(BaseModel):
     )
     _nonzero_categories = validator("categories", allow_reuse=True)(nonzero_validator)
 
-    is_set: bool = False
+    set_interpretation: Optional[SetInterpretationEnum] = Field(None, nullable=True)
     constraints: Optional[HashableSequence[AttributeConstraint]] = Field(
         default=HashableSequence[AttributeConstraint](__root__=[]),
         title="attribute constraints",

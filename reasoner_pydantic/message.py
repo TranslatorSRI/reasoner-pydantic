@@ -175,6 +175,7 @@ class Query(BaseModel):
         nullable=True,
     )
     workflow: Optional[Workflow]
+    bypass_cache: Optional[bool]
 
     class Config:
         title = "query"
@@ -185,10 +186,11 @@ class Query(BaseModel):
 class AsyncQuery(BaseModel):
     """AsyncQuery."""
 
-    callback: constr(regex=r"^https?://") = Field(..., format="uri")
+    callback: constr(regex=r"^https?://") = Field(..., format="uri", nullable=False)
     message: Message = Field(
         ...,
         title="message",
+        nullable=False
     )
     log_level: Optional[LogLevel] = Field(
         None,
@@ -196,6 +198,7 @@ class AsyncQuery(BaseModel):
         nullable=True,
     )
     workflow: Optional[Workflow]
+    bypass_cache: Optional[bool]
 
     class Config:
         title = "query"
@@ -209,9 +212,10 @@ class Response(BaseModel):
     message: Message = Field(
         ...,
         title="message",
+        nullable=False
     )
 
-    logs: Optional[HashableSequence[LogEntry]] = Field(None, nullable=True)
+    logs: Optional[HashableSequence[LogEntry]] = Field(..., nullable=False)
 
     status: Optional[str] = Field(None, nullable=True)
 
@@ -248,7 +252,7 @@ class AsyncQueryStatusResponse(BaseModel):
 
     description: str = Field(..., title="description")
 
-    logs: Optional[HashableSet[LogEntry]] = Field(None, nullable=True)
+    logs: HashableSet[LogEntry] = Field(..., nullable=False)
 
     response_url: Optional[str] = Field(None, nullable=True)
 
