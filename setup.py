@@ -1,4 +1,5 @@
 """Setup file for reasoner package."""
+
 from setuptools import setup
 
 from pathlib import Path
