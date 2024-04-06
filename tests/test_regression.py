@@ -3,8 +3,8 @@ from reasoner_pydantic.utils import HashableSequence
 
 EXAMPLE_RESULT = {
     "node_bindings": {
-        "n1": [{"id": "CHEBI:6801"}],
-        "n2": [{"id": "MONDO:5148"}],
+        "n1": [{"id": "CHEBI:6801", "attributes": []}],
+        "n2": [{"id": "MONDO:5148", "attributes": []}],
     },
     "analyses": [
         {

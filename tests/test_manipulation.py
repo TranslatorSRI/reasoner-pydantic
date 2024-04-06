@@ -33,13 +33,14 @@ def test_manipulation():
     qnode_id = next(iter(message.query_graph.nodes))
 
     # add knowledge graph node
-    knode: Node = Node()
+    knode: Node = Node(categories=["biolink:NamedThing"], attributes=[])
     knode_id = "foo:bar"
     message.knowledge_graph.nodes[knode_id] = knode
 
     # add result
     node_binding: NodeBinding = NodeBinding(
         id=knode_id,
+        attributes=[]
     )
     result: Result = Result(
         node_bindings={qnode_id: [node_binding]},

@@ -42,9 +42,18 @@ EXAMPLE_MESSAGE = {
     },
     "knowledge_graph": {
         "nodes": {
-            "CHEBI:6801": {},
-            "MONDO:5148": {},
-            "CHEBI:6802": {},
+            "CHEBI:6801": {
+                "categories": ["biolink:NamedThing"],
+                "attributes": []
+            },
+            "MONDO:5148": {
+                "categories": ["biolink:NamedThing"],
+                "attributes": []
+            },
+            "CHEBI:6802": {
+                "categories": ["biolink:NamedThing"],
+                "attributes": []
+            },
         },
         "edges": {
             "CHEBI:6801-biolink:treats-MONDO:5148": {
@@ -92,14 +101,15 @@ EXAMPLE_MESSAGE = {
                         "resource_role": "primary_knowledge_source",
                     }
                 ],
+                "attributes": []
             },
         },
     },
     "results": [
         {
             "node_bindings": {
-                "n1": [{"id": "CHEBI:6801"}],
-                "n2": [{"id": "MONDO:5148"}],
+                "n1": [{"id": "CHEBI:6801", "attributes": []}],
+                "n2": [{"id": "MONDO:5148", "attributes": []}],
             },
             "analyses": [
                 {
@@ -117,6 +127,7 @@ EXAMPLE_MESSAGE = {
                             }
                         ]
                     },
+                    "attributes": []
                 },
                 {
                     "resource_id": "ara0",
@@ -124,9 +135,11 @@ EXAMPLE_MESSAGE = {
                         "n1n2": [
                             {
                                 "id": "CHEBI:6802-biolink:treats-MONDO:5148",
+                                "attributes": []
                             }
                         ]
                     },
+                    "attributes": []
                 },
                 {
                     "resource_id": "ara1",
@@ -134,14 +147,16 @@ EXAMPLE_MESSAGE = {
                         "n1n2": [
                             {
                                 "id": "CHEBI:6801-biolink:treats-MONDO:5148",
+                                "attributes": []
                             }
                         ]
                     },
+                    "attributes": []
                 },
             ],
         }
     ],
-    "auxiliary_graphs": {"a1": {"edges": ["CHEBI:6801-biolink:treats-MONDO:5148"]}},
+    "auxiliary_graphs": {"a1": {"edges": ["CHEBI:6801-biolink:treats-MONDO:5148"], "attributes": []}},
 }
 
 EXAMPLE_MESSAGE_MULT = {
@@ -166,10 +181,22 @@ EXAMPLE_MESSAGE_MULT = {
     },
     "knowledge_graph": {
         "nodes": {
-            "CHEBI:6801": {},
-            "MONDO:5148": {},
-            "CHEBI:6802": {},
-            "CHEBI:6803": {},
+            "CHEBI:6801": {
+                "categories": ["biolink:NamedThing"],
+                "attributes": []
+            },
+            "MONDO:5148": {
+                "categories": ["biolink:NamedThing"],
+                "attributes": []
+            },
+            "CHEBI:6802": {
+                "categories": ["biolink:NamedThing"],
+                "attributes": []
+            },
+            "CHEBI:6803": {
+                "categories": ["biolink:NamedThing"],
+                "attributes": []
+            },
         },
         "edges": {
             "CHEBI:6801-biolink:related_to-MONDO:5148": {
@@ -182,6 +209,7 @@ EXAMPLE_MESSAGE_MULT = {
                         "resource_role": "primary_knowledge_source",
                     }
                 ],
+                "attributes": []
             },
             "CHEBI:6802-biolink:related_t0-MONDO:5148": {
                 "subject": "CHEBI:6802",
@@ -193,6 +221,7 @@ EXAMPLE_MESSAGE_MULT = {
                         "resource_role": "primary_knowledge_source",
                     }
                 ],
+                "attributes": []
             },
             "CHEBI:6803-biolink:related_to-MONDO:5148": {
                 "subject": "CHEBI:6803",
@@ -204,15 +233,16 @@ EXAMPLE_MESSAGE_MULT = {
                         "resource_role": "primary_knowledge_source",
                     }
                 ],
+                "attributes": []
             },
         },
     },
     "results": [
         {
             "node_bindings": {
-                "n0": [{"id": "CHEBI:6803"}],
-                "n1": [{"id": "CHEBI:6801"}, {"id": "CHEBI:6802"}],
-                "n2": [{"id": "MONDO:5148"}],
+                "n0": [{"id": "CHEBI:6803", "attributes": []}],
+                "n1": [{"id": "CHEBI:6801", "attributes": []}, {"id": "CHEBI:6802", "attributes": []}],
+                "n2": [{"id": "MONDO:5148", "attributes": []}],
             },
             "analyses": [
                 {
@@ -237,6 +267,7 @@ EXAMPLE_MESSAGE_MULT = {
                         "n1n2": [
                             {
                                 "id": "CHEBI:6802-biolink:treats-MONDO:5148",
+                                "attributes": []
                             }
                         ]
                     },
@@ -247,6 +278,7 @@ EXAMPLE_MESSAGE_MULT = {
                         "n1n2": [
                             {
                                 "id": "CHEBI:6801-biolink:treats-MONDO:5148",
+                                "attributes": []
                             }
                         ]
                     },
@@ -257,6 +289,7 @@ EXAMPLE_MESSAGE_MULT = {
                         "n0n1": [
                             {
                                 "id": "CHEBI:6803-biolink:treats-MONDO:5148",
+                                "attributes": []
                             }
                         ]
                     },
