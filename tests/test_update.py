@@ -44,7 +44,7 @@ def test_result_merging():
                             "resource_role": "primary_knowledge_source",
                         }
                     ],
-                    "attributes": []
+                    "attributes": [],
                 },
                 "ke1": {
                     "subject": "kn0",
@@ -56,7 +56,7 @@ def test_result_merging():
                             "resource_role": "primary_knowledge_source",
                         }
                     ],
-                    "attributes": []
+                    "attributes": [],
                 },
             },
         },
@@ -67,7 +67,7 @@ def test_result_merging():
                     {
                         "resource_id": "ara0",
                         "edge_bindings": {"e0": [{"id": "ke0", "attributes": []}]},
-                        "attributes": []
+                        "attributes": [],
                     }
                 ],
             },
@@ -77,12 +77,12 @@ def test_result_merging():
                     {
                         "resource_id": "ara0",
                         "edge_bindings": {"e0": [{"id": "ke0", "attributes": []}]},
-                        "attributes": []
+                        "attributes": [],
                     },
                     {
                         "resource_id": "ara1",
                         "edge_bindings": {"e0": [{"id": "ke0", "attributes": []}]},
-                        "attributes": []
+                        "attributes": [],
                     },
                 ],
             },
@@ -111,7 +111,7 @@ def test_different_result_merging():
                             "resource_role": "primary_knowledge_source",
                         }
                     ],
-                    "attributes": []
+                    "attributes": [],
                 },
                 "ke1": {
                     "subject": "kn0",
@@ -123,7 +123,7 @@ def test_different_result_merging():
                             "resource_role": "primary_knowledge_source",
                         }
                     ],
-                    "attributes": []
+                    "attributes": [],
                 },
             },
         },
@@ -134,7 +134,7 @@ def test_different_result_merging():
                     {
                         "resource_id": "ara0",
                         "edge_bindings": {"e0": [{"id": "ke0", "attributes": []}]},
-                        "attributes": []
+                        "attributes": [],
                     }
                 ],
             },
@@ -144,12 +144,12 @@ def test_different_result_merging():
                     {
                         "resource_id": "ara0",
                         "edge_bindings": {"e0": [{"id": "ke0", "attributes": []}]},
-                        "attributes": []
+                        "attributes": [],
                     },
                     {
                         "resource_id": "ara1",
                         "edge_bindings": {"e0": [{"id": "ke0", "attributes": []}]},
-                        "attributes": []
+                        "attributes": [],
                     },
                 ],
             },
@@ -179,7 +179,7 @@ def test_deduplicate_results_out_of_order():
                             "resource_role": "primary_knowledge_source",
                         }
                     ],
-                    "attributes": []
+                    "attributes": [],
                 },
                 "ke1": {
                     "subject": "kn0",
@@ -191,37 +191,43 @@ def test_deduplicate_results_out_of_order():
                             "resource_role": "primary_knowledge_source",
                         }
                     ],
-                    "attributes": []
+                    "attributes": [],
                 },
             },
         },
         "results": [
             {
                 "node_bindings": {
-                    "a": [{"id": "MONDO:0011122", "attributes": []}, {"id": "CHEBI:88916", "attributes": []}]
+                    "a": [
+                        {"id": "MONDO:0011122", "attributes": []},
+                        {"id": "CHEBI:88916", "attributes": []},
+                    ]
                 },
                 "analyses": [
                     {
                         "resource_id": "ara0",
                         "edge_bindings": {"e0": [{"id": "ke0", "attributes": []}]},
-                        "attributes": []
+                        "attributes": [],
                     }
                 ],
             },
             {
                 "node_bindings": {
-                    "a": [{"id": "CHEBI:88916", "attributes": []}, {"id": "MONDO:0011122", "attributes": []}],
+                    "a": [
+                        {"id": "CHEBI:88916", "attributes": []},
+                        {"id": "MONDO:0011122", "attributes": []},
+                    ],
                 },
                 "analyses": [
                     {
                         "resource_id": "ara0",
                         "edge_bindings": {"e0": [{"id": "ke0", "attributes": []}]},
-                        "attributes": []
+                        "attributes": [],
                     },
                     {
                         "resource_id": "ara1",
                         "edge_bindings": {"e0": [{"id": "ke0", "attributes": []}]},
-                        "attributes": []
+                        "attributes": [],
                     },
                 ],
             },
@@ -243,13 +249,19 @@ def test_deduplicate_results_different():
         "results": [
             {
                 "node_bindings": {
-                    "b": [{"id": "CHEBI:88916", "attributes": []}, {"id": "MONDO:0011122", "attributes": []}],
+                    "b": [
+                        {"id": "CHEBI:88916", "attributes": []},
+                        {"id": "MONDO:0011122", "attributes": []},
+                    ],
                 },
                 "analyses": [],
             },
             {
                 "node_bindings": {
-                    "a": [{"id": "MONDO:0011122", "attributes": []}, {"id": "CHEBI:88916", "attributes": []}],
+                    "a": [
+                        {"id": "MONDO:0011122", "attributes": []},
+                        {"id": "CHEBI:88916", "attributes": []},
+                    ],
                 },
                 "analyses": [],
             },
@@ -316,7 +328,10 @@ def test_normalize_knowledge_graph_edges():
 
     message_a = {
         "knowledge_graph": {
-            "nodes": {"MONDO:1": {"categories": ["biolink:NamedThing"], "attributes": []}, "CHEBI:1": {"categories": ["biolink:NamedThing"], "attributes": []}},
+            "nodes": {
+                "MONDO:1": {"categories": ["biolink:NamedThing"], "attributes": []},
+                "CHEBI:1": {"categories": ["biolink:NamedThing"], "attributes": []},
+            },
             "edges": {
                 "n0n1": {
                     "subject": "MONDO:1",
@@ -336,7 +351,10 @@ def test_normalize_knowledge_graph_edges():
             {
                 "node_bindings": [],
                 "analyses": [
-                    {"resource_id": "ara0", "edge_bindings": {"qe0": [{"id": "n0n1", "attributes": []}]}}
+                    {
+                        "resource_id": "ara0",
+                        "edge_bindings": {"qe0": [{"id": "n0n1", "attributes": []}]},
+                    }
                 ],
             }
         ],
@@ -344,7 +362,10 @@ def test_normalize_knowledge_graph_edges():
 
     message_b = {
         "knowledge_graph": {
-            "nodes": {"MONDO:1": {"categories": ["biolink:NamedThing"], "attributes": []}, "CHEBI:1": {"categories": ["biolink:NamedThing"], "attributes": []}},
+            "nodes": {
+                "MONDO:1": {"categories": ["biolink:NamedThing"], "attributes": []},
+                "CHEBI:1": {"categories": ["biolink:NamedThing"], "attributes": []},
+            },
             "edges": {
                 "n0n1": {
                     "subject": "MONDO:1",

@@ -1,4 +1,5 @@
 """Reasoner API models."""
+
 import copy
 import hashlib
 
@@ -187,11 +188,7 @@ class AsyncQuery(BaseModel):
     """AsyncQuery."""
 
     callback: constr(regex=r"^https?://") = Field(..., format="uri", nullable=False)
-    message: Message = Field(
-        ...,
-        title="message",
-        nullable=False
-    )
+    message: Message = Field(..., title="message", nullable=False)
     log_level: Optional[LogLevel] = Field(
         None,
         title="log_level",
@@ -209,11 +206,7 @@ class AsyncQuery(BaseModel):
 class Response(BaseModel):
     """Response."""
 
-    message: Message = Field(
-        ...,
-        title="message",
-        nullable=False
-    )
+    message: Message = Field(..., title="message", nullable=False)
 
     logs: Optional[HashableSequence[LogEntry]] = Field(..., nullable=False)
 

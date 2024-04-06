@@ -1,4 +1,5 @@
 """Query graph models."""
+
 from enum import Enum
 
 from pydantic.class_validators import validator
@@ -73,6 +74,7 @@ class QualifierConstraint(BaseModel):
         default=HashableSequence[Qualifier](__root__=[]),
         title="qualifier set",
     )
+
 
 class SetInterpretationEnum(str, Enum):
     """Enumeration for set interpretation."""

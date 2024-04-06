@@ -1,4 +1,5 @@
 """Auxiliary Graphs model"""
+
 from typing import Optional
 
 from pydantic import Field, parse_obj_as

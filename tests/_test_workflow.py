@@ -1,4 +1,5 @@
 """Test alignment with OpenAPI schema."""
+
 import json
 
 import httpx
