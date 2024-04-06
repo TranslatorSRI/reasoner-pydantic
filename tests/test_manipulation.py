@@ -1,4 +1,5 @@
 """Test manipulation."""
+
 from reasoner_pydantic import (
     Query,
     Message,
@@ -38,10 +39,7 @@ def test_manipulation():
     message.knowledge_graph.nodes[knode_id] = knode
 
     # add result
-    node_binding: NodeBinding = NodeBinding(
-        id=knode_id,
-        attributes=[]
-    )
+    node_binding: NodeBinding = NodeBinding(id=knode_id, attributes=[])
     result: Result = Result(
         node_bindings={qnode_id: [node_binding]},
         analyses=[],

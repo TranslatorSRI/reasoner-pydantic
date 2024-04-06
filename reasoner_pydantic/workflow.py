@@ -1,4 +1,5 @@
 """Operations models."""
+
 from enum import Enum
 from typing import Any, Optional, Union
 from pydantic.class_validators import validator

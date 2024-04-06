@@ -1,4 +1,5 @@
 """Results models."""
+
 import copy
 from typing import Optional
 
@@ -12,11 +13,7 @@ from .shared import Attribute, CURIE
 class EdgeBinding(BaseModel):
     """Edge binding."""
 
-    id: str = Field(
-        ...,
-        title="knowledge graph id",
-        nullable=False
-    )
+    id: str = Field(..., title="knowledge graph id", nullable=False)
 
     attributes: HashableSet[Attribute] = Field(..., nullable=False)
 
@@ -90,11 +87,7 @@ class Analysis(BaseModel):
 class NodeBinding(BaseModel):
     """Node binding."""
 
-    id: CURIE = Field(
-        ...,
-        title="knowledge graph id",
-        nullable=False
-    )
+    id: CURIE = Field(..., title="knowledge graph id", nullable=False)
 
     query_id: Optional[CURIE] = Field(None, title="query graph id")
 
@@ -114,15 +107,11 @@ class Result(BaseModel):
     """Result."""
 
     node_bindings: HashableMapping[str, HashableSet[NodeBinding]] = Field(
-        ...,
-        title="list of node bindings",
-        nullable=False
+        ..., title="list of node bindings", nullable=False
     )
 
     analyses: HashableSet[Analysis] = Field(
-        ...,
-        title="list of anlysis blocks",
-        nullable=False
+        ..., title="list of anlysis blocks", nullable=False
     )
 
     class Config:

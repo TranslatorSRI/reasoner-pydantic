@@ -1,4 +1,5 @@
 """Test workflow things."""
+
 from reasoner_pydantic import Query
 
 query = {
