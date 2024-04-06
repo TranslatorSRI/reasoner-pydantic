@@ -44,6 +44,7 @@ def test_result_merging():
                             "resource_role": "primary_knowledge_source",
                         }
                     ],
+                    "attributes": []
                 },
                 "ke1": {
                     "subject": "kn0",
@@ -55,29 +56,33 @@ def test_result_merging():
                             "resource_role": "primary_knowledge_source",
                         }
                     ],
+                    "attributes": []
                 },
             },
         },
         "results": [
             {
-                "node_bindings": {"n0": [{"id": "kn0"}]},
+                "node_bindings": {"n0": [{"id": "kn0", "attributes": []}]},
                 "analyses": [
                     {
                         "resource_id": "ara0",
-                        "edge_bindings": {"e0": [{"id": "ke0"}]},
+                        "edge_bindings": {"e0": [{"id": "ke0", "attributes": []}]},
+                        "attributes": []
                     }
                 ],
             },
             {
-                "node_bindings": {"n0": [{"id": "kn0"}]},
+                "node_bindings": {"n0": [{"id": "kn0", "attributes": []}]},
                 "analyses": [
                     {
                         "resource_id": "ara0",
-                        "edge_bindings": {"e0": [{"id": "ke0"}]},
+                        "edge_bindings": {"e0": [{"id": "ke0", "attributes": []}]},
+                        "attributes": []
                     },
                     {
                         "resource_id": "ara1",
-                        "edge_bindings": {"e0": [{"id": "ke0"}]},
+                        "edge_bindings": {"e0": [{"id": "ke0", "attributes": []}]},
+                        "attributes": []
                     },
                 ],
             },
@@ -106,6 +111,7 @@ def test_different_result_merging():
                             "resource_role": "primary_knowledge_source",
                         }
                     ],
+                    "attributes": []
                 },
                 "ke1": {
                     "subject": "kn0",
@@ -117,29 +123,33 @@ def test_different_result_merging():
                             "resource_role": "primary_knowledge_source",
                         }
                     ],
+                    "attributes": []
                 },
             },
         },
         "results": [
             {
-                "node_bindings": {"n0": [{"id": "kn0"}]},
+                "node_bindings": {"n0": [{"id": "kn0", "attributes": []}]},
                 "analyses": [
                     {
                         "resource_id": "ara0",
-                        "edge_bindings": {"e0": [{"id": "ke0"}]},
+                        "edge_bindings": {"e0": [{"id": "ke0", "attributes": []}]},
+                        "attributes": []
                     }
                 ],
             },
             {
-                "node_bindings": {"n0": [{"id": "kn1"}]},
+                "node_bindings": {"n0": [{"id": "kn1", "attributes": []}]},
                 "analyses": [
                     {
                         "resource_id": "ara0",
-                        "edge_bindings": {"e0": [{"id": "ke0"}]},
+                        "edge_bindings": {"e0": [{"id": "ke0", "attributes": []}]},
+                        "attributes": []
                     },
                     {
                         "resource_id": "ara1",
-                        "edge_bindings": {"e0": [{"id": "ke0"}]},
+                        "edge_bindings": {"e0": [{"id": "ke0", "attributes": []}]},
+                        "attributes": []
                     },
                 ],
             },
