@@ -13,7 +13,7 @@ class AuxiliaryGraph(BaseModel):
 
     edges: HashableSet[str] = Field(..., title="edges in auxiliary graph")
 
-    attributes: Optional[HashableSet[Attribute]] = Field(None, nullable=True)
+    attributes: HashableSet[Attribute] = Field(..., nullable=False)
 
     class Config:
         title = "auxiliary graph"
