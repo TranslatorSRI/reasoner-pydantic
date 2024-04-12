@@ -5,7 +5,7 @@ import hashlib
 
 from typing import Optional, Callable
 
-from pydantic import constr, Field, parse_obj_as
+from pydantic import constr, Field, parse_obj_as, validator
 
 from .base_model import BaseModel
 from .utils import HashableSequence, HashableSet
@@ -208,7 +208,7 @@ class Response(BaseModel):
 
     message: Message = Field(..., title="message", nullable=False)
 
-    logs: Optional[HashableSequence[LogEntry]] = Field(..., nullable=False)
+    logs: Optional[HashableSequence[LogEntry]] = Field([], nullable=False)
 
     status: Optional[str] = Field(None, nullable=True)
 
@@ -217,6 +217,11 @@ class Response(BaseModel):
     class Config:
         title = "response"
         extra = "allow"
+
+    @validator('logs')
+    def prevent_none(cls, v):
+        assert v is not None
+        return v
 
     def parse_obj(obj, normalize=True):
         response = parse_obj_as(Response, obj)
