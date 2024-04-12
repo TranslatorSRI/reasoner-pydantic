@@ -218,7 +218,7 @@ class Response(BaseModel):
         title = "response"
         extra = "allow"
 
-    @validator('logs')
+    @validator("logs")
     def prevent_none(cls, v):
         assert v is not None
         return v
