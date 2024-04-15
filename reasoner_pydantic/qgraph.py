@@ -101,7 +101,7 @@ class QNode(BaseModel):
     )
     _nonzero_categories = validator("categories", allow_reuse=True)(nonzero_validator)
 
-    set_interpretation: Optional[SetInterpretationEnum] = Field(None, nullable=True)
+    set_interpretation: Optional[SetInterpretationEnum] = Field("BATCH", nullable=True)
     constraints: Optional[HashableSequence[AttributeConstraint]] = Field(
         default=HashableSequence[AttributeConstraint](__root__=[]),
         title="attribute constraints",
