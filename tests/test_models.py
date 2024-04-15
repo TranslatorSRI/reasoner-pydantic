@@ -396,6 +396,7 @@ def test_combine_analyses():
             assert len(analysis["edge_bindings"]["n1n2"]) == 2
             assert len(analysis["edge_bindings"]["n0n1"]) == 1
 
+
 def test_response():
     """
     Test that response object is parsed properly
