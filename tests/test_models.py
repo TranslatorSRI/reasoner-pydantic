@@ -1,7 +1,7 @@
 from typing import Optional
 from reasoner_pydantic.base_model import BaseModel
 from reasoner_pydantic.shared import Attribute, BiolinkEntity
-from reasoner_pydantic import Message, QNode, QEdge, QueryGraph, Result
+from reasoner_pydantic import Message, QNode, QEdge, QueryGraph, Result, Response
 from reasoner_pydantic.utils import HashableMapping, HashableSequence, HashableSet
 
 
@@ -395,3 +395,11 @@ def test_combine_analyses():
         if analysis["resource_id"] == "ara0":
             assert len(analysis["edge_bindings"]["n1n2"]) == 2
             assert len(analysis["edge_bindings"]["n0n1"]) == 1
+
+def test_response():
+    """
+    Test that response object is parsed properly
+    """
+
+    response = Response.parse_obj({"message": EXAMPLE_MESSAGE})
+    assert isinstance(response, Response)
