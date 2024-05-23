@@ -438,6 +438,7 @@ class OperationLookupAndScore(BaseOperation):
     class Config:
         extra = "forbid"
 
+
 operations = [
     OperationAnnotate,
     OperationAnnotateEdges,
@@ -468,7 +469,7 @@ operations = [
     OperationSortResultsEdgeAttribute,
     OperationSortResultsNodeAttribute,
     OperationSortResultsScore,
-    OperationLookupAndScore
+    OperationLookupAndScore,
 ]
 
 
@@ -503,7 +504,7 @@ class Operation(BaseModel):
         OperationSortResultsEdgeAttribute,
         OperationSortResultsNodeAttribute,
         OperationSortResultsScore,
-        OperationLookupAndScore
+        OperationLookupAndScore,
     ]
 
 
