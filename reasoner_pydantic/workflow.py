@@ -458,6 +458,7 @@ operations = [
     OperationFilterResults,
     OperationFilterResultsTopN,
     OperationLookup,
+    OperationLookupAndScore,
     OperationOverlay,
     OperationOverlayComputeJaccard,
     OperationOverlayComputeNgd,
@@ -469,7 +470,6 @@ operations = [
     OperationSortResultsEdgeAttribute,
     OperationSortResultsNodeAttribute,
     OperationSortResultsScore,
-    OperationLookupAndScore,
 ]
 
 
@@ -493,6 +493,7 @@ class Operation(BaseModel):
         OperationFilterResults,
         OperationFilterResultsTopN,
         OperationLookup,
+        OperationLookupAndScore,
         OperationOverlay,
         OperationOverlayComputeJaccard,
         OperationOverlayComputeNgd,
@@ -504,7 +505,6 @@ class Operation(BaseModel):
         OperationSortResultsEdgeAttribute,
         OperationSortResultsNodeAttribute,
         OperationSortResultsScore,
-        OperationLookupAndScore,
     ]
 
 
