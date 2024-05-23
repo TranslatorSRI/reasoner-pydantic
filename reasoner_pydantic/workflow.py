@@ -302,6 +302,14 @@ class OperationLookup(BaseOperation):
         extra = "forbid"
 
 
+class OperationLookupAndScore(BaseOperation):
+    id: constant("lookup_and_score")
+    parameters: Optional[Any]
+
+    class Config:
+        extra = "forbid"
+
+
 class OperationOverlay(BaseOperation):
     id: constant("overlay")
     parameters: Optional[Any]
@@ -426,14 +434,6 @@ class SortResultsScoreParameters(BaseModel):
 class OperationSortResultsScore(BaseOperation):
     id: constant("sort_results_score")
     parameters: SortResultsScoreParameters
-
-    class Config:
-        extra = "forbid"
-
-
-class OperationLookupAndScore(BaseOperation):
-    id: constant("lookup_and_score")
-    parameters: Optional[Any]
 
     class Config:
         extra = "forbid"
