@@ -431,6 +431,13 @@ class OperationSortResultsScore(BaseOperation):
         extra = "forbid"
 
 
+class OperationLookupAndScore(BaseOperation):
+    id: constant("lookup_and_score")
+    parameters: Optional[Any]
+
+    class Config:
+        extra = "forbid"
+
 operations = [
     OperationAnnotate,
     OperationAnnotateEdges,
@@ -461,6 +468,7 @@ operations = [
     OperationSortResultsEdgeAttribute,
     OperationSortResultsNodeAttribute,
     OperationSortResultsScore,
+    OperationLookupAndScore
 ]
 
 
@@ -495,6 +503,7 @@ class Operation(BaseModel):
         OperationSortResultsEdgeAttribute,
         OperationSortResultsNodeAttribute,
         OperationSortResultsScore,
+        OperationLookupAndScore
     ]
 
 
