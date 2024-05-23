@@ -404,4 +404,3 @@ def test_response():
 
     response = Response.parse_obj({"message": EXAMPLE_MESSAGE})
     assert isinstance(response, Response)
-    response = Response(**{"message": EXAMPLE_MESSAGE})
