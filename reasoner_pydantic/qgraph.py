@@ -107,10 +107,9 @@ class QNode(BaseModel):
         default=HashableSequence[AttributeConstraint](__root__=[]),
         title="attribute constraints",
     )
-    
+
     member_ids: Optional[HashableSequence[CURIE]] = Field(
-        default=HashableSequence[CURIE](__root__=[]),
-        title="set member ids"
+        default=HashableSequence[CURIE](__root__=[]), title="set member ids"
     )
 
     class Config:
