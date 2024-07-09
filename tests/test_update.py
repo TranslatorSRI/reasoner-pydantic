@@ -449,6 +449,7 @@ def test_merge_identical_attributes():
     assert ATTRIBUTE_A in node.attributes
     assert len(node.attributes) == 1
 
+
 def test_merge_knowledge_graph_edges():
     """
     Test that knowledge graph edges are merged properly
@@ -470,13 +471,13 @@ def test_merge_knowledge_graph_edges():
                         {
                             "resource_id": "kp0",
                             "resource_role": "aggregator_knowledge_source",
-                            "upstream_resource_ids": ["ks0"]
+                            "upstream_resource_ids": ["ks0"],
                         },
                         {
                             "resource_id": "ara0",
                             "resource_role": "aggregator_knowledge_source",
-                            "upstream_resource_ids": ["kp0"]
-                        }
+                            "upstream_resource_ids": ["kp0"],
+                        },
                     ],
                     "attributes": [],
                 }
@@ -501,13 +502,13 @@ def test_merge_knowledge_graph_edges():
                         {
                             "resource_id": "kp1",
                             "resource_role": "aggregator_knowledge_source",
-                            "upstream_resource_ids": ["ks0"]
+                            "upstream_resource_ids": ["ks0"],
                         },
                         {
                             "resource_id": "ara0",
                             "resource_role": "aggregator_knowledge_source",
-                            "upstream_resource_ids": ["kp1"]
-                        }
+                            "upstream_resource_ids": ["kp1"],
+                        },
                     ],
                     "attributes": [],
                 }
@@ -524,7 +525,7 @@ def test_merge_knowledge_graph_edges():
     edges = m.knowledge_graph.edges
     assert len(edges) == 1
     edge = next(iter(edges.values()))
-    
+
     sources = edge.sources
     assert len(sources) == 4
     for source in sources:
