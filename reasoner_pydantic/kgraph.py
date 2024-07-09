@@ -108,6 +108,8 @@ class Edge(BaseModel):
                 self.attributes = other.attributes
         if other.sources:
             if self.sources:
+                # We need to do the union of the two sets and then update each
+                # source with the information from the other list
                 self.sources.update(other.sources)
                 for source in self.sources:
                     for other_source in other.sources:
