@@ -109,6 +109,10 @@ class Edge(BaseModel):
         if other.sources:
             if self.sources:
                 self.sources.update(other.sources)
+                for source in self.sources:
+                    for other_source in other.sources:
+                        if source == other_source:
+                            source.update(other_source)
             else:
                 self.sources = other.sources
 
