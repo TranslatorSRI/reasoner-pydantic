@@ -448,3 +448,85 @@ def test_merge_identical_attributes():
 
     assert ATTRIBUTE_A in node.attributes
     assert len(node.attributes) == 1
+
+def test_merge_knowledge_graph_edges():
+    """
+    Test that knowledge graph edges are merged properly
+    """
+
+    message_a = {
+        "knowledge_graph": {
+            "nodes": {},
+            "edges": {
+                "ke0": {
+                    "subject": "kn0",
+                    "object": "kn1",
+                    "predicate": "biolink:ameliorates",
+                    "sources": [
+                        {
+                            "resource_id": "ks0",
+                            "resource_role": "primary_knowledge_source",
+                        },
+                        {
+                            "resource_id": "kp0",
+                            "resource_role": "aggregator_knowledge_source",
+                            "upstream_resource_ids": ["ks0"]
+                        },
+                        {
+                            "resource_id": "ara0",
+                            "resource_role": "aggregator_knowledge_source",
+                            "upstream_resource_ids": ["kp0"]
+                        }
+                    ],
+                    "attributes": [],
+                }
+            },
+        },
+        "results": [],
+    }
+
+    message_b = {
+        "knowledge_graph": {
+            "nodes": {},
+            "edges": {
+                "ke0": {
+                    "subject": "kn0",
+                    "object": "kn1",
+                    "predicate": "biolink:ameliorates",
+                    "sources": [
+                        {
+                            "resource_id": "ks0",
+                            "resource_role": "primary_knowledge_source",
+                        },
+                        {
+                            "resource_id": "kp1",
+                            "resource_role": "aggregator_knowledge_source",
+                            "upstream_resource_ids": ["ks0"]
+                        },
+                        {
+                            "resource_id": "ara0",
+                            "resource_role": "aggregator_knowledge_source",
+                            "upstream_resource_ids": ["kp1"]
+                        }
+                    ],
+                    "attributes": [],
+                }
+            },
+        },
+        "results": [],
+    }
+
+    m = Message()
+
+    m.update(Message.parse_obj(message_a))
+    m.update(Message.parse_obj(message_b))
+
+    edges = m.knowledge_graph.edges
+    assert len(edges) == 1
+    edge = next(iter(edges.values()))
+    
+    sources = edge.sources
+    assert len(sources) == 4
+    for source in sources:
+        if source.resource_id == "ara0":
+            assert len(source.upstream_resource_ids) == 2
