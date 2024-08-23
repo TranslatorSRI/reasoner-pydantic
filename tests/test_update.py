@@ -479,7 +479,12 @@ def test_merge_knowledge_graph_edges():
                             "upstream_resource_ids": ["kp0"],
                         },
                     ],
-                    "attributes": [],
+                    "attributes": [
+                        {
+                            "attribute_type_id": "biolink:agent_type",
+                            "value": "automated_agent"
+                        }
+                    ],
                 }
             },
         },
@@ -510,7 +515,12 @@ def test_merge_knowledge_graph_edges():
                             "upstream_resource_ids": ["kp1"],
                         },
                     ],
-                    "attributes": [],
+                    "attributes": [
+                        {
+                            "attribute_type_id": "biolink:agent_type",
+                            "value": "automated_agent"
+                        }
+                    ],
                 }
             },
         },
