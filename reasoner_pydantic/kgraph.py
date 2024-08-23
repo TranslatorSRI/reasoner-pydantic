@@ -106,7 +106,10 @@ class Edge(BaseModel):
                 # We need to make sure we don't add a second KL/AT
                 new_attributes = HashableSet[Attribute]
                 for attribute in other.attributes:
-                    if attribute.attribute_type_id not in ("biolink:knowledge_level", "biolink:agent_type"):
+                    if attribute.attribute_type_id not in (
+                        "biolink:knowledge_level",
+                        "biolink:agent_type",
+                    ):
                         new_attributes.add(attribute)
                 self.attributes.update(new_attributes)
             else:
