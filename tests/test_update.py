@@ -482,7 +482,7 @@ def test_merge_knowledge_graph_edges():
                     "attributes": [
                         {
                             "attribute_type_id": "biolink:agent_type",
-                            "value": "automated_agent"
+                            "value": "automated_agent",
                         }
                     ],
                 }
@@ -518,7 +518,7 @@ def test_merge_knowledge_graph_edges():
                     "attributes": [
                         {
                             "attribute_type_id": "biolink:agent_type",
-                            "value": "automated_agent"
+                            "value": "automated_agent",
                         }
                     ],
                 }
