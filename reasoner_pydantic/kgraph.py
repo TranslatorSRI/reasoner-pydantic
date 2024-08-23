@@ -104,7 +104,7 @@ class Edge(BaseModel):
         if other.attributes:
             if self.attributes:
                 # We need to make sure we don't add a second KL/AT
-                new_attributes = HashableSet[Attribute]
+                new_attributes = HashableSet[Attribute].parse_obj(())
                 for attribute in other.attributes:
                     if attribute.attribute_type_id not in (
                         "biolink:knowledge_level",
