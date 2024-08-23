@@ -26,6 +26,9 @@ class BaseModel(PydanticBaseModel):
         raise NotImplementedError(
             f"Model {self.__class__.__name__} has no update method"
         )
+    
+    def get_field(self, field):
+        getattr(self, field, None)
 
     # After running validation on all known properties, make sure everything else is hashable
     @root_validator(allow_reuse=True, pre=False)
