@@ -4,7 +4,9 @@
 
 [Pydantic](https://pydantic-docs.helpmanual.io/) models for the [Reasoner API](https://github.com/NCATS-Tangerine/NCATS-ReasonerStdAPI) data formats.
 
-These models are very handy when setting up a Reasoner API with [FastAPI](https://fastapi.tiangolo.com/).
+These models are very handy when setting up a Reasoner API with [FastAPI](https://fastapi.tiangolo.com/). 
+
+These models provide validation for TRAPI messages, as well as useful utilities based on architectural decisions, such as edge merging, result merging, and analysis combination. 
 
 ## Example usage
 

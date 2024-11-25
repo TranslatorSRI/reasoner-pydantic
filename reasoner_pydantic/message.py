@@ -69,6 +69,8 @@ class Message(BaseModel):
         return m
 
     def update(self, other: "Message", normalize=True):
+        """Updates one message with information from another. 
+        Can run with normalize=false, if both messages are normalized already."""
         if hash(self.query_graph) != hash(other.query_graph):
             raise NotImplementedError("Query graph merging not supported yet")
         # Make a copy because normalization will modify results

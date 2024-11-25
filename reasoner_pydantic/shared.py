@@ -40,8 +40,9 @@ class EdgeIdentifier(str):
 
 
 class RecursiveAttribute(BaseModel):
-    """Attribute subattribute."""
+    """Recursive Attribute subattribute."""
 
+    # Included to preserve direct references to Attribute and SubAttribute
     attribute_type_id: CURIE = Field(..., title="type")
     value: Any = Field(..., title="value")
     value_type_id: Optional[CURIE] = Field(

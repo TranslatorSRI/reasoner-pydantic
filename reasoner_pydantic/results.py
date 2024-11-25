@@ -147,6 +147,8 @@ class Result(BaseModel):
         return result
 
     def combine_analyses_by_resource_id(self):
+        # Useful when a service unintentionally adds multiple analyses to a single result
+        # Combines all of those analyses
         combine = HashableMapping[str, Analysis]()
         analyses = HashableSequence.parse_obj([analysis for analysis in self.analyses])
         for i, analysis in enumerate(analyses):
