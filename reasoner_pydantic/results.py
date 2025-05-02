@@ -1,30 +1,30 @@
 """Results models."""
 
 import copy
-from typing import Optional, Union
+from typing import Annotated, Optional, Union
 
-from pydantic import Field, parse_obj_as, ValidationError
+from pydantic import ConfigDict, Field, model_validator
 
 from .base_model import BaseModel
-from .utils import HashableMapping, HashableSet, HashableSequence
-from .shared import Attribute, CURIE
+from .utils import HashableMapping, HashableSet, HashableSequence, stable_hash
+from .shared import Attribute, CURIE, EdgeIdentifier
 
 
 class EdgeBinding(BaseModel):
     """Edge binding."""
 
-    id: str = Field(..., title="knowledge graph id", nullable=False)
+    id: Annotated[EdgeIdentifier, Field(title="knowledge graph id")]
 
-    attributes: HashableSet[Attribute] = Field(..., nullable=False)
-
-    class Config:
-        title = "edge binding"
-        schema_extra = {
+    attributes: HashableSet[Attribute]
+    model_config = ConfigDict(
+        title="edge binding",
+        json_schema_extra={
             "example": {
                 "id": "string",
             },
-        }
-        extra = "allow"
+        },
+        extra="allow",
+    )
 
 
 class PathBinding(BaseModel):
@@ -45,47 +45,49 @@ class PathBinding(BaseModel):
 class BaseAnalysis(BaseModel):
     """Base Analysis."""
 
-    resource_id: CURIE = Field(
-        ...,
-        title="resource infores",
-    )
+    resource_id: Annotated[
+        CURIE,
+        Field(
+            title="resource infores",
+        ),
+    ]
 
-    score: Optional[float] = Field(
-        None,
-        format="float",
-    )
 
-    support_graphs: Optional[HashableSet[str]] = Field(None, nullable=True)
+    score: Optional[float] = None
 
-    scoring_method: Optional[str] = Field(None, nullable=True)
+    support_graphs: Optional[HashableSet[str]] = None
 
-    attributes: Optional[HashableSet[Attribute]] = Field(None, nullable=True)
+    scoring_method: Optional[str] = None
+
+    attributes: Optional[HashableSet[Attribute]] = None
 
 
 class Analysis(BaseAnalysis):
     """Standard analysis"""
 
-    edge_bindings: HashableMapping[str, HashableSet[EdgeBinding]] = Field(
-        ...,
-        title="list of edge bindings",
-    )
+    edge_bindings: Annotated[
+        HashableMapping[str, HashableSet[EdgeBinding]],
+        Field(
+            title="list of edge bindings",
+        ),
+    ]
 
-    class Config:
-        title = "standard analysis"
-        extra = "allow"
+    model_config = ConfigDict(title="standard analysis", extra="allow")
 
     def __hash__(self) -> int:
-        return hash(
+        return stable_hash(
             (
                 self.resource_id,
-                self.edge_bindings,
+                hash(self.edge_bindings),
                 self.score,
-                self.support_graphs,
+                hash(self.support_graphs) if self.support_graphs is not None else None,
                 self.scoring_method,
             )
         )
 
-    def update(self, other):
+    def update(self, other: object):
+        if not isinstance(other, Analysis):
+            raise TypeError("Analysis may only be updated with another Analysis.")
         for k in other.edge_bindings:
             if k in self.edge_bindings:
                 self.edge_bindings[k].update(copy.deepcopy(other.edge_bindings[k]))
@@ -106,14 +108,14 @@ class Analysis(BaseAnalysis):
 class PathfinderAnalysis(BaseAnalysis):
     """Pathfinder Analysis."""
 
-    path_bindings: HashableMapping[str, HashableSet[PathBinding]] = Field(
-        ...,
-        title="list of path bindings",
-    )
+    path_bindings: Annotated[
+        HashableMapping[str, HashableSet[PathBinding]],
+        Field(
+            title="list of path bindings",
+        )
+    ]
 
-    class Config:
-        title = "pathfinder analysis"
-        extra = "allow"
+    model_config = ConfigDict(title="pathfinder analysis", extra="allow")
 
     def __hash__(self) -> int:
         return hash(
@@ -147,38 +149,48 @@ class PathfinderAnalysis(BaseAnalysis):
 class NodeBinding(BaseModel):
     """Node binding."""
 
-    id: CURIE = Field(..., title="knowledge graph id", nullable=False)
+    id: Annotated[
+        CURIE,
+        Field(
+            title="knowledge graph id",
+        ),
+    ]
 
-    query_id: Optional[CURIE] = Field(None, title="query graph id")
+    query_id: Annotated[Optional[CURIE], Field(title="query graph id")] = None
 
-    attributes: HashableSet[Attribute] = Field(..., nullable=False)
-
-    class Config:
-        title = "node binding"
-        schema_extra = {
+    attributes: HashableSet[Attribute]
+    model_config = ConfigDict(
+        title="node binding",
+        json_schema_extra={
             "example": {
                 "id": "x:string",
             },
-        }
-        extra = "allow"
+        },
+        extra="allow",
+    )
 
 
 class Result(BaseModel):
     """Result."""
 
-    node_bindings: HashableMapping[str, HashableSet[NodeBinding]] = Field(
-        ..., title="list of node bindings", nullable=False
-    )
+    node_bindings: Annotated[
+        HashableMapping[str, HashableSet[NodeBinding]],
+        Field(
+            title="list of node bindings",
+        ),
+    ]
 
-    analyses: Union[HashableSet[Analysis], HashableSet[PathfinderAnalysis]] = Field(
-        ..., title="list of anlysis blocks", nullable=False
-    )
+    analyses: Annotated[
+        Union[HashableSet[Analysis], HashableSet[PathfinderAnalysis]],
+        Field(
+            title="list of anlysis blocks",
+        ),
+    ]
+    model_config = ConfigDict(title="result", extra="allow")
 
-    class Config:
-        title = "result"
-        extra = "allow"
-
-    def update(self, other):
+    def update(self, other: object):
+        if not isinstance(other, Result):
+            raise TypeError("Result may only be updated with another Result.")
         if other.analyses:
             if self.analyses:
                 for analysis in other.analyses:
@@ -193,37 +205,20 @@ class Result(BaseModel):
                 self.analyses = other.analyses
 
     def __hash__(self) -> int:
-        return hash(self.node_bindings)
-
-    def parse_obj(obj):
-        result = parse_obj_as(Result, obj)
-        nbindings = HashableMapping.parse_obj(obj["node_bindings"])
-        if "analyses" in obj.keys() and len(obj["analyses"]):
-            if "edge_bindings" in obj["analyses"][0].keys():
-                analyses = HashableSet[Analysis]()
-                for analysis in obj["analyses"]:
-                    analyses.add(Analysis.parse_obj(analysis))
-            elif "path_bindings" in obj["analyses"][0].keys():
-                analyses = HashableSet[PathfinderAnalysis]()
-                for analysis in obj["analyses"]:
-                    analyses.add(PathfinderAnalysis.parse_obj(analysis))
-            else:
-                raise ValidationError(["Analyses missing bindings"], Result)
-        else:
-            analyses = []
-        r = Result(node_bindings=nbindings, analyses=analyses)
-        result.update(r)
-        return result
+        return stable_hash(self.node_bindings)
 
     def combine_analyses_by_resource_id(self):
         # Useful when a service unintentionally adds multiple analyses to a single result
         # Combines all of those analyses
-        combine = HashableMapping[str, Analysis]()
-        analyses = HashableSequence.parse_obj([analysis for analysis in self.analyses])
-        for i, analysis in enumerate(analyses):
+        combine = HashableMapping[CURIE, Analysis]()
+        analyses = HashableSequence[Analysis].model_validate(
+            [analysis for analysis in self.analyses]
+        )
+        for _ in range(len(analyses)):
+            analysis = analyses.pop()
             if analysis.resource_id not in combine:
                 combine[analysis.resource_id] = analysis
-            for j, analysis_to_compare in enumerate(analyses[i + 1 :]):
+            for analysis_to_compare in analyses:
                 if (
                     analysis.resource_id == analysis_to_compare.resource_id
                     and analysis != analysis_to_compare
@@ -237,20 +232,16 @@ class Result(BaseModel):
         self.analyses = combined_analyses
 
 
-class Results(BaseModel):
+class Results(HashableSequence[Result]):
     """Results."""
 
-    __root__: Optional[HashableSequence[Result]]
+    model_config = ConfigDict(title="allow")
 
-    class Config:
-        title = "results"
-        extra = "allow"
+    def append(self, value: Result):
+        self.root.append(value)
 
-    def append(self, result):
-        self.__root__.append(result)
-
-    def add(self, result):
-        results = self.__root__
+    def add(self, result: Result):
+        results = self.root
         try:
             # this is slow for larger results
             results[results.index(result)].update(result)
@@ -258,36 +249,38 @@ class Results(BaseModel):
             results.append(result)
 
     def __len__(self):
-        return len(self.__root__)
+        return len(self.root)
 
     def __iter__(self):
-        return self.__root__.__iter__()
+        return self.root.__iter__()
 
     def __contains__(self, v):
-        return self.__root__.__contains__(v)
+        return self.root.__contains__(v)
 
     def __getitem__(self, i):
-        return self.__root__.__getitem__(i)
+        return self.root.__getitem__(i)
 
-    def update(self, other):
-        results = parse_obj_as(HashableMapping, {})
+    def update(self, other: object):
+        results = HashableMapping[int, Result].model_validate({})
         for result in other:
             if not isinstance(result, Result):
-                result = Result.parse_obj(result)
+                result = Result.model_validate(result)
             result_hash = hash(result)
             if result_hash in results:
                 results[result_hash].update(result)
             else:
                 results[hash(result)] = result
 
-    def parse_obj(obj):
-        parse_obj_as(Results, obj)
-        results = parse_obj_as(HashableMapping, {})
-        for result in obj:
-            result = Result.parse_obj(result)
+    @model_validator(mode="after")
+    def merge_results(self):
+        results: dict[int, Result] = {}
+        for result in self.root:
             result_hash = hash(result)
             if result_hash in results:
                 results[result_hash].update(result)
             else:
-                results[hash(result)] = result
-        return parse_obj_as(Results, list(results.values()))
+                results[result_hash] = result
+
+        self.root.clear()
+        self.root.extend(results.values())
+        return self
