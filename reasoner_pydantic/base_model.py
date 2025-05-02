@@ -1,9 +1,13 @@
 import json
+from typing import Any, Final, Generic, TypeVar
 
-from pydantic import BaseModel as PydanticBaseModel
+from pydantic import (
+    model_validator,
+    BaseModel as PydanticBaseModel,
+    RootModel as PydanticRootModel,
+)
 
-from pydantic.class_validators import root_validator
-from .utils import make_hashable
+from .utils import make_hashable, stable_hash
 
 
 class BaseModel(PydanticBaseModel):
@@ -13,28 +17,53 @@ class BaseModel(PydanticBaseModel):
     This provides hash and equality methods.
     """
 
+    _stable_hashable: Final[bool] = True
+
     def __hash__(self) -> int:
         """Hash function based on Pydantic implementation"""
-        return hash((self.__class__, tuple(self.__dict__.values())))
+        return stable_hash(
+            (
+                self.__class__.__name__,
+                {
+                    k: stable_hash(v)
+                    for k, v in {
+                        **self.__dict__,
+                        **(self.__pydantic_extra__ or {}),
+                    }.items()
+                },
+            )
+        )
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: object) -> bool:
         """Equality function that calls hash function"""
         return self.__hash__() == other.__hash__()
 
-    def update(self, other):
+    def update(self, _other: object) -> None:
         """Update fields on this object with fields from other object"""
         raise NotImplementedError(
             f"Model {self.__class__.__name__} has no update method"
         )
 
-    def get_field(self, field):
-        getattr(self, field, None)
+    def get_field(self, field: str):
+        return getattr(self, field, None)
 
     # After running validation on all known properties, make sure everything else is hashable
-    @root_validator(allow_reuse=True, pre=False)
-    def make_hashable_root(cls, values):
+    @model_validator(mode="before")
+    @classmethod
+    def make_hashable_root(cls, values: Any):
         # The root validator must take and return a dict
-        return {k: make_hashable(v) for k, v in values.items()}
+        return make_hashable(values)
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[Any, Any]:
         return json.loads(self.json())
+
+
+RootType = TypeVar("RootType")
+
+
+class RootModel(BaseModel, PydanticRootModel[RootType], Generic[RootType]):
+    """
+    Custom root model for all classes.
+
+    This provides hash and equality methods.
+    """

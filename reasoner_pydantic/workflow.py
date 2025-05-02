@@ -1,174 +1,135 @@
 """Operations models."""
 
 from enum import Enum
-from typing import Any, Optional, Union
-from pydantic.class_validators import validator
+from typing import Any, Literal, Optional, Union
 
-from pydantic.types import confloat, conint
 
-from .base_model import BaseModel
-from .utils import HashableSequence, nonzero_validator
+from .base_model import BaseModel, RootModel
+from .utils import HashableSequence
 from .shared import BiolinkPredicate
-
-
-def constant(s: str):
-    """Generate a static enum."""
-    return Enum(value=s, names={s: s}, type=str)
+from pydantic import Field, ConfigDict
+from typing import Annotated
 
 
 class RunnerAllowList(BaseModel):
-    allowlist: Optional[HashableSequence[str]]
-    timeout: Optional[float]
-
-    class Config:
-        extra = "forbid"
+    allowlist: Optional[HashableSequence[str]] = None
+    timeout: Optional[float] = None
+    model_config = ConfigDict(extra="forbid")
 
 
 class RunnerDenyList(BaseModel):
-    denylist: Optional[HashableSequence[str]]
-    timeout: Optional[float]
-
-    class Config:
-        extra = "forbid"
+    denylist: Optional[HashableSequence[str]] = None
+    timeout: Optional[float] = None
+    model_config = ConfigDict(extra="forbid")
 
 
 class RunnerTimeout(BaseModel):
-    timeout: Optional[float]
-
-    class Config:
-        extra = "forbid"
+    timeout: Optional[float] = None
+    model_config = ConfigDict(extra="forbid")
 
 
-class RunnerParameters(BaseModel):
-    __root__: Optional[Union[RunnerAllowList, RunnerDenyList, RunnerTimeout]]
+RunnerParameters = RootModel[
+    Optional[Union[RunnerAllowList, RunnerDenyList, RunnerTimeout]]
+]
 
 
 class BaseOperation(BaseModel):
-    runner_parameters: Optional[RunnerParameters]
-
-    class Config:
-        extra = "forbid"
+    runner_parameters: Optional[RunnerParameters] = None
+    model_config = ConfigDict(extra="forbid")
 
 
 class OperationAnnotate(BaseOperation):
-    id: constant("annotate")
-    parameters: Optional[Any]
-
-    class Config:
-        extra = "forbid"
+    id: Literal["annotate"]
+    parameters: Optional[Any] = None
+    model_config = ConfigDict(extra="forbid")
 
 
 class AnnotateEdgesParameters(BaseModel):
-    attributes: Optional[HashableSequence[str]]
+    attributes: Optional[HashableSequence[str]] = None
 
 
 class OperationAnnotateEdges(BaseOperation):
-    id: constant("annotate_edges")
-    parameters: Optional[AnnotateEdgesParameters]
-
-    class Config:
-        extra = "forbid"
+    id: Literal["annotate_edges"]
+    parameters: Optional[AnnotateEdgesParameters] = None
+    model_config = ConfigDict(extra="forbid")
 
 
 class AnnotateNodesParameters(BaseModel):
-    attributes: Optional[HashableSequence[str]]
+    attributes: Optional[HashableSequence[str]] = None
 
 
 class OperationAnnotateNodes(BaseOperation):
-    id: constant("annotate_nodes")
-    parameters: Optional[AnnotateNodesParameters]
-
-    class Config:
-        extra = "forbid"
+    id: Literal["annotate_nodes"]
+    parameters: Optional[AnnotateNodesParameters] = None
+    model_config = ConfigDict(extra="forbid")
 
 
 class OperationBind(BaseOperation):
-    id: constant("bind")
-    parameters: Optional[Any]
-
-    class Config:
-        extra = "forbid"
+    id: Literal["bind"]
+    parameters: Optional[Any] = None
+    model_config = ConfigDict(extra="forbid")
 
 
 class OperationCompleteResults(BaseOperation):
-    id: constant("complete_results")
-    parameters: Optional[Any]
-
-    class Config:
-        extra = "forbid"
+    id: Literal["complete_results"]
+    parameters: Optional[Any] = None
+    model_config = ConfigDict(extra="forbid")
 
 
 class EnrichResultsParameters(BaseModel):
-    pvalue_threshold: confloat(ge=0.0, le=1.0) = 1e-6
-    qnode_keys: Optional[HashableSequence[str]]
-    predicates_to_exclude: Optional[HashableSequence[BiolinkPredicate]]
+    pvalue_threshold: Annotated[float, Field(ge=0.0, le=1.0)] = 1e-6
+    qnode_keys: Optional[HashableSequence[str]] = None
+    predicates_to_exclude: Optional[HashableSequence[BiolinkPredicate]] = None
 
 
 class OperationEnrichResults(BaseOperation):
-    id: constant("enrich_results")
-    parameters: Optional[EnrichResultsParameters]
-
-    class Config:
-        extra = "forbid"
+    id: Literal["enrich_results"]
+    parameters: Optional[EnrichResultsParameters] = None
+    model_config = ConfigDict(extra="forbid")
 
 
 class FillAllowParameters(BaseModel):
-    allowlist: Optional[HashableSequence[str]]
-    qedge_keys: Optional[HashableSequence[str]]
-
-    class Config:
-        extra = "forbid"
+    allowlist: Optional[HashableSequence[str]] = None
+    qedge_keys: Optional[HashableSequence[str]] = None
+    model_config = ConfigDict(extra="forbid")
 
 
 class FillDenyParameters(BaseModel):
-    denylist: Optional[HashableSequence[str]]
-    qedge_keys: Optional[HashableSequence[str]]
-
-    class Config:
-        extra = "forbid"
+    denylist: Optional[HashableSequence[str]] = None
+    qedge_keys: Optional[HashableSequence[str]] = None
+    model_config = ConfigDict(extra="forbid")
 
 
-class FillParameters(BaseModel):
-    __root__: Union[FillAllowParameters, FillDenyParameters]
+FillParameters = RootModel[Union[FillAllowParameters, FillDenyParameters]]
 
 
 class OperationFill(BaseOperation):
-    id: constant("fill")
-    parameters: Optional[FillParameters]
-
-    class Config:
-        extra = "forbid"
+    id: Literal["fill"]
+    parameters: Optional[FillParameters] = None
+    model_config = ConfigDict(extra="forbid")
 
 
 class OperationFilterResults(BaseOperation):
-    id: constant("filter_results")
-    parameters: Optional[Any]
-
-    class Config:
-        extra = "forbid"
+    id: Literal["filter_results"]
+    parameters: Optional[Any] = None
+    model_config = ConfigDict(extra="forbid")
 
 
 class FilterResultsTopNParameters(BaseModel):
-    max_results: conint(ge=0)
-
-    class Config:
-        extra = "forbid"
+    max_results: Annotated[int, Field(ge=0)]
+    model_config = ConfigDict(extra="forbid")
 
 
 class OperationFilterResultsTopN(BaseOperation):
-    id: constant("filter_results_top_n")
-    parameters: Optional[FilterResultsTopNParameters]
-
-    class Config:
-        extra = "forbid"
+    id: Literal["filter_results_top_n"]
+    parameters: Optional[FilterResultsTopNParameters] = None
+    model_config = ConfigDict(extra="forbid")
 
 
 class OperationFilterKgraph(BaseOperation):
-    id: constant("filter_kgraph")
-    parameters: Optional[Any]
-
-    class Config:
-        extra = "forbid"
+    id: Literal["filter_kgraph"]
+    parameters: Optional[Any] = None
+    model_config = ConfigDict(extra="forbid")
 
 
 class AboveOrBelowEnum(str, Enum):
@@ -182,53 +143,49 @@ class FilterKgraphContinuousKedgeAttributeParameters(BaseModel):
     edge_attribute: str
     threshold: float
     remove_above_or_below: AboveOrBelowEnum
-    qedge_keys: Optional[HashableSequence[str]]
-    qnode_keys: HashableSequence[str] = []
+    qedge_keys: Optional[HashableSequence[str]] = None
+    qnode_keys: HashableSequence[str] = Field(
+        default_factory=lambda: HashableSequence[str]()
+    )
 
 
 class OperationFilterKgraphContinuousKedgeAttribute(BaseOperation):
-    id: constant("filter_kgraph_continuous_kedge_attribute")
+    id: Literal["filter_kgraph_continuous_kedge_attribute"]
     parameters: FilterKgraphContinuousKedgeAttributeParameters
-
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 class FilterKgraphDiscreteKedgeAttributeParameters(BaseModel):
     edge_attribute: str
-    remove_value: Any
-    qedge_keys: Optional[HashableSequence[str]]
-    qnode_keys: HashableSequence[str] = []
+    remove_value: Any = None
+    qedge_keys: Optional[HashableSequence[str]] = None
+    qnode_keys: HashableSequence[str] = Field(
+        default_factory=lambda: HashableSequence[str]()
+    )
 
 
 class OperationFilterKgraphDiscreteKedgeAttribute(BaseOperation):
-    id: constant("filter_kgraph_discrete_kedge_attribute")
+    id: Literal["filter_kgraph_discrete_kedge_attribute"]
     parameters: FilterKgraphDiscreteKedgeAttributeParameters
-
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 class FilterKgraphDiscreteKnodeAttributeParameters(BaseModel):
     node_attribute: str
-    remove_value: Any
-    qnode_keys: Optional[HashableSequence[str]]
+    remove_value: Any = None
+    qnode_keys: Optional[HashableSequence[str]] = None
 
 
 class OperationFilterKgraphDiscreteKnodeAttribute(BaseOperation):
-    id: constant("filter_kgraph_discrete_knode_attribute")
+    id: Literal["filter_kgraph_discrete_knode_attribute"]
     parameters: FilterKgraphDiscreteKnodeAttributeParameters
-
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 class OperationFilterKgraphOrphans(BaseOperation):
-    id: constant("filter_kgraph_orphans")
-    parameters: Optional[Any]
-
-    class Config:
-        extra = "forbid"
+    id: Literal["filter_kgraph_orphans"]
+    parameters: Optional[Any] = None
+    model_config = ConfigDict(extra="forbid")
 
 
 class TopOrBottomEnum(str, Enum):
@@ -240,26 +197,28 @@ class TopOrBottomEnum(str, Enum):
 
 class FilterKgraphTopNParameters(BaseModel):
     edge_attribute: str
-    max_edges: conint(le=0) = 50
+    max_edges: Annotated[int, Field(le=0)] = 50
     remove_top_or_bottom: TopOrBottomEnum = TopOrBottomEnum.top
-    qedge_keys: Optional[HashableSequence[str]]
-    qnode_keys: HashableSequence[str] = []
+    qedge_keys: Optional[HashableSequence[str]] = None
+    qnode_keys: HashableSequence[str] = Field(
+        default_factory=lambda: HashableSequence[str]()
+    )
 
 
 class FilterKgraphPercentileParameters(BaseModel):
     edge_attribute: str
-    threshold: confloat(ge=0, le=100) = 95
+    threshold: Annotated[float, Field(ge=0, le=100)] = 95
     remove_above_or_below: AboveOrBelowEnum = AboveOrBelowEnum.below
-    qedge_keys: Optional[HashableSequence[str]]
-    qnode_keys: HashableSequence[str] = []
+    qedge_keys: Optional[HashableSequence[str]] = None
+    qnode_keys: HashableSequence[str] = Field(
+        default_factory=lambda: HashableSequence[str]()
+    )
 
 
 class OperationFilterKgraphPercentile(BaseOperation):
-    id: constant("filter_kgraph_percentile")
+    id: Literal["filter_kgraph_percentile"]
     parameters: FilterKgraphPercentileParameters
-
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 class PlusOrMinusEnum(str, Enum):
@@ -272,50 +231,42 @@ class PlusOrMinusEnum(str, Enum):
 class FilterKgraphStdDevParameters(BaseModel):
     edge_attribute: str
     plus_or_minus_std_dev: PlusOrMinusEnum = PlusOrMinusEnum.plus
-    num_sigma: confloat(ge=0) = 1
+    num_sigma: Annotated[float, Field(ge=0)] = 1
     remove_above_or_below: AboveOrBelowEnum = AboveOrBelowEnum.below
-    qedge_keys: Optional[HashableSequence[str]]
-    qnode_keys: HashableSequence[str] = []
+    qedge_keys: Optional[HashableSequence[str]] = None
+    qnode_keys: HashableSequence[str] = Field(
+        default_factory=lambda: HashableSequence[str]()
+    )
 
 
 class OperationFilterKgraphStdDev(BaseOperation):
-    id: constant("filter_kgraph_std_dev")
+    id: Literal["filter_kgraph_std_dev"]
     parameters: FilterKgraphStdDevParameters
-
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 class OperationFilterKgraphTopN(BaseOperation):
-    id: constant("filter_kgraph_top_n")
+    id: Literal["filter_kgraph_top_n"]
     parameters: FilterKgraphTopNParameters
-
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 class OperationLookup(BaseOperation):
-    id: constant("lookup")
-    parameters: Optional[Any]
-
-    class Config:
-        extra = "forbid"
+    id: Literal["lookup"]
+    parameters: Optional[Any] = None
+    model_config = ConfigDict(extra="forbid")
 
 
 class OperationLookupAndScore(BaseOperation):
-    id: constant("lookup_and_score")
-    parameters: Optional[Any]
-
-    class Config:
-        extra = "forbid"
+    id: Literal["lookup_and_score"]
+    parameters: Optional[Any] = None
+    model_config = ConfigDict(extra="forbid")
 
 
 class OperationOverlay(BaseOperation):
-    id: constant("overlay")
-    parameters: Optional[Any]
-
-    class Config:
-        extra = "forbid"
+    id: Literal["overlay"]
+    parameters: Optional[Any] = None
+    model_config = ConfigDict(extra="forbid")
 
 
 class OverlayComputeJaccardParameters(BaseModel):
@@ -325,11 +276,9 @@ class OverlayComputeJaccardParameters(BaseModel):
 
 
 class OperationOverlayComputeJaccard(BaseOperation):
-    id: constant("overlay_compute_jaccard")
+    id: Literal["overlay_compute_jaccard"]
     parameters: OverlayComputeJaccardParameters
-
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 class OverlayComputeNgdParameters(BaseModel):
@@ -338,58 +287,46 @@ class OverlayComputeNgdParameters(BaseModel):
 
 
 class OperationOverlayComputeNgd(BaseOperation):
-    id: constant("overlay_compute_ngd")
+    id: Literal["overlay_compute_ngd"]
     parameters: OverlayComputeNgdParameters
-
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 class OperationOverlayConnectKnodes(BaseOperation):
-    id: constant("overlay_connect_knodes")
-    parameters: Optional[Any]
-
-    class Config:
-        extra = "forbid"
+    id: Literal["overlay_connect_knodes"]
+    parameters: Optional[Any] = None
+    model_config = ConfigDict(extra="forbid")
 
 
 class OverlayFisherExactTestParameters(BaseModel):
     subject_qnode_key: str
     object_qnode_key: str
     virtual_relation_label: str
-    rel_edge_key: Optional[str]
+    rel_edge_key: Optional[str] = None
 
 
 class OperationOverlayFisherExactTest(BaseOperation):
-    id: constant("overlay_fisher_exact_test")
+    id: Literal["overlay_fisher_exact_test"]
     parameters: OverlayFisherExactTestParameters
-
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 class OperationRestate(BaseOperation):
-    id: constant("restate")
-    parameters: Optional[Any]
-
-    class Config:
-        extra = "forbid"
+    id: Literal["restate"]
+    parameters: Optional[Any] = None
+    model_config = ConfigDict(extra="forbid")
 
 
 class OperationScore(BaseOperation):
-    id: constant("score")
-    parameters: Optional[Any]
-
-    class Config:
-        extra = "forbid"
+    id: Literal["score"]
+    parameters: Optional[Any] = None
+    model_config = ConfigDict(extra="forbid")
 
 
 class OperationSortResults(BaseOperation):
-    id: constant("sort_results")
-    parameters: Optional[Any]
-
-    class Config:
-        extra = "forbid"
+    id: Literal["sort_results"]
+    parameters: Optional[Any] = None
+    model_config = ConfigDict(extra="forbid")
 
 
 class AscOrDescEnum(str, Enum):
@@ -402,29 +339,25 @@ class AscOrDescEnum(str, Enum):
 class SortResultsEdgeAttributeParameters(BaseModel):
     edge_attribute: str
     ascending_or_descending: AscOrDescEnum
-    qedge_keys: Optional[HashableSequence[str]]
+    qedge_keys: Optional[HashableSequence[str]] = None
 
 
 class OperationSortResultsEdgeAttribute(BaseOperation):
-    id: constant("sort_results_edge_attribute")
+    id: Literal["sort_results_edge_attribute"]
     parameters: SortResultsEdgeAttributeParameters
-
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 class SortResultsNodeAttributeParameters(BaseModel):
     node_attribute: str
     ascending_or_descending: AscOrDescEnum
-    qnode_keys: Optional[HashableSequence[str]]
+    qnode_keys: Optional[HashableSequence[str]] = None
 
 
 class OperationSortResultsNodeAttribute(BaseOperation):
-    id: constant("sort_results_node_attribute")
+    id: Literal["sort_results_node_attribute"]
     parameters: SortResultsNodeAttributeParameters
-
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 class SortResultsScoreParameters(BaseModel):
@@ -432,11 +365,9 @@ class SortResultsScoreParameters(BaseModel):
 
 
 class OperationSortResultsScore(BaseOperation):
-    id: constant("sort_results_score")
+    id: Literal["sort_results_score"]
     parameters: SortResultsScoreParameters
-
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 operations = [
@@ -472,9 +403,8 @@ operations = [
     OperationSortResultsScore,
 ]
 
-
-class Operation(BaseModel):
-    __root__: Union[
+Operation = RootModel[
+    Union[
         OperationAnnotate,
         OperationAnnotateEdges,
         OperationAnnotateNodes,
@@ -506,7 +436,7 @@ class Operation(BaseModel):
         OperationSortResultsNodeAttribute,
         OperationSortResultsScore,
     ]
+]
 
 
-class Workflow(BaseModel):
-    __root__: HashableSequence[Operation]
+Workflow = HashableSequence[Operation]
