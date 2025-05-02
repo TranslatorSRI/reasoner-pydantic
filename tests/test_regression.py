@@ -31,9 +31,9 @@ EXAMPLE_RESULT = {
 def test_result_hashable():
     """Check that we can hash a result with extra properties"""
 
-    result_obj = Result.parse_obj(EXAMPLE_RESULT)
-    result_dict = result_obj.dict()
+    result_obj = Result.model_validate(EXAMPLE_RESULT)
+    result_dict = result_obj.model_dump()
 
     assert len(result_dict["raw_data"]) == 1
-    assert type(result_obj.raw_data) == HashableSequence
+    assert type(result_obj.raw_data) is HashableSequence
     assert result_obj.raw_data[0] == "test"

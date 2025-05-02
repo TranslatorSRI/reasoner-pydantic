@@ -111,7 +111,7 @@ query2 = {
 def test_workflow():
     """Test construction of a Query with a workflow."""
     query_obj = Query(**query)
-    query_dict = query_obj.dict()
+    query_dict = query_obj.model_dump()
     assert "runner_parameters" in query_dict["workflow"][0].keys()
     assert "parameters" in query_dict["workflow"][0].keys()
     assert "allowlist" in query_dict["workflow"][0]["runner_parameters"].keys()
@@ -122,5 +122,5 @@ def test_workflow():
 
 def test_workflow2():
     query_obj = Query(**query)
-    query_dict = query_obj.dict()
+    query_dict = query_obj.model_dump()
     assert "parameters" in query_dict["workflow"][0].keys()
