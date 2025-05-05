@@ -14,8 +14,8 @@ class EdgeBinding(BaseModel):
     """Edge binding."""
 
     id: Annotated[EdgeIdentifier, Field(title="knowledge graph id")]
-
     attributes: HashableSet[Attribute]
+
     model_config = ConfigDict(
         title="edge binding",
         json_schema_extra={
@@ -30,16 +30,13 @@ class EdgeBinding(BaseModel):
 class PathBinding(BaseModel):
     """Path binding."""
 
-    id: str = Field(..., title="auxiliary graph id", nullable=False)
+    id: Annotated[str, Field(title="auxiliary graph id")]
 
-    class Config:
-        title = "path binding"
-        schema_extra = {
-            "example": {
-                "id": "string",
-            },
-        }
-        extra = "allow"
+    model_config = ConfigDict(
+        title="path binding",
+        json_schema_extra={ "example": {"id": "string"} }
+        extra="allow"
+    )
 
 
 class BaseAnalysis(BaseModel):
@@ -52,13 +49,15 @@ class BaseAnalysis(BaseModel):
         ),
     ]
 
-
+    edge_bindings: Annotated[
+        HashableMapping[str, HashableSet[EdgeBinding]],
+        Field(
+            title="list of edge bindings",
+        ),
+    ]
     score: Optional[float] = None
-
     support_graphs: Optional[HashableSet[str]] = None
-
     scoring_method: Optional[str] = None
-
     attributes: Optional[HashableSet[Attribute]] = None
 
 
@@ -155,10 +154,9 @@ class NodeBinding(BaseModel):
             title="knowledge graph id",
         ),
     ]
-
     query_id: Annotated[Optional[CURIE], Field(title="query graph id")] = None
-
     attributes: HashableSet[Attribute]
+
     model_config = ConfigDict(
         title="node binding",
         json_schema_extra={
@@ -179,13 +177,13 @@ class Result(BaseModel):
             title="list of node bindings",
         ),
     ]
-
     analyses: Annotated[
         Union[HashableSet[Analysis], HashableSet[PathfinderAnalysis]],
         Field(
             title="list of anlysis blocks",
         ),
     ]
+
     model_config = ConfigDict(title="result", extra="allow")
 
     def update(self, other: object):

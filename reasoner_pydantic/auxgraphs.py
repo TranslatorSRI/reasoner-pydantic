@@ -14,8 +14,8 @@ class AuxiliaryGraph(BaseModel):
     edges: Annotated[
         HashableSet[EdgeIdentifier], Field(title="edges in auxiliary graph")
     ]
-
     attributes: HashableSet[Attribute]
+
     model_config = ConfigDict(title="auxiliary graph", extra="allow")
 
 
