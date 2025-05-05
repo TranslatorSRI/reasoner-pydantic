@@ -24,6 +24,7 @@ class Node(BaseModel):
     name: Optional[str] = None
     attributes: HashableSet[Attribute]
     is_set: Optional[bool] = None
+
     model_config = ConfigDict(
         title="knowledge-graph node",
         json_schema_extra={
@@ -58,11 +59,8 @@ class RetrievalSource(BaseModel):
     """A component of source retrieval provenance"""
 
     resource_id: Annotated[CURIE, Field(title="infores for source")]
-
     resource_role: Annotated[ResourceRoleEnum, Field(title="source type")]
-
     upstream_resource_ids: Optional[HashableSet[CURIE]] = None
-
     source_record_urls: Optional[HashableSet[str]] = None
 
     def __hash__(self) -> int:
@@ -99,6 +97,7 @@ class Edge(BaseModel):
     ]
     qualifiers: Optional[HashableSet[Qualifier]] = None
     attributes: Optional[HashableSet[Attribute]]
+
     model_config = ConfigDict(title="knowledge-graph edge", extra="forbid")
 
     def update(self, other: Any):
@@ -156,6 +155,7 @@ class KnowledgeGraph(BaseModel):
     edges: HashableMapping[EdgeIdentifier, Edge] = Field(
         default_factory=lambda: HashableMapping[EdgeIdentifier, Edge]()
     )
+
     model_config = ConfigDict(title="knowledge graph", extra="allow")
 
     def update(self, other: object) -> None:
