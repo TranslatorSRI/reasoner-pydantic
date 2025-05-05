@@ -109,8 +109,8 @@ class LogLevel(RootModel[LogLevelEnum]):
 class LogEntry(BaseModel):
     """Log entry."""
 
-    timestamp: Annotated[Optional[datetime], Field(default=None)]
-    level: Annotated[Optional[LogLevel], Field(default=None)]
-    code: Annotated[Optional[str], Field(default=None)]
-    message: Annotated[Optional[str], Field(default=None)]
+    timestamp: Optional[datetime] = None
+    level: Optional[LogLevel] = None
+    code: Optional[str] = None
+    message: str = ""
     model_config = ConfigDict(extra="allow")

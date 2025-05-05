@@ -51,12 +51,9 @@ class AttributeConstraint(BaseModel):
 class QualifierConstraint(BaseModel):
     """QEdge Qualifier constraint."""
 
-    qualifier_set: Annotated[
-        HashableSequence[Qualifier],
-        Field(
-            title="qualifier set",
-        ),
-    ] = HashableSequence[Qualifier]()
+    qualifier_set: HashableSequence[Qualifier] = Field(
+        title="qualifier set", default_factory=lambda: HashableSequence[Qualifier]()
+    )
 
 
 class SetInterpretationEnum(str, Enum):
@@ -73,25 +70,20 @@ class QNode(BaseModel):
     ids: Annotated[
         Optional[HashableSequence[CURIE]], AfterValidator(nonzero_validator)
     ] = None
-
     categories: Annotated[
         Optional[HashableSequence[BiolinkEntity]], AfterValidator(nonzero_validator)
     ] = None
-
     set_interpretation: Annotated[
         Optional[SetInterpretationEnum], Field(SetInterpretationEnum.BATCH)
     ]
+    constraints: HashableSequence[AttributeConstraint] = Field(
+        title="attribute constraints",
+        default_factory=lambda: HashableSequence[AttributeConstraint](),
+    )
+    member_ids: Optional[HashableSequence[CURIE]] = Field(
+        title="set member ids", default_factory=lambda: HashableSequence[CURIE]()
+    )
 
-    constraints: Annotated[
-        Optional[HashableSequence[AttributeConstraint]],
-        Field(
-            title="attribute constraints",
-        ),
-    ] = HashableSequence[AttributeConstraint]()
-
-    member_ids: Annotated[
-        Optional[HashableSequence[CURIE]], Field(title="set member ids")
-    ] = HashableSequence[CURIE]()
     model_config = ConfigDict(
         title="query-graph node",
         extra="allow",
@@ -116,28 +108,21 @@ class QEdge(BaseModel):
             title="object node id",
         ),
     ]
-
     knowledge_type: Annotated[
         Optional[KnowledgeType], Field(title="knowledge type")
     ] = None
-
     predicates: Annotated[
         Optional[HashableSequence[BiolinkPredicate]], AfterValidator(nonzero_validator)
     ] = None
+    attribute_constraints: HashableSequence[AttributeConstraint] = Field(
+        title="attribute constraints",
+        default_factory=lambda: HashableSequence[AttributeConstraint](),
+    )
+    qualifier_constraints: HashableSequence[QualifierConstraint] = Field(
+        title="qualifier constraint",
+        default_factory=lambda: HashableSequence[QualifierConstraint](),
+    )
 
-    attribute_constraints: Annotated[
-        Optional[HashableSequence[AttributeConstraint]],
-        Field(
-            title="attribute constraints",
-        ),
-    ] = HashableSequence[AttributeConstraint]()
-
-    qualifier_constraints: Annotated[
-        Optional[HashableSequence[QualifierConstraint]],
-        Field(
-            title="qualifier constraint",
-        ),
-    ] = HashableSequence[QualifierConstraint]()
     model_config = ConfigDict(
         title="query-graph edge", extra="allow", populate_by_name=True
     )
@@ -158,4 +143,5 @@ class QueryGraph(BaseModel):
             title="dict of edges",
         ),
     ]
+
     model_config = ConfigDict(title="simple query graph", extra="allow")
