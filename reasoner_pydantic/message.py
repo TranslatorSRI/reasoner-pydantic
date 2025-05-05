@@ -8,14 +8,13 @@ from typing import Optional, Callable
 from pydantic import (
     AnyHttpUrl,
     ValidationInfo,
-    field_validator,
     ConfigDict,
     Field,
     model_validator,
 )
 
 from .base_model import BaseModel
-from .utils import HashableSequence, HashableSet
+from .utils import HashableSequence
 from .results import Results
 from .qgraph import QueryGraph
 from .kgraph import Edge, KnowledgeGraph
@@ -178,7 +177,7 @@ class Query(BaseModel):
     message: Message
     log_level: Optional[LogLevel] = None
     workflow: Optional[Workflow] = None
-    bypass_cache: Optional[bool] = None
+    bypass_cache: Optional[bool] = False
     model_config = ConfigDict(
         title="query", extra="allow", json_schema_extra={"x-body-name": "request_body"}
     )
@@ -191,7 +190,7 @@ class AsyncQuery(BaseModel):
     message: Message
     log_level: Optional[LogLevel] = None
     workflow: Optional[Workflow] = None
-    bypass_cache: Optional[bool] = None
+    bypass_cache: Optional[bool] = False
     model_config = ConfigDict(
         title="query", extra="allow", json_schema_extra={"x-body-name": "request_body"}
     )
@@ -201,20 +200,16 @@ class Response(BaseModel):
     """Response."""
 
     message: Message
-
-    logs: Optional[HashableSequence[LogEntry]] = Field(
+    logs: HashableSequence[LogEntry] = Field(
         default_factory=lambda: HashableSequence[LogEntry]()
     )
     status: Optional[str] = None
-
+    description: Optional[str] = None
     workflow: Optional[Workflow] = None
-    model_config = ConfigDict(title="response", extra="allow")
+    schema_verison: Optional[str] = None
+    biolink_version: Optional[str] = None
 
-    @field_validator("logs")
-    @classmethod
-    def prevent_none(cls, v: object):
-        assert v is not None
-        return v
+    model_config = ConfigDict(title="response", extra="allow")
 
     @model_validator(mode="after")
     def normalize(self, info: ValidationInfo) -> "Response":
@@ -230,9 +225,7 @@ class AsyncQueryResponse(BaseModel):
     """ "Async Query Response."""
 
     status: Optional[str] = None
-
     description: Optional[str] = None
-
     job_id: Annotated[str, Field(title="job id")]
     model_config = ConfigDict(title="async query response", extra="allow")
 
@@ -241,10 +234,8 @@ class AsyncQueryStatusResponse(BaseModel):
     """Async Query Status Response."""
 
     status: str
-
     description: str
-
-    logs: HashableSet[LogEntry]
-
+    logs: HashableSequence[LogEntry]
     response_url: Optional[str] = None
+
     model_config = ConfigDict(title="async query status response", extra="allow")
