@@ -91,19 +91,13 @@ BiolinkEntity = Annotated[
 ]
 
 
-class LogLevelEnum(str, Enum):
+class LogLevel(str, Enum):
     """Log level."""
 
-    error = "ERROR"
-    warning = "WARNING"
-    info = "INFO"
-    debug = "DEBUG"
-
-
-class LogLevel(RootModel[LogLevelEnum]):
-    """Log level."""
-
-    root: LogLevelEnum
+    ERROR = "ERROR"
+    WARNING = "WARNING"
+    INFO = "INFO"
+    DEBUG = "DEBUG"
 
 
 class LogEntry(BaseModel):
