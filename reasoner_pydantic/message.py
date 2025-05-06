@@ -211,7 +211,7 @@ class Response(BaseModel):
     status: Optional[str] = None
     description: Optional[str] = None
     workflow: Optional[Workflow] = None
-    schema_verison: Optional[str] = None
+    schema_version: Optional[str] = None
     biolink_version: Optional[str] = None
 
     model_config = ConfigDict(title="response", extra="allow")
