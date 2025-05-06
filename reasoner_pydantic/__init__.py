@@ -43,6 +43,8 @@ from .metakg import (
 )
 from .utils import (
     HashableSequence,
+    HashableMapping,
+    HashableSet,
 )
 
 components = [
@@ -81,4 +83,6 @@ components = [
     Workflow,
     Analysis,
     HashableSequence,
+    HashableMapping,
+    HashableSet,
 ]
