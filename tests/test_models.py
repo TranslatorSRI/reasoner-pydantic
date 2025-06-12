@@ -1,13 +1,10 @@
-from typing import Optional
-from reasoner_pydantic.base_model import BaseModel
 from reasoner_pydantic.shared import Attribute, BiolinkEntity
 from reasoner_pydantic import Message, QNode, QEdge, QueryGraph, Result, Response
-from reasoner_pydantic.utils import HashableMapping, HashableSequence, HashableSet
 
 
 def test_qnode_null_properties():
     """Check that we can parse a QNode with None property values"""
-    QNode.parse_obj(
+    QNode.model_validate(
         {
             "ids": None,
             "categories": None,
@@ -17,7 +14,7 @@ def test_qnode_null_properties():
 
 def test_qedge_null_properties():
     """Check that we can parse a QEdge with None property values"""
-    QEdge.parse_obj(
+    QEdge.model_validate(
         {
             "subject": "n0",
             "object": "n1",
@@ -288,11 +285,11 @@ EXAMPLE_MESSAGE_MULT = {
 def test_message_hashable():
     """Check that we can hash a message"""
 
-    m = Message.parse_obj(EXAMPLE_MESSAGE)
+    m = Message.model_validate(EXAMPLE_MESSAGE)
     h = hash(m)
     assert h
 
-    m2 = Message.parse_obj(EXAMPLE_MESSAGE)
+    m2 = Message.model_validate(EXAMPLE_MESSAGE)
     h2 = hash(m2)
 
     assert h == h2
@@ -301,9 +298,9 @@ def test_message_hashable():
 def test_message_jsonify():
     """Check that we can jsonify a message"""
 
-    m = Message.parse_obj(EXAMPLE_MESSAGE)
-    m_json = m.json()
-    m2 = Message.parse_raw(m_json)
+    m = Message.model_validate(EXAMPLE_MESSAGE)
+    m_json = m.model_dump_json()
+    m2 = Message.model_validate_json(m_json)
 
     assert m == m2
 
@@ -311,20 +308,20 @@ def test_message_jsonify():
 def test_message_dictify():
     """Check that we can dictify a message"""
 
-    m = Message.parse_obj(EXAMPLE_MESSAGE)
-    m_dict = m.dict()
-    m2 = Message.parse_obj(m_dict)
+    m = Message.model_validate(EXAMPLE_MESSAGE)
+    m_dict = m.model_dump()
+    m2 = Message.model_validate(m_dict)
 
     assert m == m2
 
-    assert type(next(iter(m_dict["results"]))) == dict
+    assert type(next(iter(m_dict["results"]))) is dict
 
 
 def test_hash_property_update():
     """Check that we can update the property of an object and the hash changes"""
 
     # Test on a QNode
-    qnode = QNode.parse_obj({"categories": ["biolink:ChemicalSubstance"]})
+    qnode = QNode.model_validate({"categories": ["biolink:ChemicalSubstance"]})
 
     h = hash(qnode)
 
@@ -337,7 +334,7 @@ def test_hash_list_update():
     """Check that we can update a list property on an object and the hash changes"""
 
     # Test on a QNode
-    qnode = QNode.parse_obj({"categories": ["biolink:ChemicalSubstance"]})
+    qnode = QNode.model_validate({"categories": ["biolink:ChemicalSubstance"]})
     h = hash(qnode)
 
     qnode.categories.append("biolink:Disease")
@@ -348,7 +345,7 @@ def test_hash_dict_update():
     """Check that we can update a dict property on an object and the hash changes"""
 
     # Test on a QueryGraph
-    kg = QueryGraph.parse_obj(EXAMPLE_MESSAGE["query_graph"])
+    kg = QueryGraph.model_validate(EXAMPLE_MESSAGE["query_graph"])
     h = hash(kg)
 
     kg.nodes["n0"] = kg.nodes["n1"]
@@ -361,7 +358,7 @@ def test_hash_deeply_nested_update():
     Check that we can update a deeply nested object and the hash change is propogated
     """
 
-    m = Message.parse_obj(EXAMPLE_MESSAGE)
+    m = Message.model_validate(EXAMPLE_MESSAGE)
     h = hash(m)
 
     m.query_graph.nodes["n1"].categories.append(BiolinkEntity("biolink:Gene"))
@@ -374,7 +371,7 @@ def test_hash_attribute_values():
     Check that we can hash a dictionary valued attribute
     """
 
-    a = Attribute.parse_obj(
+    a = Attribute.model_validate(
         {
             "attribute_type_id": "biolink:knowledge_source",
             "value": {"sources": ["a", "b", "c"]},
@@ -387,9 +384,9 @@ def test_combine_analyses():
     """
     Test that combine analyses function combines analyses
     """
-    result = Result.parse_obj(EXAMPLE_MESSAGE_MULT["results"][0])
+    result = Result.model_validate(EXAMPLE_MESSAGE_MULT["results"][0])
     result.combine_analyses_by_resource_id()
-    r = result.dict()
+    r = result.model_dump()
     assert len(r["analyses"]) == 2
     for analysis in r["analyses"]:
         if analysis["resource_id"] == "ara0":
@@ -402,5 +399,5 @@ def test_response():
     Test that response object is parsed properly
     """
 
-    response = Response.parse_obj({"message": EXAMPLE_MESSAGE})
+    response = Response.model_validate({"message": EXAMPLE_MESSAGE})
     assert isinstance(response, Response)

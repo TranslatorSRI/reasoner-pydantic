@@ -1,30 +1,27 @@
-import copy
-import json
-import pytest
-
-from reasoner_pydantic import Attribute, Message, Results
+from reasoner_pydantic import Attribute, Message
 
 
 # Some sample attributes
-ATTRIBUTE_A = {
-    "attribute_type_id": "biolink:knowledge_source",
-    "value": "https://automat.renci.org/",
-    "attributes": [
-        {"attribute_type_id": "biolink:publication", "value": "pubmed_central"},
-        {"attribute_type_id": "biolink:has_p-value_evidence", "value": 0.04},
-    ],
-}
+ATTRIBUTE_A = Attribute.model_validate(
+    {
+        "attribute_type_id": "biolink:knowledge_source",
+        "value": "https://automat.renci.org/",
+        "attributes": [
+            {"attribute_type_id": "biolink:publication", "value": "pubmed_central"},
+            {"attribute_type_id": "biolink:has_p-value_evidence", "value": 0.04},
+        ],
+    }
+)
 
-ATTRIBUTE_B = {
-    "attribute_type_id": "biolink:publication",
-    "value": "pubmed_central",
-    "attributes": [
-        {"attribute_type_id": "biolink:has_original_source", "value": True},
-    ],
-}
-
-ATTRIBUTE_A = Attribute.parse_obj(ATTRIBUTE_A)
-ATTRIBUTE_B = Attribute.parse_obj(ATTRIBUTE_B)
+ATTRIBUTE_B = Attribute.model_validate(
+    {
+        "attribute_type_id": "biolink:publication",
+        "value": "pubmed_central",
+        "attributes": [
+            {"attribute_type_id": "biolink:has_original_source", "value": True},
+        ],
+    }
+)
 
 
 def test_result_merging():
@@ -89,9 +86,10 @@ def test_result_merging():
         ],
     }
 
-    m = Message.parse_obj(message)
+    m = Message.model_validate(message)
+    assert m.results is not None
     assert len(m.results) == 1
-    assert len(next(iter(m.results.__root__)).analyses) == 2
+    assert len(next(iter(m.results)).analyses) == 2
 
 
 def test_different_result_merging():
@@ -155,7 +153,7 @@ def test_different_result_merging():
             },
         ],
     }
-    m = Message.parse_obj(message)
+    m = Message.model_validate(message)
     assert len(m.results) == 2
 
 
@@ -234,7 +232,8 @@ def test_deduplicate_results_out_of_order():
         ],
     }
 
-    m = Message.parse_obj(message)
+    m = Message.model_validate(message)
+    assert m.results is not None
     assert len(m.results) == 1
 
 
@@ -268,7 +267,8 @@ def test_deduplicate_results_different():
         ],
     }
 
-    m = Message.parse_obj(message)
+    m = Message.model_validate(message)
+    assert m.results is not None
     assert len(m.results) == 2
 
 
@@ -308,10 +308,11 @@ def test_merge_knowledge_graph_nodes():
 
     m = Message()
 
-    m.update(Message.parse_obj(message_a))
-    m.update(Message.parse_obj(message_b))
+    m.update(Message.model_validate(message_a))
+    m.update(Message.model_validate(message_b))
 
     # Validate output
+    assert m.knowledge_graph is not None
     nodes = m.knowledge_graph.nodes
     assert len(nodes) == 1
     node = next(iter(nodes.values()))
@@ -349,7 +350,7 @@ def test_normalize_knowledge_graph_edges():
         },
         "results": [
             {
-                "node_bindings": [],
+                "node_bindings": {},
                 "analyses": [
                     {
                         "resource_id": "ara0",
@@ -386,19 +387,21 @@ def test_normalize_knowledge_graph_edges():
 
     m = Message()
 
-    m_a = Message.parse_obj(message_a)
-    m_b = Message.parse_obj(message_b)
+    m_a = Message.model_validate(message_a)
+    m_b = Message.model_validate(message_b)
 
     m.update(m_a)
     m.update(m_b)
 
     # Check that we didn't combine edges
+    assert m.knowledge_graph is not None
     edges = m.knowledge_graph.edges
     assert len(edges) == 2
 
     # Check that the result was updated to point to the correct edge
     edge_id, edge = next(iter(edges.items()))
-    result = next(iter(m.results.__root__))
+    assert m.results is not None
+    result = next(iter(m.results))
     analysis = next(iter(result.analyses))
     assert next(iter(analysis.edge_bindings["qe0"])).id == edge_id
 
@@ -438,10 +441,16 @@ def test_merge_identical_attributes():
 
     m = Message()
 
-    m.update(Message.parse_obj(message_a))
-    m.update(Message.parse_obj(message_b))
+    m.update(Message.model_validate(message_a))
 
+    print(m)
+    print()
+
+    m.update(Message.model_validate(message_b))
+
+    print(m)
     # Validate output
+    assert m.knowledge_graph is not None
     nodes = m.knowledge_graph.nodes
     assert len(nodes) == 1
     node = next(iter(nodes.values()))
@@ -529,9 +538,10 @@ def test_merge_knowledge_graph_edges():
 
     m = Message()
 
-    m.update(Message.parse_obj(message_a))
-    m.update(Message.parse_obj(message_b))
+    m.update(Message.model_validate(message_a))
+    m.update(Message.model_validate(message_b))
 
+    assert m.knowledge_graph is not None
     edges = m.knowledge_graph.edges
     assert len(edges) == 1
     edge = next(iter(edges.values()))
@@ -540,4 +550,5 @@ def test_merge_knowledge_graph_edges():
     assert len(sources) == 4
     for source in sources:
         if source.resource_id == "ara0":
+            assert source.upstream_resource_ids is not None
             assert len(source.upstream_resource_ids) == 2

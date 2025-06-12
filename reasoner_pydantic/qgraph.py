@@ -2,11 +2,9 @@
 
 from enum import Enum
 
-from pydantic.class_validators import validator
-from reasoner_pydantic.utils import HashableMapping
-from typing import Any, Optional
+from typing import Annotated, Any, Optional
 
-from pydantic import Field
+from pydantic import AfterValidator, ConfigDict, Field, model_serializer
 
 from .base_model import BaseModel
 from .utils import HashableMapping, HashableSequence, nonzero_validator
@@ -26,43 +24,26 @@ class Operator(str, Enum):
 class AttributeConstraint(BaseModel):
     """QNode or QEdge attribute constraint."""
 
-    name: str = Field(
-        ...,
-        title="name",
-        nullable=False,
-    )
-    id: CURIE = Field(
-        ...,
-        title="id",
-        nullable=False,
-    )
-    negated: bool = Field(
-        False,
-        title="not",
-        alias="not",
-    )
-    operator: Operator = Field(
-        ...,
-        title="operator",
-    )
-    value: Any = Field(
-        ...,
-        title="value",
-    )
-    unit_id: Optional[Any] = Field(
-        None,
-        title="unit_id",
-    )
-    unit_name: Optional[Any] = Field(
-        None,
-        title="unit_name",
-    )
+    name: str
+    id: CURIE
+    negated: Annotated[
+        bool,
+        Field(
+            False,
+            title="not",
+            alias="not",
+        ),
+    ]
+    operator: Operator
+    value: Any
+    unit_id: Optional[Any] = None
+    unit_name: Optional[Any] = None
+    model_config = ConfigDict(extra="forbid")
 
-    class Config:
-        extra = "forbid"
-
-    def dict(self, *args, **kwargs):
-        output = super().dict(*args, **kwargs)
+    @model_serializer
+    def serialize(self):
+        """Replace `negated` with `not`."""
+        output = self.__dict__
         output["not"] = output.pop("negated", False)
         return output
 
@@ -71,8 +52,7 @@ class QualifierConstraint(BaseModel):
     """QEdge Qualifier constraint."""
 
     qualifier_set: HashableSequence[Qualifier] = Field(
-        default=HashableSequence[Qualifier](__root__=[]),
-        title="qualifier set",
+        title="qualifier set", default_factory=lambda: HashableSequence[Qualifier]()
     )
 
 
@@ -87,86 +67,81 @@ class SetInterpretationEnum(str, Enum):
 class QNode(BaseModel):
     """Query node."""
 
-    ids: Optional[HashableSequence[CURIE]] = Field(
-        None,
-        title="ids",
-        nullable=True,
-    )
-    _nonzero_ids = validator("ids", allow_reuse=True)(nonzero_validator)
-
-    categories: Optional[HashableSequence[BiolinkEntity]] = Field(
-        None,
-        title="categories",
-        nullable=True,
-    )
-    _nonzero_categories = validator("categories", allow_reuse=True)(nonzero_validator)
-
-    set_interpretation: Optional[SetInterpretationEnum] = Field("BATCH", nullable=True)
-
-    constraints: Optional[HashableSequence[AttributeConstraint]] = Field(
-        default=HashableSequence[AttributeConstraint](__root__=[]),
+    ids: Annotated[
+        Optional[HashableSequence[CURIE]], AfterValidator(nonzero_validator)
+    ] = None
+    categories: Annotated[
+        Optional[HashableSequence[BiolinkEntity]], AfterValidator(nonzero_validator)
+    ] = None
+    set_interpretation: Annotated[
+        Optional[SetInterpretationEnum], Field(SetInterpretationEnum.BATCH)
+    ]
+    constraints: HashableSequence[AttributeConstraint] = Field(
         title="attribute constraints",
+        default_factory=lambda: HashableSequence[AttributeConstraint](),
     )
-
     member_ids: Optional[HashableSequence[CURIE]] = Field(
-        default=HashableSequence[CURIE](__root__=[]), title="set member ids"
+        title="set member ids", default_factory=lambda: HashableSequence[CURIE]()
     )
 
-    class Config:
-        title = "query-graph node"
-        extra = "allow"
-        allow_population_by_field_name = True
+    model_config = ConfigDict(
+        title="query-graph node",
+        extra="allow",
+        populate_by_name=True,
+        use_enum_values=True,  # See https://github.com/pydantic/pydantic/discussions/9270
+        validate_default=True,  # See https://docs.pydantic.dev/latest/api/config/#pydantic.config.ConfigDict.use_enum_values
+    )
 
 
 class QEdge(BaseModel):
     """Query edge."""
 
-    subject: str = Field(
-        ...,
-        title="subject node id",
-    )
-    object: str = Field(
-        ...,
-        title="object node id",
-    )
-
-    knowledge_type: Optional[KnowledgeType] = Field(None, title="knowledge type")
-
-    predicates: Optional[HashableSequence[BiolinkPredicate]] = Field(
-        None,
-        title="predicates",
-        nullable=True,
-    )
-    _nonzero_predicates = validator("predicates", allow_reuse=True)(nonzero_validator)
-
-    attribute_constraints: Optional[HashableSequence[AttributeConstraint]] = Field(
-        default=HashableSequence[AttributeConstraint](__root__=[]),
+    subject: Annotated[
+        str,
+        Field(
+            title="subject node id",
+        ),
+    ]
+    object: Annotated[
+        str,
+        Field(
+            title="object node id",
+        ),
+    ]
+    knowledge_type: Annotated[
+        Optional[KnowledgeType], Field(title="knowledge type")
+    ] = None
+    predicates: Annotated[
+        Optional[HashableSequence[BiolinkPredicate]], AfterValidator(nonzero_validator)
+    ] = None
+    attribute_constraints: HashableSequence[AttributeConstraint] = Field(
         title="attribute constraints",
+        default_factory=lambda: HashableSequence[AttributeConstraint](),
     )
-
-    qualifier_constraints: Optional[HashableSequence[QualifierConstraint]] = Field(
-        default=HashableSequence[QualifierConstraint](__root__=[]),
+    qualifier_constraints: HashableSequence[QualifierConstraint] = Field(
         title="qualifier constraint",
+        default_factory=lambda: HashableSequence[QualifierConstraint](),
     )
 
-    class Config:
-        title = "query-graph edge"
-        extra = "allow"
-        allow_population_by_field_name = True
+    model_config = ConfigDict(
+        title="query-graph edge", extra="allow", populate_by_name=True
+    )
 
 
 class QueryGraph(BaseModel):
     """Query graph."""
 
-    nodes: HashableMapping[str, QNode] = Field(
-        ...,
-        title="dict of nodes",
-    )
-    edges: HashableMapping[str, QEdge] = Field(
-        ...,
-        title="dict of edges",
-    )
+    nodes: Annotated[
+        HashableMapping[str, QNode],
+        Field(
+            title="dict of nodes",
+        ),
+    ]
+    edges: Annotated[
+        HashableMapping[str, QEdge],
+        Field(
+            title="dict of edges",
+        ),
+    ]
 
-    class Config:
-        title = "simple query graph"
-        extra = "allow"
+    model_config = ConfigDict(title="simple query graph", extra="allow")

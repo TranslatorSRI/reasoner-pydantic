@@ -1,8 +1,8 @@
 """Knowledge graph models."""
 
-from typing import Optional
+from typing import Annotated, Any, Optional
 
-from pydantic import Field
+from pydantic import ConfigDict, Field
 
 from .shared import (
     Attribute,
@@ -20,26 +20,25 @@ from .utils import HashableMapping, HashableSet
 class Node(BaseModel):
     """Knowledge graph node."""
 
-    categories: HashableSet[BiolinkEntity] = Field(
-        ...,
-        title="categories",
-        nullable=False,
-    )
-    name: Optional[str] = Field(None, nullable=True)
-    attributes: HashableSet[Attribute] = Field(..., nullable=False)
-    is_set: Optional[bool]
+    categories: HashableSet[BiolinkEntity]
+    name: Optional[str] = None
+    attributes: HashableSet[Attribute]
+    is_set: Optional[bool] = None
 
-    class Config:
-        title = "knowledge-graph node"
-        schema_extra = {
+    model_config = ConfigDict(
+        title="knowledge-graph node",
+        json_schema_extra={
             "example": {
                 "category": "string",
             },
-        }
-        extra = "forbid"
-        allow_population_by_field_name = True
+        },
+        extra="forbid",
+        populate_by_name=True,
+    )
 
-    def update(self, other):
+    def update(self, other: object) -> None:
+        if not isinstance(other, Node):
+            raise TypeError("Node may only be updated with Node.")
         if other.name:
             self.name = other.name
 
@@ -59,18 +58,17 @@ class Node(BaseModel):
 class RetrievalSource(BaseModel):
     """A component of source retrieval provenance"""
 
-    resource_id: CURIE = Field(..., title="infores for source")
-
-    resource_role: ResourceRoleEnum = Field(..., title="source type")
-
-    upstream_resource_ids: Optional[HashableSet[CURIE]] = Field(None, nullable=True)
-
-    source_record_urls: Optional[HashableSet[str]] = Field(None, nullable=True)
+    resource_id: Annotated[CURIE, Field(title="infores for source")]
+    resource_role: Annotated[ResourceRoleEnum, Field(title="source type")]
+    upstream_resource_ids: Optional[HashableSet[CURIE]] = None
+    source_record_urls: Optional[HashableSet[str]] = None
 
     def __hash__(self) -> int:
         return hash((self.resource_id, self.resource_role))
 
-    def update(self, other):
+    def update(self, other: object):
+        if not isinstance(other, RetrievalSource):
+            raise TypeError("RetrievalSource may only be updated with RetrievalSource.")
         if other.upstream_resource_ids:
             if self.upstream_resource_ids:
                 self.upstream_resource_ids.update(other.upstream_resource_ids)
@@ -81,30 +79,46 @@ class RetrievalSource(BaseModel):
 class Edge(BaseModel):
     """Knowledge graph edge."""
 
-    subject: CURIE = Field(
-        ...,
-        title="subject node id",
-    )
-    object: CURIE = Field(
-        ...,
-        title="object node id",
-    )
-    predicate: BiolinkPredicate = Field(..., title="edge predicate")
-    sources: HashableSet[RetrievalSource] = Field(
-        ..., title="list of source retrievals"
-    )
-    qualifiers: Optional[HashableSet[Qualifier]] = Field(None, nullable=True)
-    attributes: Optional[HashableSet[Attribute]] = Field(..., nullable=False)
+    subject: Annotated[
+        CURIE,
+        Field(
+            title="subject node id",
+        ),
+    ]
+    object: Annotated[
+        CURIE,
+        Field(
+            title="object node id",
+        ),
+    ]
+    predicate: Annotated[BiolinkPredicate, Field(title="edge predicate")]
+    sources: Annotated[
+        HashableSet[RetrievalSource], Field(title="list of source retrievals")
+    ]
+    qualifiers: Optional[HashableSet[Qualifier]] = None
+    attributes: Optional[HashableSet[Attribute]]
 
-    class Config:
-        title = "knowledge-graph edge"
-        extra = "forbid"
+    model_config = ConfigDict(title="knowledge-graph edge", extra="forbid")
 
-    def update(self, other):
+    def __hash__(self) -> int:
+        primary_knowledge_source = self.get_primary_knowedge_source()
+        return hash(
+            (
+                self.subject,
+                self.object,
+                self.predicate,
+                self.qualifiers,
+                primary_knowledge_source,
+            )
+        )
+
+    def update(self, other: Any):
+        if not isinstance(other, Edge):
+            raise TypeError("Edge may only be updated with Edge.")
         if other.attributes:
             if self.attributes:
                 # We need to make sure we don't add a second KL/AT
-                new_attributes = HashableSet[Attribute].parse_obj(())
+                new_attributes = HashableSet[Attribute](set())
                 for attribute in other.attributes:
                     if attribute.attribute_type_id not in (
                         "biolink:knowledge_level",
@@ -131,36 +145,23 @@ class Edge(BaseModel):
             if source.resource_role == "primary_knowledge_source":
                 return source.resource_id
 
-    def __hash__(self) -> int:
-        primary_knowledge_source = self.get_primary_knowedge_source()
-        return hash(
-            (
-                self.subject,
-                self.object,
-                self.predicate,
-                self.qualifiers,
-                primary_knowledge_source,
-            )
-        )
-
 
 class KnowledgeGraph(BaseModel):
     """Knowledge graph."""
 
     nodes: HashableMapping[CURIE, Node] = Field(
-        ...,
-        title="nodes",
+        default_factory=lambda: HashableMapping[CURIE, Node]()
     )
     edges: HashableMapping[EdgeIdentifier, Edge] = Field(
-        ...,
-        title="edges",
+        default_factory=lambda: HashableMapping[EdgeIdentifier, Edge]()
     )
 
-    class Config:
-        title = "knowledge graph"
-        extra = "allow"
+    model_config = ConfigDict(title="knowledge graph", extra="allow")
 
-    def update(self, other):
+    def update(self, other: object) -> None:
+        if not isinstance(other, KnowledgeGraph):
+            raise TypeError("KnowledgeGraph may only be updated with KnowledgeGraph.")
+
         for key, value in other.nodes.items():
             existing = self.nodes.get(key, None)
             if existing:

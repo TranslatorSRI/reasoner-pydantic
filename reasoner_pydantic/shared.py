@@ -5,19 +5,17 @@ from __future__ import annotations
 import re
 from datetime import datetime
 from enum import Enum
-import string
-from typing import Any, Optional
+from typing import Annotated, Any, Optional
 
-from pydantic import Field
-from pydantic.types import ConstrainedStr
+from pydantic import ConfigDict, Field
+from pydantic.types import StringConstraints
 
 from .base_model import BaseModel
 from .utils import HashableSequence
 
 
 # TODO: potential add validation for structure of CURIE
-class CURIE(str):
-    """Compact URI."""
+CURIE = str
 
 
 class ResourceRoleEnum(str, Enum):
@@ -35,135 +33,58 @@ class KnowledgeType(str, Enum):
     inferred = "inferred"
 
 
-class EdgeIdentifier(str):
-    """Identifier for an edge in a knowledge graph"""
-
-
-class RecursiveAttribute(BaseModel):
-    """Recursive Attribute subattribute."""
-
-    # Included to preserve direct references to Attribute and SubAttribute
-    attribute_type_id: CURIE = Field(..., title="type")
-    value: Any = Field(..., title="value")
-    value_type_id: Optional[CURIE] = Field(
-        None,
-        title="value_type_id",
-        nullable=True,
-    )
-    original_attribute_name: Optional[str] = Field(None, nullable=True)
-    value_url: Optional[str] = Field(None, nullable=True)
-    attribute_source: Optional[str] = Field(None, nullable=True)
-    description: Optional[str] = Field(None, nullable=True)
-    attributes: Optional[HashableSequence[RecursiveAttribute]] = Field(
-        None, nullable=True
-    )
-
-    class Config:
-        extra = "forbid"
-
-
-class SubAttribute(BaseModel):
-    """Attribute subattribute."""
-
-    attribute_type_id: CURIE = Field(..., title="type")
-    value: Any = Field(..., title="value")
-    value_type_id: Optional[CURIE] = Field(
-        None,
-        title="value_type_id",
-        nullable=True,
-    )
-    original_attribute_name: Optional[str] = Field(None, nullable=True)
-    value_url: Optional[str] = Field(None, nullable=True)
-    attribute_source: Optional[str] = Field(None, nullable=True)
-    description: Optional[str] = Field(None, nullable=True)
-    attributes: Optional[HashableSequence[RecursiveAttribute]] = Field(
-        None, nullable=True
-    )
-
-    class Config:
-        extra = "forbid"
+EdgeIdentifier = str
 
 
 class Attribute(BaseModel):
     """Node/edge attribute."""
 
-    attribute_type_id: CURIE = Field(..., title="type")
-    value: Any = Field(..., title="value")
-    value_type_id: Optional[CURIE] = Field(
-        None,
-        title="value_type_id",
-        nullable=True,
-    )
-    original_attribute_name: Optional[str] = Field(None, nullable=True)
-    value_url: Optional[str] = Field(None, nullable=True)
-    attribute_source: Optional[str] = Field(None, nullable=True)
-    description: Optional[str] = Field(None, nullable=True)
-    attributes: Optional[HashableSequence[SubAttribute]] = Field(None, nullable=True)
-
-    class Config:
-        extra = "forbid"
+    attribute_type_id: Annotated[CURIE, Field(title="type")]
+    value: Any
+    value_type_id: Optional[CURIE] = None
+    original_attribute_name: Optional[str] = None
+    value_url: Optional[str] = None
+    attribute_source: Optional[str] = None
+    description: Optional[str] = None
+    attributes: Optional[HashableSequence["Attribute"]] = None
+    model_config = ConfigDict(extra="forbid")
 
 
-class BiolinkQualifier(ConstrainedStr):
-    """Biolink Qualifier."""
-
-    regex = re.compile("^biolink:[a-z][a-z_]*$")
-
-    class Config:
-        title = "biolink entity"
+BiolinkQualifier = Annotated[
+    str, StringConstraints(pattern=re.compile("^biolink:[a-z][a-z_]*$"))
+]
 
 
 class Qualifier(BaseModel):
     """Edge qualifier."""
 
-    qualifier_type_id: BiolinkQualifier = Field(..., title="type")
+    qualifier_type_id: Annotated[BiolinkQualifier, Field(title="type")]
 
-    qualifier_value: str = Field(..., title="value")
-
-
-class BiolinkEntity(ConstrainedStr):
-    """Biolink entity."""
-
-    regex = re.compile("^biolink:[A-Z][a-zA-Z]*$")
-
-    class Config:
-        title = "biolink entity"
+    qualifier_value: Annotated[str, Field(title="value")]
 
 
-class BiolinkPredicate(ConstrainedStr):
-    """Biolink predicate."""
+BiolinkPredicate = Annotated[
+    str, StringConstraints(pattern=re.compile("^biolink:[a-z][a-z_]*$"))
+]
+BiolinkEntity = Annotated[
+    str, StringConstraints(pattern=re.compile("^biolink:[A-Z][a-zA-Z_]*$"))
+]
 
-    regex = re.compile("^biolink:[a-z][a-z_]*$")
 
-    class Config:
-        title = "biolink predicate"
-
-
-class LogLevelEnum(str, Enum):
+class LogLevel(str, Enum):
     """Log level."""
 
-    error = "ERROR"
-    warning = "WARNING"
-    info = "INFO"
-    debug = "DEBUG"
-
-
-class LogLevel(BaseModel):
-    """Log level."""
-
-    __root__: LogLevelEnum
+    ERROR = "ERROR"
+    WARNING = "WARNING"
+    INFO = "INFO"
+    DEBUG = "DEBUG"
 
 
 class LogEntry(BaseModel):
     """Log entry."""
 
-    timestamp: Optional[datetime] = Field(None, nullable=True)
-    level: Optional[LogLevel] = Field(None, nullable=True)
-    code: Optional[str] = Field(None, nullable=True)
-    message: Optional[str] = Field(None, nullable=True)
-
-    class Config:
-        extra = "allow"
-
-
-RecursiveAttribute.update_forward_refs()
+    timestamp: Optional[datetime] = None
+    level: Optional[LogLevel] = None
+    code: Optional[str] = None
+    message: str = ""
+    model_config = ConfigDict(extra="allow")
