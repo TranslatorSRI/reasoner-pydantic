@@ -144,9 +144,7 @@ class Result(BaseModel):
         # Useful when a service unintentionally adds multiple analyses to a single result
         # Combines all of those analyses
         combine = HashableMapping[CURIE, Analysis]()
-        analyses = HashableSequence[Analysis].model_validate(
-            [analysis for analysis in self.analyses]
-        )
+        analyses = HashableSequence[Analysis]([analysis for analysis in self.analyses])
         for _ in range(len(analyses)):
             analysis = analyses.pop()
             if analysis.resource_id not in combine:
@@ -194,7 +192,9 @@ class Results(HashableSequence[Result]):
         return self.root.__getitem__(i)
 
     def update(self, other: object):
-        results = HashableMapping[int, Result].model_validate({})
+        results = HashableMapping[int, Result](
+            {hash(result): result for result in self.root}
+        )
         for result in other:
             if not isinstance(result, Result):
                 result = Result.model_validate(result)
@@ -203,6 +203,8 @@ class Results(HashableSequence[Result]):
                 results[result_hash].update(result)
             else:
                 results[hash(result)] = result
+        self.root.clear()
+        self.root.extend(results.values())
 
     @model_validator(mode="after")
     def merge_results(self):
