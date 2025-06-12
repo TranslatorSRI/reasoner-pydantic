@@ -22,6 +22,4 @@ def test_hash_property_update():
 
 To achieve this, we have a [custom base model](reasoner_pydantic/base_model.py) for all objects that includes a hash function. This hash function recurses down through the object and computes the hash for the entire object when called. We have similar code in place for lists, dicts, and sets, which can be found in the [reasoner_pydantic/utils.py](reasoner_pydantic/utils.py) file. When implemented properly, this provide the basis for efficient in-place object merging.
 
-These hashes are natively computed deterministically, so they can be used for purposes such as caching.
-
-
+To ensure deterministic hash values, it is required that the `PYTHONHASHSEED` environment variable be set to `0`.

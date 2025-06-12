@@ -9,23 +9,6 @@ KeyType = TypeVar("KeyType")
 ValueType = TypeVar("ValueType")
 
 
-def stable_hash(obj: object) -> int:
-    """Produce a stable hash of an object by deterministically serializing it."""
-
-    if hasattr(obj, "_stable_hashable"):
-        return hash(obj)
-
-    as_str = json.dumps(
-        obj,
-        ensure_ascii=False,
-        sort_keys=True,
-        indent=None,
-        separators=(",", ":"),
-        default=lambda a: a.__json__(),
-    )
-    return int(hashlib.md5(as_str.encode("utf-8")).hexdigest(), 16)
-
-
 class HashableMapping(
     RootModel[dict[KeyType, ValueType]],
     collections.abc.MutableMapping[KeyType, ValueType],
@@ -36,7 +19,6 @@ class HashableMapping(
     """
 
     root: dict[KeyType, ValueType] = dict()
-    _stable_hashable: Final[bool] = True
 
     def __getitem__(self, k: KeyType) -> ValueType:
         return self.root[k]
@@ -54,7 +36,7 @@ class HashableMapping(
         del self.root[k]
 
     def __hash__(self):
-        return stable_hash({str(k): stable_hash(v) for k, v in self.root.items()})
+        return hash(tuple((k, v) for k, v in self.root.items()))
 
     def __eq__(self, other: object) -> bool:
         return self.__hash__() == other.__hash__()
@@ -70,7 +52,6 @@ class HashableSequence(
     """
 
     root: list[ValueType] = list()
-    _stable_hashable: Final[bool] = True
 
     def __contains__(self, v: object) -> bool:
         return v in self.root
@@ -94,7 +75,7 @@ class HashableSequence(
         self.root.insert(index, value)
 
     def __hash__(self):
-        return stable_hash([stable_hash(v) for v in self.root])
+        return hash(tuple(self.root))
 
     def __eq__(self, other: object) -> bool:
         return self.__hash__() == other.__hash__()
@@ -110,7 +91,6 @@ class HashableSet(
     """
 
     root: set[ValueType] = set()
-    _stable_hashable: Final[bool] = True
 
     def __contains__(self, v):
         return v in self.root
@@ -133,7 +113,7 @@ class HashableSet(
     def __hash__(self):
         # Use frozenset instead of tuple to ensure
         # hash is computed without ordering of elements
-        return stable_hash(sorted([stable_hash(v) for v in self.root]))
+        return hash(frozenset(self.root))
 
     @model_serializer
     def as_list(self) -> list[ValueType]:
@@ -168,8 +148,6 @@ def make_hashable(o: object):
             {k: make_hashable(v) for k, v in cast(dict[Any, Any], o).items()}
         )
     if "list" in o_type:
-        return HashableSequence(
-            [make_hashable(v) for v in cast(list[Any], o)]
-        )
+        return HashableSequence([make_hashable(v) for v in cast(list[Any], o)])
 
     return o

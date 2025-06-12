@@ -6,7 +6,7 @@ from typing import Annotated, Optional, Union
 from pydantic import ConfigDict, Field, model_validator
 
 from .base_model import BaseModel
-from .utils import HashableMapping, HashableSet, HashableSequence, stable_hash
+from .utils import HashableMapping, HashableSet, HashableSequence 
 from .shared import Attribute, CURIE, EdgeIdentifier
 
 
@@ -74,12 +74,12 @@ class Analysis(BaseAnalysis):
     model_config = ConfigDict(title="standard analysis", extra="allow")
 
     def __hash__(self) -> int:
-        return stable_hash(
+        return hash(
             (
                 self.resource_id,
-                hash(self.edge_bindings),
+                self.edge_bindings,
                 self.score,
-                hash(self.support_graphs) if self.support_graphs is not None else None,
+                self.support_graphs,
                 self.scoring_method,
             )
         )
@@ -203,7 +203,7 @@ class Result(BaseModel):
                 self.analyses = other.analyses
 
     def __hash__(self) -> int:
-        return stable_hash(self.node_bindings)
+        return hash(self.node_bindings)
 
     def combine_analyses_by_resource_id(self):
         # Useful when a service unintentionally adds multiple analyses to a single result
