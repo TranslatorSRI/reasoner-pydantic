@@ -14,7 +14,7 @@ from .shared import (
     ResourceRoleEnum,
 )
 from .base_model import BaseModel
-from .utils import HashableMapping, HashableSet, stable_hash
+from .utils import HashableMapping, HashableSet 
 
 
 class Node(BaseModel):
@@ -64,7 +64,7 @@ class RetrievalSource(BaseModel):
     source_record_urls: Optional[HashableSet[str]] = None
 
     def __hash__(self) -> int:
-        return stable_hash((self.resource_id, self.resource_role))
+        return hash((self.resource_id, self.resource_role))
 
     def update(self, other: object):
         if not isinstance(other, RetrievalSource):
@@ -102,12 +102,12 @@ class Edge(BaseModel):
 
     def __hash__(self) -> int:
         primary_knowledge_source = self.get_primary_knowedge_source()
-        return stable_hash(
+        return hash(
             (
                 self.subject,
                 self.object,
                 self.predicate,
-                hash(self.qualifiers) if self.qualifiers is not None else None,
+                self.qualifiers,
                 primary_knowledge_source,
             )
         )
