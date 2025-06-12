@@ -6,7 +6,7 @@ from typing import Annotated, Optional, Union
 from pydantic import ConfigDict, Field, model_validator
 
 from .base_model import BaseModel
-from .utils import HashableMapping, HashableSet, HashableSequence 
+from .utils import HashableMapping, HashableSet, HashableSequence
 from .shared import Attribute, CURIE, EdgeIdentifier
 
 
