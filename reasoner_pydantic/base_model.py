@@ -7,7 +7,7 @@ from pydantic import (
     RootModel as PydanticRootModel,
 )
 
-from .utils import make_hashable, stable_hash
+from .utils import make_hashable
 
 
 class BaseModel(PydanticBaseModel):
@@ -17,20 +17,18 @@ class BaseModel(PydanticBaseModel):
     This provides hash and equality methods.
     """
 
-    _stable_hashable: Final[bool] = True
-
     def __hash__(self) -> int:
         """Hash function based on Pydantic implementation"""
-        return stable_hash(
+        return hash(
             (
                 self.__class__.__name__,
-                {
-                    k: stable_hash(v)
+                *(
+                    (k, hash(v))
                     for k, v in {
                         **self.__dict__,
                         **(self.__pydantic_extra__ or {}),
                     }.items()
-                },
+                ),
             )
         )
 

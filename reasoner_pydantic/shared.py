@@ -10,8 +10,8 @@ from typing import Annotated, Any, Optional
 from pydantic import ConfigDict, Field
 from pydantic.types import StringConstraints
 
-from .base_model import BaseModel, RootModel
-from .utils import HashableSequence, stable_hash
+from .base_model import BaseModel
+from .utils import HashableSequence
 
 
 # TODO: potential add validation for structure of CURIE
