@@ -109,7 +109,7 @@ class Message(BaseModel):
         Replace edge IDs with a hash of the edge object
         """
         self._update_kg_edge_ids(
-            lambda edge: EdgeIdentifier.model_validate(
+            lambda edge: EdgeIdentifier(
                 hashlib.blake2b(
                     hash(edge).to_bytes(16, byteorder="big", signed=True), digest_size=6
                 ).hexdigest()

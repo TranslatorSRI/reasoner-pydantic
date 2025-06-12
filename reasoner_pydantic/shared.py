@@ -14,27 +14,8 @@ from .base_model import BaseModel, RootModel
 from .utils import HashableSequence, stable_hash
 
 
-class StrValue(RootModel[str]):
-    """Generic handling for string values that supports equality with normal strings."""
-
-    root: str
-
-    def __eq__(self, other: object) -> bool:
-        return self.root == other.__str__()
-
-    def __hash__(self) -> int:
-        return stable_hash(self.root)
-
-    def __str__(self) -> str:
-        return self.root
-
-    def __json__(self) -> str:
-        return self.root
-
-
 # TODO: potential add validation for structure of CURIE
-class CURIE(StrValue):
-    """Compact URI."""
+CURIE = str
 
 
 class ResourceRoleEnum(str, Enum):
@@ -52,8 +33,7 @@ class KnowledgeType(str, Enum):
     inferred = "inferred"
 
 
-class EdgeIdentifier(StrValue):
-    """Identifier for an edge in a knowledge graph"""
+EdgeIdentifier = str
 
 
 class Attribute(BaseModel):
