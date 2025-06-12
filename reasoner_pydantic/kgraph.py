@@ -1,6 +1,6 @@
 """Knowledge graph models."""
 
-from typing import Annotated, Any, Optional
+from typing import Annotated, Any, Optional, override
 
 from pydantic import ConfigDict, Field
 
@@ -100,13 +100,25 @@ class Edge(BaseModel):
 
     model_config = ConfigDict(title="knowledge-graph edge", extra="forbid")
 
+    def __hash__(self) -> int:
+        primary_knowledge_source = self.get_primary_knowedge_source()
+        return stable_hash(
+            (
+                self.subject,
+                self.object,
+                self.predicate,
+                hash(self.qualifiers) if self.qualifiers is not None else None,
+                primary_knowledge_source,
+            )
+        )
+
     def update(self, other: Any):
         if not isinstance(other, Edge):
             raise TypeError("Edge may only be updated with Edge.")
         if other.attributes:
             if self.attributes:
                 # We need to make sure we don't add a second KL/AT
-                new_attributes = HashableSet[Attribute].model_validate(())
+                new_attributes = HashableSet[Attribute](set())
                 for attribute in other.attributes:
                     if attribute.attribute_type_id not in (
                         "biolink:knowledge_level",
@@ -132,18 +144,6 @@ class Edge(BaseModel):
         for source in self.sources:
             if source.resource_role == "primary_knowledge_source":
                 return source.resource_id
-
-    def __hash__(self) -> int:
-        primary_knowledge_source = self.get_primary_knowedge_source()
-        return stable_hash(
-            (
-                self.subject,
-                self.object,
-                self.predicate,
-                hash(self.qualifiers) if self.qualifiers is not None else None,
-                primary_knowledge_source,
-            )
-        )
 
 
 class KnowledgeGraph(BaseModel):

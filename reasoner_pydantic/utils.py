@@ -164,12 +164,12 @@ def make_hashable(o: object):
     o_type = str(type(o))
 
     if "dict" in o_type:
-        return HashableMapping.model_validate(
+        return HashableMapping(
             {k: make_hashable(v) for k, v in cast(dict[Any, Any], o).items()}
         )
     if "list" in o_type:
-        return HashableSequence.model_validate(
-            (make_hashable(v) for v in cast(list[Any], o))
+        return HashableSequence(
+            [make_hashable(v) for v in cast(list[Any], o)]
         )
 
     return o
