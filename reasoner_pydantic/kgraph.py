@@ -1,6 +1,6 @@
 """Knowledge graph models."""
 
-from typing import Annotated, Any, Optional, override
+from typing import Annotated, Any, Optional
 
 from pydantic import ConfigDict, Field
 
