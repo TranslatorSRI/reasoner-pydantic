@@ -294,11 +294,7 @@ PATHFINDER_MESSAGE = {
             "p0": {
                 "subject": "n0",
                 "object": "n1",
-                "constraints": [
-                    {
-                        "intermediate_categories": ["biolink:Gene"]
-                    }
-                ]
+                "constraints": [{"intermediate_categories": ["biolink:Gene"]}],
             }
         },
     },
@@ -350,21 +346,12 @@ PATHFINDER_MESSAGE = {
             "analyses": [
                 {
                     "resource_id": "ara0",
-                    "path_bindings": {
-                        "p0": [
-                            {
-                                "id": "a0",
-                                "attributes": []
-                            }
-                        ]
-                    },
+                    "path_bindings": {"p0": [{"id": "a0", "attributes": []}]},
                 }
             ],
         }
     ],
-    "auxiliary_graphs": {
-        "a0": {"edges": ["e0", "e1"], "attributes": []}
-    },
+    "auxiliary_graphs": {"a0": {"edges": ["e0", "e1"], "attributes": []}},
 }
 
 
@@ -488,6 +475,7 @@ def test_response():
     response = Response.parse_obj({"message": EXAMPLE_MESSAGE})
     assert isinstance(response, Response)
 
+
 def test_pathfinder_message():
     """
     Test that pathfinder messages can be parsed.
@@ -496,4 +484,3 @@ def test_pathfinder_message():
     message = Message.parse_obj(PATHFINDER_MESSAGE)
 
     assert isinstance(message, Message)
-    

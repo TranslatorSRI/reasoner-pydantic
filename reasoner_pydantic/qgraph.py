@@ -75,11 +75,15 @@ class QualifierConstraint(BaseModel):
         title="qualifier set",
     )
 
+
 class PathConstraint(BaseModel):
     """QPath Constraint"""
 
     intermediate_categories: Optional[HashableSequence[BiolinkEntity]]
-    _nonzero_categories = validator("intermediate_categories", allow_reuse=True)(nonzero_validator)
+    _nonzero_categories = validator("intermediate_categories", allow_reuse=True)(
+        nonzero_validator
+    )
+
 
 class SetInterpretationEnum(str, Enum):
     """Enumeration for set interpretation."""
@@ -159,8 +163,10 @@ class QEdge(BaseModel):
         extra = "allow"
         allow_population_by_field_name = True
 
+
 class QPath(BaseModel):
     """Query path"""
+
     subject: str = Field(
         ...,
         title="subject node id",
@@ -169,7 +175,7 @@ class QPath(BaseModel):
         ...,
         title="object node id",
     )
-    
+
     predicates: Optional[HashableSequence[BiolinkPredicate]] = Field(
         None,
         title="predicates",
@@ -177,6 +183,7 @@ class QPath(BaseModel):
     )
 
     constraints: Optional[HashableSequence[PathConstraint]]
+
 
 class BaseQueryGraph(BaseModel):
     """Base query graph."""
@@ -190,6 +197,7 @@ class BaseQueryGraph(BaseModel):
         title = "Base query graph"
         extra = "allow"
 
+
 class QueryGraph(BaseQueryGraph):
     """Traditional query graph."""
 
@@ -201,6 +209,7 @@ class QueryGraph(BaseQueryGraph):
     class Config:
         title = "simple query graph"
         extra = "allow"
+
 
 class PathfinderQueryGraph(BaseQueryGraph):
     """Pathfinder query graph."""
