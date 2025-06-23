@@ -1,9 +1,9 @@
 """Results models."""
 
 import copy
-from typing import Optional
+from typing import Optional, Union
 
-from pydantic import Field, parse_obj_as
+from pydantic import Field, parse_obj_as, ValidationError
 
 from .base_model import BaseModel
 from .utils import HashableMapping, HashableSet, HashableSequence
@@ -26,18 +26,29 @@ class EdgeBinding(BaseModel):
         }
         extra = "allow"
 
+class PathBinding(BaseModel):
+    """Path binding."""
 
-class Analysis(BaseModel):
-    """Analysis."""
+    id: str = Field(..., title="auxiliary graph id", nullable=False)
+
+    attributes: HashableSet[Attribute] = Field(..., nullable=False)
+
+    class Config:
+        title = "path binding"
+        schema_extra = {
+            "example": {
+                "id": "string",
+            },
+        }
+        extra = "allow"
+
+
+class BaseAnalysis(BaseModel):
+    """Base Analysis."""
 
     resource_id: CURIE = Field(
         ...,
         title="resource infores",
-    )
-
-    edge_bindings: HashableMapping[str, HashableSet[EdgeBinding]] = Field(
-        ...,
-        title="list of edge bindings",
     )
 
     score: Optional[float] = Field(
@@ -51,8 +62,16 @@ class Analysis(BaseModel):
 
     attributes: Optional[HashableSet[Attribute]] = Field(None, nullable=True)
 
+class Analysis(BaseAnalysis):
+    """Standard analysis"""
+    
+    edge_bindings: HashableMapping[str, HashableSet[EdgeBinding]] = Field(
+        ...,
+        title="list of edge bindings",
+    )
+
     class Config:
-        title = "analysis"
+        title = "standard analysis"
         extra = "allow"
 
     def __hash__(self) -> int:
@@ -72,6 +91,46 @@ class Analysis(BaseModel):
                 self.edge_bindings[k].update(copy.deepcopy(other.edge_bindings[k]))
             else:
                 self.edge_bindings[k] = copy.deepcopy(other.edge_bindings[k])
+        if other.attributes:
+            if self.attributes:
+                self.attributes.update(other.attributes)
+            else:
+                self.attributes = other.attributes
+        if other.support_graphs:
+            if self.support_graphs:
+                self.support_graphs.update(other.support_graphs)
+            else:
+                self.support_graphs = other.support_graphs
+
+class PathfinderAnalysis(BaseAnalysis):
+    """Pathfinder Analysis"""
+    
+    path_bindings: HashableMapping[str, HashableSet[PathBinding]] = Field(
+        ...,
+        title="list of path bindings",
+    )
+
+    class Config:
+        title = "pathfinder analysis"
+        extra = "allow"
+
+    def __hash__(self) -> int:
+        return hash(
+            (
+                self.resource_id,
+                self.path_bindings,
+                self.score,
+                self.support_graphs,
+                self.scoring_method,
+            )
+        )
+
+    def update(self, other):
+        for k in other.path_bindings:
+            if k in self.path_bindings:
+                self.path_bindings[k].update(copy.deepcopy(other.path_bindings[k]))
+            else:
+                self.path_bindings[k] = copy.deepcopy(other.path_bindings[k])
         if other.attributes:
             if self.attributes:
                 self.attributes.update(other.attributes)
@@ -110,7 +169,7 @@ class Result(BaseModel):
         ..., title="list of node bindings", nullable=False
     )
 
-    analyses: HashableSet[Analysis] = Field(
+    analyses: Union[HashableSet[Analysis], HashableSet[PathfinderAnalysis]] = Field(
         ..., title="list of anlysis blocks", nullable=False
     )
 
@@ -138,10 +197,19 @@ class Result(BaseModel):
     def parse_obj(obj):
         result = parse_obj_as(Result, obj)
         nbindings = HashableMapping.parse_obj(obj["node_bindings"])
-        analyses = HashableSet[Analysis]()
-        if "analyses" in obj.keys():
-            for analysis in obj["analyses"]:
-                analyses.add(Analysis.parse_obj(analysis))
+        if "analyses" in obj.keys() and len(obj["analyses"]):
+            if "edge_bindings" in obj["analyses"][0].keys():
+                analyses = HashableSet[Analysis]()
+                for analysis in obj["analyses"]:
+                    analyses.add(Analysis.parse_obj(analysis))
+            elif "path_bindings" in obj["analyses"][0].keys():
+                analyses = HashableSet[PathfinderAnalysis]()
+                for analysis in obj["analyses"]:
+                    analyses.add(PathfinderAnalysis.parse_obj(analysis))
+            else:
+                raise ValidationError(["Analyses missing bindings"], Result)
+        else:
+            analyses = []
         r = Result(node_bindings=nbindings, analyses=analyses)
         result.update(r)
         return result
