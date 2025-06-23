@@ -3,14 +3,14 @@
 import copy
 import hashlib
 
-from typing import Optional, Callable
+from typing import Optional, Callable, Union
 
-from pydantic import constr, Field, parse_obj_as, validator
+from pydantic import constr, Field, parse_obj_as, validator, ValidationError
 
 from .base_model import BaseModel
 from .utils import HashableSequence, HashableSet
-from .results import Result, Results
-from .qgraph import QueryGraph
+from .results import Result, Results, Analysis
+from .qgraph import QueryGraph, PathfinderQueryGraph
 from .kgraph import KnowledgeGraph
 from .shared import LogEntry, LogLevel
 from .workflow import Workflow
@@ -20,7 +20,7 @@ from .auxgraphs import AuxiliaryGraphs
 class Message(BaseModel):
     """Message."""
 
-    query_graph: Optional[QueryGraph] = Field(
+    query_graph: Optional[Union[QueryGraph, PathfinderQueryGraph]] = Field(
         None,
         title="query graph",
         nullable=True,
@@ -50,7 +50,12 @@ class Message(BaseModel):
         results = None
         auxgraphs = None
         if "query_graph" in obj.keys() and obj["query_graph"] is not None:
-            qgraph = QueryGraph.parse_obj(obj["query_graph"])
+            if "edges" in obj["query_graph"].keys():
+                qgraph = QueryGraph.parse_obj(obj["query_graph"])
+            elif "paths" in obj["query_graph"].keys():
+                qgraph = PathfinderQueryGraph.parse_obj(obj["query_graph"])
+            else:
+                raise ValidationError(["No Paths or Edges in Query Graph"], Message)
         if "knowledge_graph" in obj.keys() and obj["knowledge_graph"] is not None:
             kgraph = KnowledgeGraph.parse_obj(obj["knowledge_graph"])
         if "results" in obj.keys() and obj["results"] is not None:
@@ -160,9 +165,10 @@ class Message(BaseModel):
             for result in self.results:
                 if result and result.analyses:
                     for analysis in result.analyses:
-                        for edge_binding_list in analysis.edge_bindings.values():
-                            for eb in edge_binding_list:
-                                eb.id = edge_id_mapping[eb.id]
+                        if isinstance(analysis, Analysis):
+                            for edge_binding_list in analysis.edge_bindings.values():
+                                for eb in edge_binding_list:
+                                    eb.id = edge_id_mapping[eb.id]
 
 
 class Query(BaseModel):
