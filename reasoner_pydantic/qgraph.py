@@ -77,7 +77,7 @@ class QualifierConstraint(BaseModel):
 
 
 class PathConstraint(BaseModel):
-    """QPath Constraint"""
+    """QPath Constraint."""
 
     intermediate_categories: Optional[HashableSequence[BiolinkEntity]]
     _nonzero_categories = validator("intermediate_categories", allow_reuse=True)(
@@ -165,7 +165,7 @@ class QEdge(BaseModel):
 
 
 class QPath(BaseModel):
-    """Query path"""
+    """Query path."""
 
     subject: str = Field(
         ...,

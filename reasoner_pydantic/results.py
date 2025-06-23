@@ -106,7 +106,7 @@ class Analysis(BaseAnalysis):
 
 
 class PathfinderAnalysis(BaseAnalysis):
-    """Pathfinder Analysis"""
+    """Pathfinder Analysis."""
 
     path_bindings: HashableMapping[str, HashableSet[PathBinding]] = Field(
         ...,
