@@ -284,6 +284,89 @@ EXAMPLE_MESSAGE_MULT = {
     "auxiliary_graphs": {"a1": {"edges": ["CHEBI:6801-biolink:treats-MONDO:5148"]}},
 }
 
+PATHFINDER_MESSAGE = {
+    "query_graph": {
+        "nodes": {
+            "n0": {"ids": ["MONDO:0005011"]},
+            "n1": {"ids": ["MONDO:0005180"]},
+        },
+        "paths": {
+            "p0": {
+                "subject": "n0",
+                "object": "n1",
+                "constraints": [
+                    {
+                        "intermediate_categories": ["biolink:Gene"]
+                    }
+                ]
+            }
+        },
+    },
+    "knowledge_graph": {
+        "nodes": {
+            "MONDO:0005011": {"categories": ["biolink:Disease"], "attributes": []},
+            "MONDO:0005180": {"categories": ["biolink:Disease"], "attributes": []},
+            "NCBIGene:120892": {"categories": ["biolink:Gene"], "attributes": []},
+        },
+        "edges": {
+            "e0": {
+                "subject": "MONDO:0005011",
+                "object": "NCBIGene:120892",
+                "predicate": "biolink:condition_associated_with_gene",
+                "sources": [
+                    {
+                        "resource_id": "kp0",
+                        "resource_role": "primary_knowledge_source",
+                    }
+                ],
+                "attributes": [
+                    {
+                        "attribute_type_id": "biolink:attribute",
+                        "value": {"sources": ["a", "b", "c"]},
+                        "attributes": [],
+                    }
+                ],
+            },
+            "e1": {
+                "subject": "NCBIGene:120892",
+                "object": "MONDO:0005180",
+                "predicate": "biolink:biomarker_for",
+                "sources": [
+                    {
+                        "resource_id": "kp0",
+                        "resource_role": "primary_knowledge_source",
+                    }
+                ],
+                "attributes": [],
+            },
+        },
+    },
+    "results": [
+        {
+            "node_bindings": {
+                "n1": [{"id": "MONDO:0005011", "attributes": []}],
+                "n2": [{"id": "MONDO:0005180", "attributes": []}],
+            },
+            "analyses": [
+                {
+                    "resource_id": "ara0",
+                    "path_bindings": {
+                        "p0": [
+                            {
+                                "id": "a0",
+                                "attributes": []
+                            }
+                        ]
+                    },
+                }
+            ],
+        }
+    ],
+    "auxiliary_graphs": {
+        "a0": {"edges": ["e0", "e1"], "attributes": []}
+    },
+}
+
 
 def test_message_hashable():
     """Check that we can hash a message"""
@@ -404,3 +487,13 @@ def test_response():
 
     response = Response.parse_obj({"message": EXAMPLE_MESSAGE})
     assert isinstance(response, Response)
+
+def test_pathfinder_message():
+    """
+    Test that pathfinder messages can be parsed.
+    """
+
+    message = Message.parse_obj(PATHFINDER_MESSAGE)
+
+    assert isinstance(message, Message)
+    
