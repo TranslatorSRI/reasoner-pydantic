@@ -371,6 +371,7 @@ INVALID_PATHFINDER_QUERY = {
     }
 }
 
+
 def test_message_hashable():
     """Check that we can hash a message"""
 
@@ -501,8 +502,9 @@ def test_pathfinder_message():
 
     assert isinstance(message, Message)
 
+
 def test_invalid_pathfinder_query():
-    """"
+    """ "
     Test that pathfinder message with empty intermediate categories errors.
     """
 
