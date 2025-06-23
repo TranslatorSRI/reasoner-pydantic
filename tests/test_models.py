@@ -1,4 +1,5 @@
 from typing import Optional
+from pydantic import ValidationError
 from reasoner_pydantic.base_model import BaseModel
 from reasoner_pydantic.shared import Attribute, BiolinkEntity
 from reasoner_pydantic import Message, QNode, QEdge, QueryGraph, Result, Response
@@ -354,6 +355,21 @@ PATHFINDER_MESSAGE = {
     "auxiliary_graphs": {"a0": {"edges": ["e0", "e1"], "attributes": []}},
 }
 
+INVALID_PATHFINDER_QUERY = {
+    "query_graph": {
+        "nodes": {
+            "n0": {"ids": ["MONDO:0005011"]},
+            "n1": {"ids": ["MONDO:0005180"]},
+        },
+        "paths": {
+            "p0": {
+                "subject": "n0",
+                "object": "n1",
+                "constraints": [{"intermediate_categories": []}],
+            }
+        },
+    }
+}
 
 def test_message_hashable():
     """Check that we can hash a message"""
@@ -484,3 +500,13 @@ def test_pathfinder_message():
     message = Message.parse_obj(PATHFINDER_MESSAGE)
 
     assert isinstance(message, Message)
+
+def test_invalid_pathfinder_query():
+    """"
+    Test that pathfinder message with empty intermediate categories errors.
+    """
+
+    try:
+        message = Message.parse_obj(INVALID_PATHFINDER_QUERY)
+    except Exception as e:
+        assert isinstance(e, ValidationError)
