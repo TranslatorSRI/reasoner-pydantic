@@ -26,6 +26,7 @@ class EdgeBinding(BaseModel):
         }
         extra = "allow"
 
+
 class PathBinding(BaseModel):
     """Path binding."""
 
@@ -62,9 +63,10 @@ class BaseAnalysis(BaseModel):
 
     attributes: Optional[HashableSet[Attribute]] = Field(None, nullable=True)
 
+
 class Analysis(BaseAnalysis):
     """Standard analysis"""
-    
+
     edge_bindings: HashableMapping[str, HashableSet[EdgeBinding]] = Field(
         ...,
         title="list of edge bindings",
@@ -102,9 +104,10 @@ class Analysis(BaseAnalysis):
             else:
                 self.support_graphs = other.support_graphs
 
+
 class PathfinderAnalysis(BaseAnalysis):
     """Pathfinder Analysis"""
-    
+
     path_bindings: HashableMapping[str, HashableSet[PathBinding]] = Field(
         ...,
         title="list of path bindings",
