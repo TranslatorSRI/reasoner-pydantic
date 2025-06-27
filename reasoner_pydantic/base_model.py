@@ -1,5 +1,5 @@
 import json
-from typing import Any, Final, Generic, TypeVar
+from typing import Any, Final, Generic, Self, TypeVar
 
 from pydantic import (
     model_validator,
@@ -19,16 +19,12 @@ class BaseModel(PydanticBaseModel):
 
     def __hash__(self) -> int:
         """Hash function based on Pydantic implementation"""
+        # Faster than calling tuple() or otherwise unpacking dictionaries
         return hash(
             (
                 self.__class__.__name__,
-                *(
-                    (k, hash(v))
-                    for k, v in {
-                        **self.__dict__,
-                        **(self.__pydantic_extra__ or {}),
-                    }.items()
-                ),
+                *self.__dict__.items(),
+                *((self.model_extra or {}).items()),
             )
         )
 
@@ -45,15 +41,18 @@ class BaseModel(PydanticBaseModel):
     def get_field(self, field: str):
         return getattr(self, field, None)
 
-    # After running validation on all known properties, make sure everything else is hashable
-    @model_validator(mode="before")
-    @classmethod
-    def make_hashable_root(cls, values: Any):
-        # The root validator must take and return a dict
-        return make_hashable(values)
+    @model_validator(mode="after")
+    def ensure_hashable_extra(self) -> Self:
+        """Ensure extra fields are hashable, if they're allowed."""
+        if not self.model_extra:
+            return self
+        for k, v in self.model_extra.items():
+            self.model_extra[k] = make_hashable(v)
+        return self
 
     def to_dict(self) -> dict[Any, Any]:
-        return json.loads(self.json())
+        """DEPRECATED: use model_dump() instead."""
+        return self.model_dump()
 
 
 RootType = TypeVar("RootType")
