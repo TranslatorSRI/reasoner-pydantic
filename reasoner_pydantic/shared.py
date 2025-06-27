@@ -5,13 +5,13 @@ from __future__ import annotations
 import re
 from datetime import datetime
 from enum import Enum
-from typing import Annotated, Any, Optional
+from typing import Annotated, Any, Hashable, Optional
 
-from pydantic import ConfigDict, Field
+from pydantic import BeforeValidator, ConfigDict, Field
 from pydantic.types import StringConstraints
 
 from .base_model import BaseModel
-from .utils import HashableSequence
+from .utils import HashableSequence, make_hashable
 
 
 # TODO: potential add validation for structure of CURIE
@@ -40,7 +40,7 @@ class Attribute(BaseModel):
     """Node/edge attribute."""
 
     attribute_type_id: Annotated[CURIE, Field(title="type")]
-    value: Any
+    value: Annotated[Hashable, BeforeValidator(make_hashable)]
     value_type_id: Optional[CURIE] = None
     original_attribute_name: Optional[str] = None
     value_url: Optional[str] = None
