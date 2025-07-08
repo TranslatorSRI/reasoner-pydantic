@@ -32,8 +32,6 @@ class PathBinding(BaseModel):
 
     id: str = Field(..., title="auxiliary graph id", nullable=False)
 
-    attributes: HashableSet[Attribute] = Field(..., nullable=False)
-
     class Config:
         title = "path binding"
         schema_extra = {
