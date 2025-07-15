@@ -59,10 +59,9 @@ class QualifierConstraint(BaseModel):
 class PathConstraint(BaseModel):
     """QPath Constraint."""
 
-    intermediate_categories: Optional[HashableSequence[BiolinkEntity]]
-    _nonzero_categories = validator("intermediate_categories", allow_reuse=True)(
-        nonzero_validator
-    )
+    intermediate_categories: Annotated[
+        Optional[HashableSequence[BiolinkEntity]], AfterValidator(nonzero_validator)
+    ]
 
 
 class SetInterpretationEnum(str, Enum):
@@ -141,24 +140,24 @@ class QPath(BaseModel):
     """Query path."""
 
     subject: Annotated[
-        str, 
+        str,
         Field(
             title="subject node id",
-        )
+        ),
     ]
 
     object: Annotated[
-        str, 
+        str,
         Field(
             title="object node id",
-        )
+        ),
     ]
 
     predicates: Annotated[
         Optional[HashableSequence[BiolinkPredicate]],
         Field(
             title="predicates",
-        )
+        ),
     ] = None
 
     constraints: Optional[HashableSequence[PathConstraint]]
@@ -197,7 +196,7 @@ class PathfinderQueryGraph(BaseQueryGraph):
         HashableMapping[str, QPath],
         Field(
             title="dict of paths",
-        )
+        ),
     ]
 
     model_config = ConfigDict(title="pathfinder query graph", extra="allow")

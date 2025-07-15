@@ -14,9 +14,7 @@ response = httpx.get(
 reference_schemas = yaml.load(
     response.text,
     Loader=yaml.FullLoader,
-)[
-    "components"
-]["schemas"]
+)["components"]["schemas"]
 
 
 def test_openapi():

@@ -27,6 +27,29 @@ class EdgeBinding(BaseModel):
     )
 
 
+class NodeBinding(BaseModel):
+    """Node binding."""
+
+    id: Annotated[
+        CURIE,
+        Field(
+            title="knowledge graph id",
+        ),
+    ]
+    query_id: Annotated[Optional[CURIE], Field(title="query graph id")] = None
+    attributes: HashableSet[Attribute]
+
+    model_config = ConfigDict(
+        title="node binding",
+        json_schema_extra={
+            "example": {
+                "id": "x:string",
+            },
+        },
+        extra="allow",
+    )
+
+
 class PathBinding(BaseModel):
     """Path binding."""
 
@@ -34,8 +57,8 @@ class PathBinding(BaseModel):
 
     model_config = ConfigDict(
         title="path binding",
-        json_schema_extra={ "example": {"id": "string"} }
-        extra="allow"
+        json_schema_extra={"example": {"id": "string"}},
+        extra="allow",
     )
 
 
@@ -49,12 +72,6 @@ class BaseAnalysis(BaseModel):
         ),
     ]
 
-    edge_bindings: Annotated[
-        HashableMapping[str, HashableSet[EdgeBinding]],
-        Field(
-            title="list of edge bindings",
-        ),
-    ]
     score: Optional[float] = None
     support_graphs: Optional[HashableSet[str]] = None
     scoring_method: Optional[str] = None
@@ -111,7 +128,7 @@ class PathfinderAnalysis(BaseAnalysis):
         HashableMapping[str, HashableSet[PathBinding]],
         Field(
             title="list of path bindings",
-        )
+        ),
     ]
 
     model_config = ConfigDict(title="pathfinder analysis", extra="allow")
@@ -143,29 +160,6 @@ class PathfinderAnalysis(BaseAnalysis):
                 self.support_graphs.update(other.support_graphs)
             else:
                 self.support_graphs = other.support_graphs
-
-
-class NodeBinding(BaseModel):
-    """Node binding."""
-
-    id: Annotated[
-        CURIE,
-        Field(
-            title="knowledge graph id",
-        ),
-    ]
-    query_id: Annotated[Optional[CURIE], Field(title="query graph id")] = None
-    attributes: HashableSet[Attribute]
-
-    model_config = ConfigDict(
-        title="node binding",
-        json_schema_extra={
-            "example": {
-                "id": "x:string",
-            },
-        },
-        extra="allow",
-    )
 
 
 class Result(BaseModel):
