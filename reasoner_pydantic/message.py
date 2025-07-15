@@ -30,9 +30,8 @@ from typing import Annotated
 class Message(BaseModel):
     """Message."""
 
-
     query_graph: Annotated[
-        Optional[Union[QueryGraph PathfinderQueryGraph]],
+        Optional[Union[QueryGraph, PathfinderQueryGraph]],
         Field(
             title="query graph",
         ),
