@@ -1,6 +1,4 @@
-from typing import Optional
 from pydantic import ValidationError
-from reasoner_pydantic.base_model import BaseModel
 from reasoner_pydantic.shared import Attribute, BiolinkEntity
 from reasoner_pydantic import Message, QNode, QEdge, QueryGraph, Result, Response
 
@@ -508,6 +506,6 @@ def test_invalid_pathfinder_query():
     """
 
     try:
-        message = Message.model_validate(INVALID_PATHFINDER_QUERY)
+        _ = Message.model_validate(INVALID_PATHFINDER_QUERY)
     except Exception as e:
         assert isinstance(e, ValidationError)
