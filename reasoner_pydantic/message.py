@@ -6,7 +6,7 @@ import hashlib
 from typing import Optional, Callable, Union
 
 
-from .results import Result, Results, Analysis
+from .results import Results, Analysis
 from .qgraph import QueryGraph, PathfinderQueryGraph
 from pydantic import (
     AnyHttpUrl,
@@ -18,8 +18,6 @@ from pydantic import (
 
 from .base_model import BaseModel
 from .utils import HashableSequence
-from .results import Results
-from .qgraph import QueryGraph
 from .kgraph import Edge, KnowledgeGraph
 from .shared import EdgeIdentifier, LogEntry, LogLevel
 from .workflow import Workflow

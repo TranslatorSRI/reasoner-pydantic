@@ -5,7 +5,7 @@ from __future__ import annotations
 import re
 from datetime import datetime
 from enum import Enum
-from typing import Annotated, Any, Hashable, Optional
+from typing import Annotated, Hashable, Optional
 
 from pydantic import BeforeValidator, ConfigDict, Field
 from pydantic.types import StringConstraints

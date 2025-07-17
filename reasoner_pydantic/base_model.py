@@ -1,5 +1,4 @@
-import json
-from typing import Any, Final, Generic, Self, TypeVar
+from typing import Any, Generic, TypeVar
 
 from pydantic import (
     model_validator,
@@ -42,7 +41,7 @@ class BaseModel(PydanticBaseModel):
         return getattr(self, field, None)
 
     @model_validator(mode="after")
-    def ensure_hashable_extra(self) -> Self:
+    def ensure_hashable_extra(self) -> "BaseModel":
         """Ensure extra fields are hashable, if they're allowed."""
         if not self.model_extra:
             return self
